@@ -1,0 +1,188 @@
+<nz-layout>
+    <nz-sider [nzWidth]="255" [nzCollapsedWidth]="0" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
+        <div class="logo">
+
+            <div class="logo-img">
+
+            </div>
+
+            <div class="button-sider">
+                <button class="button-menu" nz-button nzType="default" nz-tooltip="Đăng xuất" (click)="logOut()">
+                    <nz-icon nzType="poweroff" nzTheme="outline" [style.color]="'#dc3545'" />
+                </button>
+
+                <button class="button-menu" nz-button nzType="default" nz-tooltip="Thông tin cá nhân"
+                    (click)="navigateRoute('system-manager/profile')">
+                    <nz-icon nzType="user" nzTheme="outline" [style.color]="'#007bff'" />
+                </button>
+
+                <button class="button-menu" nz-button nzType="default" nz-tooltip="Đổi mật khẩu"
+                    (click)="changePassOpen()">
+                    <nz-icon nzType="lock" nzTheme="outline" [style.color]="'#28a745'" />
+                </button>
+
+                <button class="button-menu" nz-button nzType="default" nz-tooltip="Hỗ trợ hệ thống"
+                    (click)="navigateRoute('system-manager/document-system')">
+                    <nz-icon nzType="info-circle" nzTheme="outline" [style.color]="'#ffc107'" />
+                </button>
+
+                <button class="button-menu" nz-button nzType="default" nz-tooltip="Hỏi đáp AI" (click)="openAI()">
+                    <nz-icon nzType="open-a-i" nzTheme="outline" />
+                </button>
+            </div>
+
+            <!-- Tìm kiếm menu -->
+            <nz-input-group [nzSuffix]="suffixIconSearch">
+                <input type="text" nz-input placeholder="Tìm kiếm chức năng" [(ngModel)]="searchMenu"
+                    (ngModelChange)="onSearchChangeMenu()" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+                <nz-icon nzType="search" />
+            </ng-template>
+        </div>
+        <ul nz-menu nzTheme="light" nzMode="inline" class="overflow-menu">
+            <ng-container *ngTemplateOutlet="menuTpl; context: { $implicit: displayedMenuTree }"></ng-container>
+
+            <ng-template #menuTpl let-menus>
+                <ng-container *ngFor="let menu of menus; let i = index">
+
+                    <!-- Menu không có con -->
+                    <ng-container *ngIf="!menu.children; else submenuTpl">
+                        <li nz-menu-item [nzPaddingLeft]="menu.level * 24" [ngClass]="{
+                                'border-menu': menu.level === 1,
+                                'menu-level-1': menu.level === 1
+                                }" (click)="navigateRoute(menu.url)">
+                            <ng-container *ngIf="menu.icon">
+                                <span nz-icon [nzType]="menu.icon"></span>
+                            </ng-container>
+                            <span>{{ menu.name }}</span>
+                        </li>
+                    </ng-container>
+
+                    <!-- Menu có submenu -->
+                    <ng-template #submenuTpl>
+                        <li nz-submenu [nzPaddingLeft]="menu.level * 24" [nzOpen]="menu.expanded"
+                            (nzOpenChange)="onOpenChange(menu)" [nzTitle]="menu.name" [nzIcon]="menu?.icon"
+                            [ngClass]="{ 'border-menu': menu.level === 1 }">
+                            <ul>
+                                <ng-container
+                                    *ngTemplateOutlet="menuTpl; context: { $implicit: menu.children }"></ng-container>
+                            </ul>
+                        </li>
+                    </ng-template>
+
+                </ng-container>
+            </ng-template>
+
+        </ul>
+    </nz-sider>
+    <nz-layout>
+        <nz-header>
+            <nz-icon class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" (click)="isCollapsed = !isCollapsed" />
+                
+            <nz-breadcrumb>
+                <nz-breadcrumb-item><a routerLink="/home"><span nz-icon nzType="home"></span></a></nz-breadcrumb-item>
+                @if(breadcrumbs){
+                <nz-breadcrumb-item *ngFor="let i of breadcrumbs">
+                    <a [routerLink]="i?.path">{{ i?.name }}</a>
+                </nz-breadcrumb-item>
+                }
+
+            </nz-breadcrumb>
+            <div class="user">
+                <nz-badge [nzCount]="5" nzSize="small">
+                    <img src="img/bell.png" nz-popover [nzPopoverTitle]="titleNotification"
+                        [nzPopoverContent]="contentNotification" nzPopoverTrigger="click" width="20">
+                </nz-badge>
+                
+                <img src="img/vietnam.png" *ngIf="language == 'vi'" (click)="changeLanguage('en')" class="flag-language"
+                    alt="Việt Nam">
+                <img src="img/united-kingdom.png" *ngIf="language == 'en'" (click)="changeLanguage('vi')"
+                    class="flag-language" alt="United Kingdom">
+
+                <div class="user-solid"></div>
+                <div class="circle">
+                    <img src="img/user.png" alt="Avatar User">
+                </div>
+
+                <div class="full-name">{{accountInfo?.fullName}}</div>
+            </div>
+        </nz-header>
+        <nz-content>
+            <router-outlet></router-outlet>
+        </nz-content>
+    </nz-layout>
+</nz-layout>
+
+<nz-modal [(nzVisible)]="isVisibleChangePass" nzTitle="ĐỔI MẬT KHẨU" [nzFooter]="actionChangePass"
+    (nzOnCancel)="changePassCancel()" (nzOnOk)="changePassOk()">
+    <ng-container *nzModalContent>
+        <input nz-input class="input-change-pass" [(ngModel)]="modelChangePass.currentPassword"
+            placeholder="Mật khẩu hiện tại" type="password" />
+        <input nz-input class="input-change-pass" [(ngModel)]="modelChangePass.newPassword" placeholder="Mật khẩu mới"
+            type="password" />
+        <input nz-input class="input-change-pass" [(ngModel)]="modelChangePass.confirmNewPassword"
+            placeholder="Xác nhận lại mật khẩu mới" type="password" />
+    </ng-container>
+    <ng-template #actionChangePass>
+        <button nz-button nzType="default" (click)="changePassCancel()">Huỷ</button>
+        <button nz-button nzType="primary" (click)="changePassOk()">Xác nhận</button>
+    </ng-template>
+</nz-modal>
+
+<ng-template #titleNotification>
+    <div class="title-noti">
+        <div>Thông báo</div>
+        <a>Xem tất cả</a>
+    </div>
+</ng-template>
+<ng-template #contentNotification>
+    <div class="list-noti">
+        <div class="noti-item-readed">
+            <div>
+                <span>Bạn có thông báo mới</span><br>
+                <span class="time-noti"><nz-icon nzType="calendar" nzTheme="outline" /> dd/MM/yyyy</span>
+            </div>
+            <nz-badge nzStatus="default"></nz-badge>
+        </div>
+        <div class="noti-item-unread">
+            <div>
+                <span>Bạn có thông báo mới</span><br>
+                <span class="time-noti"><nz-icon nzType="calendar" nzTheme="outline" /> dd/MM/yyyy</span>
+            </div>
+            <nz-badge nzStatus="processing"></nz-badge>
+        </div>
+    </div>
+</ng-template>
+
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzWidth]="420" [nzVisible]="isVisibleAI" nzTitle="AI HỎI ĐÁP"
+    [nzFooter]="footerAI" [nzClosable]="false" (nzOnClose)="closeAI()">
+
+    <ng-container nz-form *nzDrawerContent>
+        <div class="chat-ai-content" *ngIf="chatAi.length == 0">
+            <div class="chat-ai-empty">
+                <img src="img/chatbot.png" width="66" />
+                <div class="chat-ai-title">Xin chào! Tôi có thể giúp gì cho bạn?</div>
+            </div>
+        </div>
+
+        <div #chatContent class="chat-ai-content" *ngIf="chatAi.length != 0">
+            @for (data of chatAi; track data) {
+            <div *ngIf="data.role == 'User'" class="message-item-right">{{data.content}}</div>
+            <div *ngIf="data.role == 'DeepSeek'" class="message-item-left" [innerHTML]="data.content"></div>
+            }
+
+        </div>
+    </ng-container>
+
+    <ng-template #footerAI>
+        <nz-input-group [nzSuffix]="suffixTemplateAI" [nzPrefix]="prefixTemplateAI">
+            <input type="text" nz-input placeholder="Hỏi bất cứ điều gì..." [(ngModel)]="inputChatbot"
+                (keydown.enter)="onAskChatbot()" />
+        </nz-input-group>
+        <ng-template #prefixTemplateAI><nz-icon nzType="audio" /></ng-template>
+        <ng-template #suffixTemplateAI>
+            <nz-icon nz-tooltip nzType="send" (click)="onAskChatbot()" />
+        </ng-template>
+    </ng-template>
+</nz-drawer>

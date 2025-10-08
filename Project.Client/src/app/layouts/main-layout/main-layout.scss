@@ -1,0 +1,241 @@
+.trigger {
+    font-size: 16px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.trigger:hover,
+.icon-header:hover {
+    color: #1890ff;
+}
+
+.icon-header {
+    font-size: 18px;
+    line-height: 64px;
+    padding-left: 20px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.icon-noti {
+    font-size: 18px;
+    line-height: 64px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.logo {
+    height: 140px;
+    padding: 6px;
+    background: #F1F0F3;
+}
+
+.logo-img {
+    height: 56px;
+}
+
+nz-sider {
+    height: 100vh;
+    border-right: solid 1px #dedede;
+}
+
+nz-header {
+    background: white;
+    height: 50px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    border-bottom: solid 1px #dedede;
+}
+
+nz-content {
+    background: white;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    position: relative;
+}
+
+.overflow-menu {
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    scrollbar-width: none;
+    border-right: none;
+    padding: 2px 6px 0px 6px;
+}
+
+.button-menu {
+    width: 100%;
+    margin-bottom: 6px;
+    border-color: #dedede;
+}
+
+.btn-logout {
+    color: #ff4d4f !important;
+    border-color: #ff4d4f !important;
+}
+
+.input-change-pass {
+    margin-bottom: 12px;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.full-name {
+    margin: 0px 12px 0px 6px;
+}
+
+.circle {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circle img {
+    height: 26px;
+    width: auto;
+}
+
+.user-solid {
+    background: #dedede;
+    width: 1px;
+    height: 20px;
+    margin: 0px 16px;
+}
+
+.flag-language {
+    width: 42px;
+    padding-left: 20px;
+}
+
+.title-noti {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 4px;
+    width: 320px;
+}
+
+.list-noti {
+    width: 352px;
+    max-height: 330px;
+    overflow-y: auto;
+    margin: -12px -16px;
+}
+
+.noti-item-readed {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 6px 8px 16px;
+    border-bottom: solid 1px #eeeeee;
+    cursor: pointer;
+}
+
+.noti-item-unread {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 6px 8px 16px;
+    border-bottom: solid 1px #eeeeee;
+    cursor: pointer;
+    background: #eeeeee;
+    font-weight: 600;
+}
+
+.time-noti {
+    color: gray;
+    font-size: smaller;
+}
+
+.button-sider {
+    display: flex;
+    gap: 6px;
+}
+
+.title-ai {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 12px;
+}
+
+.chat-ai {
+    width: 50%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.chat-ai-content {
+    height: calc(100vh - 152px);
+    overflow-y: auto;
+    display: flex;
+    flex-flow: column;
+    padding-bottom: 22px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.chat-ai-title {
+    font-size: 20px;
+    font-weight: 600;
+    background: linear-gradient(90deg, #4facfe 0%, #FF66FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.chat-ai-empty {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+    padding-top: 12%;
+}
+
+.message-item-right {
+    max-width: 70%;
+    width: fit-content;
+    background: #4da6ff;
+    color: white;
+    padding: 6px 10px;
+    margin: 4px;
+    float: right;
+    border-radius: 2px;
+    margin-left: auto;
+}
+
+.message-item-left {
+    max-width: 70%;
+    width: fit-content;
+    background: #eeeeee;
+    padding: 6px 10px;
+    margin: 4px;
+    border-radius: 2px;
+}
+
+.border-menu{
+    // border-bottom: solid 1px #dedede !important;
+    border: none
+}
+.menu-level-1 {
+    height: 40px !important;
+    padding-bottom: 4px !important;
+}
+
+.ant-menu-item-selected {
+    background-color: #E7E6E9 !important;
+    color: #262626 !important;
+    border-radius: 2px;
+}
