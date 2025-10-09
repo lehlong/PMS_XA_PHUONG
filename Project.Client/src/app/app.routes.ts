@@ -29,6 +29,12 @@ export const routes: Routes = [
         loadChildren: () => import('./@master-data/master-data.routes').then(m => m.masterDataRoutes),
         canActivate: [AuthGuard],
       },
+
+      {
+        path: 'project',
+        loadChildren: () => import('./@project/project.routes').then(m => m.projectRoutes),
+        canActivate: [AuthGuard],
+      },
     ],
   },
   {

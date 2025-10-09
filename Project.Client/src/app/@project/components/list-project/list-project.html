@@ -1,6 +1,6 @@
 <nz-page-header nzBackIcon>
-    <nz-page-header-title>Lịch sử đăng nhập</nz-page-header-title>
-    <nz-page-header-subtitle>Danh sách lịch sử đăng nhập</nz-page-header-subtitle>
+    <nz-page-header-title>DANH SÁCH DỰ ÁN</nz-page-header-title>
+    <nz-page-header-subtitle>Danh sách các dự án</nz-page-header-subtitle>
     <nz-page-header-extra>
         <nz-space>
             <input *nzSpaceItem nz-input placeholder="Tìm kiếm nhanh" [(ngModel)]="filter.keyWord"
@@ -14,8 +14,8 @@
                 <nz-icon nzType="search" nzTheme="outline" />
             </button>
 
-            <button *nzSpaceItem nz-button nzDanger nzType="primary" (click)="delHistory()">
-                <nz-icon nzType="delete" nzTheme="outline" /> Xoá lịch sử
+            <button *nzSpaceItem nz-button nzType="primary" (click)="openCreate()">
+                <nz-icon nzType="plus" nzTheme="outline" /> Thêm mới
             </button>
         </nz-space>
     </nz-page-header-extra>
@@ -41,27 +41,27 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of list.data; trackBy: trackById">
-                    <td [nzChecked]="setOfCheckedId.has(item.id)"
-                        (nzCheckedChange)="onItemChecked(item.id, $event)"></td>
-                    <td>{{ item.userName }}</td>
-                    <td nzAlign="center">{{ item.logonTime | date: 'dd/MM/yyyy HH:mm' }}</td>
-                    <td nzAlign="center">{{ item.browser }}</td>
-                    <td nzAlign="center">{{ item.version }}</td>
+                <!-- <tr *ngFor="let item of list.data; trackBy: trackById">
+                    <td [nzChecked]="setOfCheckedId.has(data.id)"
+                        (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
+                    <td>{{ data.userName }}</td>
+                    <td nzAlign="center">{{ data.logonTime | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td nzAlign="center">{{ data.browser }}</td>
+                    <td nzAlign="center">{{ data.version }}</td>
                     <td nzAlign="center">
-                        <nz-icon [nzType]="item.isMobile ? 'mobile' : 'laptop'" nzTheme="outline" />
+                        <nz-icon [nzType]="data.isMobile ? 'mobile' : 'laptop'" nzTheme="outline" />
                     </td>
-                    <td nzAlign="center">{{ item.os }}</td>
-                    <td nzAlign="center">{{ item.mobileModel }}</td>
-                    <td>{{ item.ipAddress }}</td>
+                    <td nzAlign="center">{{ data.os }}</td>
+                    <td nzAlign="center">{{ data.mobileModel }}</td>
+                    <td>{{ data.ipAddress }}</td>
                     <td nzAlign="center">
-                        <nz-tag [nzColor]="item.status ? 'success' : 'error'">
-                            <nz-icon [nzType]="item.status ? 'check-circle' : 'close-circle'" />
-                            <span>{{item.status ? 'Thành công' : 'Thất bại'}}</span>
+                        <nz-tag [nzColor]="data.status ? 'success' : 'error'">
+                            <nz-icon [nzType]="data.status ? 'check-circle' : 'close-circle'" />
+                            <span>{{data.status ? 'Thành công' : 'Thất bại'}}</span>
                         </nz-tag>
                     </td>
-                    <td>{{ item.reason }}</td>
-                </tr>
+                    <td>{{ data.reason }}</td>
+                </tr> -->
             </tbody>
         </nz-table>
     </nz-page-header-content>

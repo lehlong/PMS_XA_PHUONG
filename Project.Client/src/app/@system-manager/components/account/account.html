@@ -70,16 +70,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let data of list.data; let i = index; trackBy: trackById">
+                                <tr *ngFor="let item of list.data; let i = index; trackBy: trackById">
                                     <td nzAlign="center">{{(data.currentPage - 1) * data.pageSize + i + 1 }}</td>
-                                    <td><a (click)="open(data, true)">{{ data.userName }}</a></td>
-                                    <td>{{ data.fullName }}</td>
-                                    <td>{{ data.phone }}</td>
-                                    <td>{{ data.email }}</td>
+                                    <td><a (click)="open(item, true)">{{ item.userName }}</a></td>
+                                    <td>{{ item.fullName }}</td>
+                                    <td>{{ item.phone }}</td>
+                                    <td>{{ item.email }}</td>
                                     <td nzAlign="center">
-                                        <nz-tag [nzColor]="data.isActive ? 'success' : 'error'">
-                                            <nz-icon [nzType]="data.isActive ? 'check-circle' : 'close-circle'" />
-                                            <span>{{data.isActive ? 'Kích hoạt' : 'Khoá'}}</span>
+                                        <nz-tag [nzColor]="item.isActive ? 'success' : 'error'">
+                                            <nz-icon [nzType]="item.isActive ? 'check-circle' : 'close-circle'" />
+                                            <span>{{item.isActive ? 'Kích hoạt' : 'Khoá'}}</span>
                                         </nz-tag>
                                     </td>
                                 </tr>
@@ -155,11 +155,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let data of accountGroup.data; let i = index; trackBy: trackById">
-                                <td nzAlign="center" [nzChecked]="checkAccountGroup(data.id)" (nzCheckedChange)="onChangeAccountGroup($event, data.id)">
+                            <tr *ngFor="let item of accountGroup.data; let i = index; trackBy: trackById">
+                                <td nzAlign="center" [nzChecked]="checkAccountGroup(item.id)" (nzCheckedChange)="onChangeAccountGroup($event, item.id)">
                                 </td>
-                                <td>{{ data.name }}</td>
-                                <td>{{ data.notes }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.notes }}</td>
                             </tr>
                         </tbody>
                     </nz-table>

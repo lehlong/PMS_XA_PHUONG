@@ -68,14 +68,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let data of list.data; let i = index; trackBy: trackById">
+                                <tr *ngFor="let item of list.data; let i = index; trackBy: trackById">
                                     <td nzAlign="center">{{(data.currentPage - 1) * data.pageSize + i + 1 }}</td>
-                                    <td><a (click)="open(data, true)">{{ data.name }}</a></td>
-                                    <td>{{ data.notes }}</td>
+                                    <td><a (click)="open(item, true)">{{ item.name }}</a></td>
+                                    <td>{{ item.notes }}</td>
                                     <td nzAlign="center">
-                                        <nz-tag [nzColor]="data.isActive ? 'success' : 'error'">
-                                            <nz-icon [nzType]="data.isActive ? 'check-circle' : 'close-circle'" />
-                                            <span>{{data.isActive ? 'Kích hoạt' : 'Khoá'}}</span>
+                                        <nz-tag [nzColor]="item.isActive ? 'success' : 'error'">
+                                            <nz-icon [nzType]="item.isActive ? 'check-circle' : 'close-circle'" />
+                                            <span>{{item.isActive ? 'Kích hoạt' : 'Khoá'}}</span>
                                         </nz-tag>
                                     </td>
                                 </tr>

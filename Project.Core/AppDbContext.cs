@@ -108,7 +108,12 @@ namespace Project.Core
         #endregion
 
         #region Master Data
+        public DbSet<MdLoaiDuAn> MdLoaiDuAn { get; set; }
+        public DbSet<MdCapDuAn> MdCapDuAn { get; set; }
         public DbSet<MdOrganize> MdOrganize { get; set; }
+        public DbSet<MdArea> MdArea { get; set; }
+        public DbSet<MdUnit> MdUnit { get; set; }
+        public DbSet<MdCurrency> MdCurrency { get; set; }
         #endregion
     }
 }
