@@ -6,6 +6,7 @@ import { Area } from "./components/area/area";
 import { Customer } from "./components/customer/customer";
 import { Unit } from "./components/unit/unit";
 import { Currency } from "./components/currency/currency";
+import { ConfigStruct } from "./components/config-struct/config-struct";
 
 export const masterDataRoutes: Routes = [
   { path: 'organize', component: Organize },
@@ -15,4 +16,5 @@ export const masterDataRoutes: Routes = [
   { path: 'customer', component: Customer },
   { path: 'unit', component: Unit },
   { path: 'currency', component: Currency },
+  { path: 'config-struct', component: ConfigStruct },
 ]

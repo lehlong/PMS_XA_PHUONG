@@ -114,6 +114,8 @@ namespace Project.Core
         public DbSet<MdArea> MdArea { get; set; }
         public DbSet<MdUnit> MdUnit { get; set; }
         public DbSet<MdCurrency> MdCurrency { get; set; }
+        public DbSet<MdConfigStruct> MdConfigStruct { get; set; }
+        public DbSet<MdCustomer> MdCustomer { get; set; }
         #endregion
     }
 }

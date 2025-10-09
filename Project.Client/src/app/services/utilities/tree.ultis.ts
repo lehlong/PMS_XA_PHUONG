@@ -39,6 +39,26 @@ export class TreeUtils {
         return build('RIGHT', 1);
     }
 
+    static buildNzConfigStructTree(list: any[]): any[] {
+        const build = (parentId: string, level: number): any[] => {
+            return list
+                .filter(item => item.pId === parentId)
+                .sort((a, b) => a.orderNumber - b.orderNumber)
+                .map(item => {
+                    const children = build(item.id, level + 1);
+                    return {
+                        key: item.id,
+                        title: item.name,
+                        ...item,
+                        level,
+                        children: children.length > 0 ? children : null
+                    };
+                });
+        };
+
+        return build('STRUCT', 1);
+    }
+
     static buildNzOrgTree(list: any[]): any[] {
         const build = (parentId: string, level: number): any[] => {
             return list
