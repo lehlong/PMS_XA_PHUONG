@@ -2,10 +2,18 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgModule } from '../../../shared/ng-zorro.module';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Subject, takeUntil } from 'rxjs';
-import { HistoryLoginService } from '../../../@system-manager/services/history-login.service';
-import { HistoryLoginDto } from '../../../class/AD/history-login.class';
 import { PaginationResult } from '../../../class/common/pagination-result.class';
 import { GlobalService } from '../../../services/common/global.service';
+import { ProjectDto } from '../../../class/PS/project.class';
+import { ProjectService } from '../../services/project.service';
+import { LoaiDuAnService } from '../../../@master-data/services/loai-du-an.service';
+import { OrganizeService } from '../../../@master-data/services/organize.service';
+import { ConfigStructDto } from '../../../class/MD/config-struct.class';
+import { TreeUtils } from '../../../services/utilities/tree.ultis';
+import { ConfigStructService } from '../../../@master-data/services/config-struct.service';
+import { AccountService } from '../../../@system-manager/services/account.service';
+import { CapDuAnService } from '../../../@master-data/services/cap-du-an.service';
+import { CustomerService } from '../../../@master-data/services/customer.service';
 
 @Component({
   selector: 'app-list-project',
@@ -16,20 +24,32 @@ import { GlobalService } from '../../../services/common/global.service';
 export class ListProject implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
-  visible : boolean = false;
+  visible: boolean = false;
 
   checked: boolean = false;
   indeterminate: boolean = false;
   setOfCheckedId = new Set<any>();
 
   data: PaginationResult = new PaginationResult();
-  dto: HistoryLoginDto = new HistoryLoginDto();
-  filter: HistoryLoginDto = new HistoryLoginDto();
+  dto: ProjectDto = new ProjectDto();
+  filter: ProjectDto = new ProjectDto();
+
+  loaiDuAn: any[] = []
+  capDuAn: any[] = []
+  lstOrganize: any[] = []
+  lstAccount: any[] = []
+  lstCustomer: any[] = []
 
   constructor(
     private global: GlobalService,
-    private service: HistoryLoginService,
-    private message: NzMessageService
+    private service: ProjectService,
+    private message: NzMessageService,
+    private _loaiDuAn: LoaiDuAnService,
+    private _organize: OrganizeService,
+    private _configStruct: ConfigStructService,
+    private _account: AccountService,
+    private _capDuAn: CapDuAnService,
+    private _customer: CustomerService
   ) {
     this.global.setBreadcrumb([
       {
@@ -41,6 +61,39 @@ export class ListProject implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.search();
+    this.getMasterData();
+  }
+
+  getMasterData() {
+    this._loaiDuAn.getAll().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.loaiDuAn = res;
+      }
+    })
+
+    this._organize.getAll().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.lstOrganize = res;
+      }
+    })
+
+    this._account.getAll().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.lstAccount = res;
+      }
+    })
+
+    this._capDuAn.getAll().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.capDuAn = res;
+      }
+    })
+
+    this._customer.getAll().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.lstCustomer = res;
+      }
+    })
   }
 
   search() {
@@ -83,7 +136,7 @@ export class ListProject implements OnInit, OnDestroy {
   }
 
   reset() {
-    this.filter = new HistoryLoginDto();
+    this.filter = new ProjectDto();
     this.search();
   }
 
@@ -103,23 +156,37 @@ export class ListProject implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  delHistory() {
-    var lstCheckedIds = [...this.setOfCheckedId]
-    if (lstCheckedIds.length == 0) {
-      this.message.error('Vui lòng chọn ít nhất 1 bản ghi!');
-      return;
-    }
-    this.service.delete(lstCheckedIds).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res) => {
-        this.indeterminate = false;
-        this.checked = false;
-        this.search();
-      }
-    })
+  close() {
+    this.visible = false;
+    this.dto = new ProjectDto();
+    this.filterConfigStruct = new ConfigStructDto();
+    this.configStructTree = [];
+    this.displayedConfigStructTree = [];
   }
 
-  openCreate(){  
+  openCreate() {
     this.visible = true;
+  }
+
+  save() {
+
+  }
+
+  filterConfigStruct: ConfigStructDto = new ConfigStructDto();
+  configStructTree: any[] = [];
+  displayedConfigStructTree: any[] = [];
+
+  onChangeOrg(e: any) {
+    this.filterConfigStruct.orgId = e;
+    this.getConfigStructs();
+  }
+
+  getConfigStructs() {
+    this._configStruct.search(this.filterConfigStruct).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.configStructTree = this.displayedConfigStructTree = TreeUtils.buildNzConfigStructTree(res.data);
+      }
+    });
   }
 }
 
