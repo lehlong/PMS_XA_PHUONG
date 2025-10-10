@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgModule } from '../../../shared/ng-zorro.module';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { PaginationResult } from '../../../class/common/pagination-result.class';
 import { GlobalService } from '../../../services/common/global.service';
 import { ProjectDto } from '../../../class/PS/project.class';
@@ -14,6 +14,7 @@ import { ConfigStructService } from '../../../@master-data/services/config-struc
 import { AccountService } from '../../../@system-manager/services/account.service';
 import { CapDuAnService } from '../../../@master-data/services/cap-du-an.service';
 import { CustomerService } from '../../../@master-data/services/customer.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-project',
@@ -49,7 +50,8 @@ export class ListProject implements OnInit, OnDestroy {
     private _configStruct: ConfigStructService,
     private _account: AccountService,
     private _capDuAn: CapDuAnService,
-    private _customer: CustomerService
+    private _customer: CustomerService,
+    private router: Router,
   ) {
     this.global.setBreadcrumb([
       {
@@ -65,35 +67,23 @@ export class ListProject implements OnInit, OnDestroy {
   }
 
   getMasterData() {
-    this._loaiDuAn.getAll().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.loaiDuAn = res;
-      }
+    forkJoin({
+      loaiDuAn: this._loaiDuAn.getAll(),
+      lstOrganize: this._organize.getAll(),
+      lstAccount: this._account.getAll(),
+      capDuAn: this._capDuAn.getAll(),
+      lstCustomer: this._customer.getAll()
     })
-
-    this._organize.getAll().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.lstOrganize = res;
-      }
-    })
-
-    this._account.getAll().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.lstAccount = res;
-      }
-    })
-
-    this._capDuAn.getAll().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.capDuAn = res;
-      }
-    })
-
-    this._customer.getAll().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.lstCustomer = res;
-      }
-    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loaiDuAn = res.loaiDuAn;
+          this.lstOrganize = res.lstOrganize;
+          this.lstAccount = res.lstAccount;
+          this.capDuAn = res.capDuAn;
+          this.lstCustomer = res.lstCustomer;
+        }
+      });
   }
 
   search() {
@@ -169,7 +159,13 @@ export class ListProject implements OnInit, OnDestroy {
   }
 
   save() {
-
+    this.service.insert(this.dto).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        if (res.status) {
+          this.openDetailProject(res.data)
+        }
+      }
+    })
   }
 
   filterConfigStruct: ConfigStructDto = new ConfigStructDto();
@@ -187,6 +183,10 @@ export class ListProject implements OnInit, OnDestroy {
         this.configStructTree = this.displayedConfigStructTree = TreeUtils.buildNzConfigStructTree(res.data);
       }
     });
+  }
+
+  openDetailProject(projectId: any) {
+    this.router.navigate([`/project/${projectId}`]);
   }
 }
 

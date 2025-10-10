@@ -39,7 +39,7 @@ export class MainLayout implements OnInit, OnDestroy {
   menuTree: any[] = [];
   displayedMenuTree: any[] = [];
 
-  accountInfo : any;
+  accountInfo: any;
 
   private lastCheckedToken = 0;
   private checkIntervalToken = 60 * 1000;
@@ -51,8 +51,8 @@ export class MainLayout implements OnInit, OnDestroy {
     private notification: NzNotificationService,
     private router: Router,
     private deepSeek: DeepSeekService
-  ) { 
-    this.accountInfo =  LocalStorageUtils.getItem('accountInfo')
+  ) {
+    this.accountInfo = LocalStorageUtils.getItem('accountInfo')
   }
 
   fullscreenListener = () => {
@@ -60,7 +60,6 @@ export class MainLayout implements OnInit, OnDestroy {
   };
 
   ngOnInit(): void {
-    console.log(this.accountInfo)
     this.breadcrumbs = this.global.breadcrumb || [];
 
     this.global.breadcrumbSubject

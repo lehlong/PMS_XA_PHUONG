@@ -1,12 +1,20 @@
-﻿using Project.Core.Common;
+﻿using AutoMapper;
+using Project.Core.Common;
+using Project.Core.Entities.MD;
+using Project.Core.Entities.PS;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Project.Core.Entities.PS
+namespace Project.Service.Dtos.PS
 {
-    public class PsProject : SoftDeleteEntity
+    public class ProjectDto : BaseDto, IMapFrom, IDto
     {
         [Key]
-        public string Id { get; set; } = string.Empty;
+        public string? Id { get; set; }
         public string? Code { get; set; }
         public string? Name { get; set; }
         public string? DonViPhuTrach { get; set; }
@@ -25,5 +33,12 @@ namespace Project.Core.Entities.PS
         public int? GiaiDoan { get; set; }
         public string? Notes { get; set; }
         public string? RefrenceFileId { get; set; }
+        public List<ProjectStructDto>? ListGiaiDoan { get; set; } = new List<ProjectStructDto>();
+        public List<ProjectStructDto>? Struct { get; set; } = new List<ProjectStructDto>();
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<PsProject, ProjectDto>().ReverseMap();
+        }
     }
 }

@@ -30,6 +30,7 @@ import { NzTabsModule } from "ng-zorro-antd/tabs";
 import { NzTagModule } from "ng-zorro-antd/tag";
 import { NzTooltipModule } from "ng-zorro-antd/tooltip";
 import { NzTreeModule } from "ng-zorro-antd/tree";
+import { NzStepsModule } from 'ng-zorro-antd/steps';
 
 export const NgModule = [
     ScrollingModule,
@@ -64,5 +65,6 @@ export const NgModule = [
     NzTreeModule,
     NzDividerModule,
     NzSplitterModule,
-    NzSwitchModule
+    NzSwitchModule,
+    NzStepsModule
 ];

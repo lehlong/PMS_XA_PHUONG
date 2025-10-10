@@ -1,1 +1,263 @@
-<p>info-project works!</p>
+<div>
+    <nz-tabs [nzSelectedIndex]="indexTabProject">
+        <nz-tab [nzTitle]="dashboard">
+            <ng-template #dashboard>
+                <nz-icon nzType="pie-chart" nzTheme="outline" /> DASHBOARD
+            </ng-template>
+
+        </nz-tab>
+        <nz-tab [nzTitle]="information">
+            <ng-template #information>
+                <nz-icon nzType="info-circle" nzTheme="outline" /> THÔNG TIN DỰ ÁN
+            </ng-template>
+
+            <div class="button-action">
+                <button nz-button nzType="primary">
+                    <nz-icon nzType="send" nzTheme="outline" /> Trình duyệt
+                </button>
+
+                <button nz-button nzType="primary" class="btn-green">
+                    <nz-icon nzType="check" nzTheme="outline" /> Phê duyệt
+                </button>
+
+                <button nz-button nzType="primary" nzDanger="">
+                    <nz-icon nzType="close" nzTheme="outline" /> Từ chối
+                </button>
+
+                <button nz-button nzType="primary" class="btn-green">
+                    <nz-icon nzType="save" nzTheme="outline" /> Cập nhật thông tin
+                </button>
+
+                <button nz-button nzType="default" (click)="chuyenTiepGiaiDoan()">
+                    <nz-icon nzType="double-right" nzTheme="outline" /> Chuyển tiếp giai đoạn
+                </button>
+
+                <button nz-button nzType="default">
+                    <nz-icon nzType="history" nzTheme="outline" /> Lịch sử hành động
+                </button>
+            </div>
+
+            <div class="project-step">
+                <nz-steps [nzCurrent]="project.giaiDoan">
+                    <nz-step *ngFor="let i of project.listGiaiDoan" [nzTitle]="i.code"
+                        [nzDescription]="i.name"></nz-step>
+                </nz-steps>
+            </div>
+
+            <div>
+                <nz-splitter>
+                    <nz-splitter-panel>
+                        <div class="box">
+                            <div class="project-workflow">
+                                <div>
+
+                                </div>
+                                <nz-steps [nzCurrent]="1" nzProgressDot nzDirection="vertical">
+                                    <nz-step nzTitle="Finished"
+                                        nzDescription="This is a description. This is a description."></nz-step>
+                                    <nz-step nzTitle="Finished"
+                                        nzDescription="This is a description. This is a description."></nz-step>
+                                    <nz-step nzTitle="In Progress"
+                                        nzDescription="This is a description. This is a description."></nz-step>
+                                    <nz-step nzTitle="Waiting" nzDescription="This is a description."></nz-step>
+                                    <nz-step nzTitle="Waiting" nzDescription="This is a description."></nz-step>
+                                </nz-steps>
+                            </div>
+                        </div>
+                    </nz-splitter-panel>
+                    <nz-splitter-panel nzDefaultSize="66%">
+                        <div class="box">
+                            <div class="project-detail">
+                                <div nz-row [nzGutter]="12">
+
+                                    <div nz-col nzSpan="6">
+                                        <label>Mã dự án</label>
+                                        <input nz-input [(ngModel)]="project.code" class="space-control" />
+                                    </div>
+                                    <div nz-col nzSpan="18">
+                                        <label>Tên dự án</label>
+                                        <input nz-input [(ngModel)]="project.name" class="space-control" />
+                                    </div>
+
+                                    <div nz-col nzSpan="24">
+                                        <label>Đơn vị phụ trách</label>
+                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.donViPhuTrach"
+                                            class="space-control" [nzDisabled]="true">
+                                            <nz-option *ngFor="let i of lstOrganize" [nzLabel]="i.name"
+                                                [nzValue]="i.id"></nz-option>
+                                        </nz-select>
+                                    </div>
+                                    <div nz-col nzSpan="6">
+                                        <label>Lãnh đạo phụ trách</label>
+                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.lanhDaoPhuTrach"
+                                            class="space-control">
+                                            <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
+                                                [nzValue]="i.userName"></nz-option>
+                                        </nz-select>
+                                    </div>
+                                    <div nz-col nzSpan="6">
+                                        <label>PM dự án</label>
+                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.pmDuAn"
+                                            class="space-control">
+                                            <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
+                                                [nzValue]="i.userName"></nz-option>
+                                        </nz-select>
+                                    </div>
+
+                                    <div nz-col nzSpan="6">
+                                        <label>Phụ trách dự án</label>
+                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.phuTrachDuAn"
+                                            class="space-control">
+                                            <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
+                                                [nzValue]="i.userName"></nz-option>
+                                        </nz-select>
+                                    </div>
+                                    <div nz-col nzSpan="6">
+                                        <label>Quản lý hợp đồng</label>
+                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.quanLyHopDong"
+                                            class="space-control">
+                                            <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
+                                                [nzValue]="i.userName"></nz-option>
+                                        </nz-select>
+                                    </div>
+
+
+                                    <div nz-col nzSpan="24">
+                                        <label>Khách hàng</label>
+                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.khachHang"
+                                            class="space-control">
+                                            <nz-option *ngFor="let i of lstCustomer" [nzLabel]="i.name"
+                                                [nzValue]="i.code"></nz-option>
+                                        </nz-select>
+                                    </div>
+
+                                    <div nz-col nzSpan="6">
+                                        <label>Cấp dự án</label>
+                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.capDuAn"
+                                            class="space-control">
+                                            <nz-option *ngFor="let i of capDuAn" [nzLabel]="i.name"
+                                                [nzValue]="i.code"></nz-option>
+                                        </nz-select>
+                                    </div>
+
+                                    <div nz-col nzSpan="6">
+                                        <label>Loại dự án</label>
+                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.loaiDuAn"
+                                            class="space-control">
+                                            <nz-option *ngFor="let i of loaiDuAn" [nzLabel]="i.name"
+                                                [nzValue]="i.code"></nz-option>
+                                        </nz-select>
+                                    </div>
+                                    <div nz-col nzSpan="6">
+                                        <label>Ngày bắt đầu</label>
+                                        <nz-date-picker [(ngModel)]="project.startDate" class="space-control"
+                                            [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
+                                    </div>
+                                    <div nz-col nzSpan="6">
+                                        <label>Ngày kết thúc</label>
+                                        <nz-date-picker [(ngModel)]="project.endDate" class="space-control"
+                                            [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
+                                    </div>
+                                    <div nz-col nzSpan="6">
+                                        <label>Khu vực</label>
+                                        <input nz-input [(ngModel)]="project.khuVuc" class="space-control" />
+                                    </div>
+                                    <div nz-col nzSpan="6">
+                                        <label>Địa điểm</label>
+                                        <input nz-input [(ngModel)]="project.diaDiem" class="space-control" />
+                                    </div>
+                                    <div nz-col nzSpan="12">
+                                        <label>Quy trình</label>
+                                        <input nz-input [(ngModel)]="project.diaDiem" class="space-control" />
+                                    </div>
+                                    <div nz-col nzSpan="24">
+                                        <label>Ghi chú</label>
+                                        <input nz-input [(ngModel)]="project.notes" class="space-control" />
+                                    </div>
+
+                                    <div nz-col nzSpan="24">
+                                        <div class="file-upload-area">
+                                            <div style="font-size: 36px;">📁</div>
+                                            <h3>Tải lên file đính kèm dự án</h3>
+                                            <p style="color: #666; font-size: 14px;">Hỗ trợ các định dạng: PDF, DOC,
+                                                DOCX,
+                                                XLS, XLSX, PNG, JPG</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nz-splitter-panel>
+                </nz-splitter>
+            </div>
+
+        </nz-tab>
+        <nz-tab [nzTitle]="personnel">
+            <ng-template #personnel>
+                <nz-icon nzType="user" nzTheme="outline" /> NHÂN SỰ
+            </ng-template>
+
+        </nz-tab>
+        <nz-tab [nzTitle]="workflow">
+            <ng-template #workflow>
+                <nz-icon nzType="bar-chart" nzTheme="outline" /> QUY TRÌNH
+            </ng-template>
+
+        </nz-tab>
+        <nz-tab [nzTitle]="struct">
+            <ng-template #struct>
+                <nz-icon nzType="apartment" nzTheme="outline" /> HẠNG MỤC, CÔNG VIỆC
+            </ng-template>
+
+            <div class="project-struct">
+                <nz-table #structTable nzBordered [nzData]="listOfMapDataStruct" nzSize="small" [nzFrontPagination]="false">
+                    <thead>
+                        <tr>
+                            <th nzWidth="40px" [nzChecked]="checkedStruct" [nzIndeterminate]="indeterminateStruct" (nzCheckedChange)="onAllCheckedStruct($event)">
+                            </th>
+                            <th nzWidth="36px"></th>
+                            <th nzWidth="100px">Mã</th>
+                            <th>Tên Hạng mục | Công việc</th>
+                            <th nzWidth="160px" nzAlign="center">Ngày bắt đầu</th>
+                            <th nzWidth="160px" nzAlign="center">Ngày kết thúc</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (data of structTable.data; track data) {
+                        @for (item of mapOfExpandedData[data.id]; track item) {
+                        @if ((item.parent && item.parent.expanded) || !item.parent) {
+                        <tr>
+                            <td [nzChecked]="setOfCheckedIdStruct.has(item.id)" (nzCheckedChange)="onItemCheckedStruct(item.id, $event)">
+                            </td>
+                            <td nzAlign="center">
+                                <img *ngIf="item.type == projectStructType.Project" src="img/PROJECT.png">
+                                <img *ngIf="item.type == projectStructType.GiaiDoan" src="img/BOQ.png">
+                                <img *ngIf="item.type == projectStructType.HangMuc" src="img/WBS.png">
+                                <img *ngIf="item.type == projectStructType.CongViec" src="img/ACTIVITY.png">
+                            </td>
+                            <td>{{ item.code }}</td>
+                            <td [nzIndentSize]="item.level! * 20" [nzShowExpand]="!!item.children"
+                                [(nzExpand)]="item.expanded"
+                                (nzExpandChange)="collapse(mapOfExpandedData[data.id], item, $event)">
+                                @if(item.type == projectStructType.GiaiDoan || item.type == projectStructType.Project){
+                                    <span style="font-weight: 600;">{{ item.name }}</span>
+                                }
+                                @else {
+                                    <span>{{ item.name }}</span>
+                                }
+                                
+                            </td>
+                            <td>{{ item.startDate | date: 'dd/MM/yyyy' }}</td>
+                            <td>{{ item.endDate | date: 'dd/MM/yyyy' }}</td>
+                        </tr>
+                        }
+                        }
+                        }
+                    </tbody>
+                </nz-table>
+            </div>
+
+
+        </nz-tab>
+    </nz-tabs>
+</div>

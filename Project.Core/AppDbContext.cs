@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Project.Core.Common;
 using Project.Core.Entities.AD;
 using Project.Core.Entities.MD;
+using Project.Core.Entities.PS;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -116,6 +117,11 @@ namespace Project.Core
         public DbSet<MdCurrency> MdCurrency { get; set; }
         public DbSet<MdConfigStruct> MdConfigStruct { get; set; }
         public DbSet<MdCustomer> MdCustomer { get; set; }
+        #endregion
+
+        #region Project
+        public DbSet<PsProject> PsProject { get; set; }
+        public DbSet<PsProjectStruct> PsProjectStruct { get; set; }
         #endregion
     }
 }

@@ -38,27 +38,21 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- <tr *ngFor="let item of list.data; trackBy: trackById">
-                    <td [nzChecked]="setOfCheckedId.has(data.id)"
-                        (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
-                    <td>{{ data.userName }}</td>
-                    <td nzAlign="center">{{ data.logonTime | date: 'dd/MM/yyyy HH:mm' }}</td>
-                    <td nzAlign="center">{{ data.browser }}</td>
-                    <td nzAlign="center">{{ data.version }}</td>
-                    <td nzAlign="center">
-                        <nz-icon [nzType]="data.isMobile ? 'mobile' : 'laptop'" nzTheme="outline" />
+                <tr *ngFor="let item of list.data; trackBy: trackById">
+                    <td [nzChecked]="setOfCheckedId.has(item.id)" (nzCheckedChange)="onItemChecked(item.id, $event)">
                     </td>
-                    <td nzAlign="center">{{ data.os }}</td>
-                    <td nzAlign="center">{{ data.mobileModel }}</td>
-                    <td>{{ data.ipAddress }}</td>
-                    <td nzAlign="center">
-                        <nz-tag [nzColor]="data.status ? 'success' : 'error'">
-                            <nz-icon [nzType]="data.status ? 'check-circle' : 'close-circle'" />
-                            <span>{{data.status ? 'Thành công' : 'Thất bại'}}</span>
-                        </nz-tag>
-                    </td>
-                    <td>{{ data.reason }}</td>
-                </tr> -->
+                    <td><a (click)="openDetailProject(item.id)">{{ item.code }}</a></td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.loaiDuAn }}</td>
+                    <td>{{ item.lanhDaoPhuTrach }}</td>
+                    <td>{{ item.donViPhuTrach }}</td>
+
+                    <td nzAlign="center">{{ item.startDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td nzAlign="center">{{ item.endDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td nzAlign="center">{{ item.giaiDoan }}</td>
+                    <td nzAlign="center">{{ item.trangThai }}</td>
+
+                </tr>
             </tbody>
         </nz-table>
     </nz-page-header-content>
@@ -133,11 +127,13 @@
                         <div style="display: flex;gap:12px">
                             <div>
                                 <label>Ngày bắt đầu</label>
-                                <nz-date-picker [(ngModel)]="dto.startDate" class="space-control" [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
+                                <nz-date-picker [(ngModel)]="dto.startDate" class="space-control"
+                                    [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
                             </div>
                             <div>
                                 <label>Ngày kết thúc</label>
-                                <nz-date-picker [(ngModel)]="dto.endDate" class="space-control" [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
+                                <nz-date-picker [(ngModel)]="dto.endDate" class="space-control"
+                                    [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
                             </div>
                         </div>
 
@@ -160,7 +156,6 @@
                         <div nz-col class="gutter-row" [nzSpan]="24">
                             <div class="inner-box">
                                 <div class="project-file">
-
                                     <div class="file-upload-area">
                                         <div style="font-size: 36px;">📁</div>
                                         <h3>Tải lên file đính kèm dự án</h3>

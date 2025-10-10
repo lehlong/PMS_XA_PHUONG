@@ -12,12 +12,14 @@ export class ProjectDto extends BaseFilter {
     phuTrachDuAn: string = '';
     quanLyHopDong: string = '';
     khachHang: string = '';
-    startDate : any;
+    startDate: any;
     endDate: any;
-    khuVuc: string ='';
+    khuVuc: string = '';
     diaDiem: string = '';
-    trangThai: string = '';
-    giaiDoan: string = '';
+    trangThai: number = 0;
+    giaiDoan: number = 0;
     notes: string = '';
     refrenceFileId: string = '';
+    struct: any[] = []
+    listGiaiDoan: any[] = []
 }
