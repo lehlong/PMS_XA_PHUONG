@@ -138,7 +138,9 @@
                         </div>
 
                         <label>Khu vực</label>
-                        <input nz-input [(ngModel)]="dto.khuVuc" class="space-control" />
+                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.khuVuc" class="space-control">
+                            <nz-option *ngFor="let i of lstArea" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
+                        </nz-select>
 
                         <label>Địa điểm</label>
                         <input nz-input [(ngModel)]="dto.diaDiem" class="space-control" />

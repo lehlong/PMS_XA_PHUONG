@@ -16,6 +16,7 @@ import { CapDuAnService } from '../../../@master-data/services/cap-du-an.service
 import { CustomerService } from '../../../@master-data/services/customer.service';
 import { Router } from '@angular/router';
 import { FileService } from '../../../services/common/file.service';
+import { AreaService } from '../../../@master-data/services/area.service';
 
 @Component({
   selector: 'app-list-project',
@@ -41,6 +42,7 @@ export class ListProject implements OnInit, OnDestroy {
   lstOrganize: any[] = []
   lstAccount: any[] = []
   lstCustomer: any[] = []
+  lstArea: any[] = []
 
   constructor(
     private global: GlobalService,
@@ -52,6 +54,7 @@ export class ListProject implements OnInit, OnDestroy {
     private _account: AccountService,
     private _capDuAn: CapDuAnService,
     private _customer: CustomerService,
+    private _area: AreaService,
     private router: Router,
     private _file : FileService
   ) {
@@ -74,7 +77,8 @@ export class ListProject implements OnInit, OnDestroy {
       lstOrganize: this._organize.getAll(),
       lstAccount: this._account.getAll(),
       capDuAn: this._capDuAn.getAll(),
-      lstCustomer: this._customer.getAll()
+      lstCustomer: this._customer.getAll(),
+      lstArea: this._area.getAll()
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -84,6 +88,7 @@ export class ListProject implements OnInit, OnDestroy {
           this.lstAccount = res.lstAccount;
           this.capDuAn = res.capDuAn;
           this.lstCustomer = res.lstCustomer;
+          this.lstArea = res.lstArea;
         }
       });
   }
