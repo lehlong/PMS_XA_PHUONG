@@ -156,11 +156,23 @@
                         <div nz-col class="gutter-row" [nzSpan]="24">
                             <div class="inner-box">
                                 <div class="project-file">
-                                    <div class="file-upload-area">
+                                    <div class="file-upload-area" (click)="fileInput.click()">
                                         <div style="font-size: 36px;">📁</div>
                                         <h3>Tải lên file đính kèm dự án</h3>
                                         <p style="color: #666; font-size: 14px;">Hỗ trợ các định dạng: PDF, DOC, DOCX,
                                             XLS, XLSX, PNG, JPG</p>
+                                    </div>
+                                </div>
+                                <div *ngFor="let f of dto.files" class="file-item">
+                                    <div><img [src]="f.icon" width="30" style="margin-right: 12px;"></div>
+                                    <div>
+                                        <span style="font-weight: 600;">{{f.fileName}}</span><br>
+                                        <span style="font-size:12px; color: gray">{{ f.fileSize < 1048576 ? (f.fileSize
+                                                / 1024 | number : "1.1-1" ) + " KB" : (f.fileSize / 1048576 | number
+                                                : "1.1-1" ) + " MB" }}</span>
+                                    </div>
+                                    <div style="margin-left: auto;color: rgb(220, 53, 69);;">
+                                        <nz-icon nzType="delete" nzTheme="outline" />
                                     </div>
                                 </div>
                             </div>
@@ -205,3 +217,5 @@
         </nz-space>
     </ng-template>
 </nz-drawer>
+
+<input type="file" #fileInput hidden multiple (change)="upload($event)" />

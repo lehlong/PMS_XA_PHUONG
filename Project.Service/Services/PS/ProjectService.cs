@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Project.Core;
+using Project.Core.Entities.CM;
 using Project.Core.Entities.PS;
 using Project.Core.Statics;
 using Project.Service.Common;
+using Project.Service.Dtos.CM;
 using Project.Service.Dtos.PS;
 
 namespace Project.Service.Services.PS
@@ -24,6 +26,7 @@ namespace Project.Service.Services.PS
                 var project = _mapper.Map<PsProject>(request);
                 project.Id = projectId;
                 project.GiaiDoan = 0;
+                project.RefrenceFileId = Guid.NewGuid().ToString();
 
                 await _dbContext.PsProject.AddAsync(project);
 
@@ -70,6 +73,15 @@ namespace Project.Service.Services.PS
                     idMapping[i.Id] = newId;
                 }
 
+                var lstFile = _mapper.Map<List<CmFile>>(request.Files);
+
+                foreach(var f in lstFile)
+                {
+                    f.RefrenceFileId = project.RefrenceFileId;
+                }
+
+                await _dbContext.CmFile.AddRangeAsync(lstFile);
+
                 await _dbContext.SaveChangesAsync();
 
                 return projectId;
@@ -101,6 +113,10 @@ namespace Project.Service.Services.PS
                 var lstProjectStruct = _mapper.Map<List<ProjectStructDto>>(_lstProjectStruct);
                 project.Struct = lstProjectStruct;
                 project.ListGiaiDoan = lstProjectStruct.Where(x => x.Type == ProjectStructType.GiaiDoan).ToList();
+
+                var _lstFile = await _dbContext.CmFile.Where(x => x.RefrenceFileId == project.RefrenceFileId).ToListAsync();
+                var lstFile = _mapper.Map<List<FileDto>>(_lstFile);
+                project.Files = lstFile;
 
                 return project;
             }

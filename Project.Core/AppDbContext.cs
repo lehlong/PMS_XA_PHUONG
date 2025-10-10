@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Project.Core.Common;
 using Project.Core.Entities.AD;
+using Project.Core.Entities.CM;
 using Project.Core.Entities.MD;
 using Project.Core.Entities.PS;
 using System.IdentityModel.Tokens.Jwt;
@@ -122,6 +123,10 @@ namespace Project.Core
         #region Project
         public DbSet<PsProject> PsProject { get; set; }
         public DbSet<PsProjectStruct> PsProjectStruct { get; set; }
+        #endregion
+
+        #region Common
+        public DbSet<CmFile> CmFile { get; set; }
         #endregion
     }
 }

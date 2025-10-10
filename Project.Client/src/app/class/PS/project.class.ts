@@ -22,4 +22,6 @@ export class ProjectDto extends BaseFilter {
     refrenceFileId: string = '';
     struct: any[] = []
     listGiaiDoan: any[] = []
+    files: any[] = []
+    personnel: any[] = []
 }

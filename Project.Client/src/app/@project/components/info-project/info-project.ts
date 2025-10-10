@@ -13,6 +13,7 @@ import { OrganizeService } from '../../../@master-data/services/organize.service
 import { AccountService } from '../../../@system-manager/services/account.service';
 import { TreeUtils } from '../../../services/utilities/tree.ultis';
 import { ProjectStructType } from '../../../shared/statics/project-struct-type.static';
+import { FileService } from '../../../services/common/file.service';
 
 @Component({
   selector: 'app-info-project',
@@ -46,6 +47,7 @@ export class InfoProject implements OnInit {
     private _account: AccountService,
     private _capDuAn: CapDuAnService,
     private _customer: CustomerService,
+    private _file : FileService
   ) { }
 
   ngOnInit(): void {
@@ -53,11 +55,7 @@ export class InfoProject implements OnInit {
     this.service.detail(this.projectId).subscribe({
       next: (res: any) => {
         this.project = res;
-
         this.listOfMapDataStruct = TreeUtils.buildNzPrjectTree(this.project.struct);
-
-        console.log(this.listOfMapDataStruct)
-
         this.listOfMapDataStruct.forEach(i => {
           this.mapOfExpandedData[i.id] = this.convertTreeToList(i);
         });
@@ -177,6 +175,24 @@ export class InfoProject implements OnInit {
       hashMap[node.id] = true;
       array.push(node);
     }
+  }
+
+  upload(e: any) {
+    const input = e.target as HTMLInputElement;
+    const files = input.files;
+
+    if (!files?.length) return;
+
+    const formData = new FormData();
+    if (files?.length) {
+      Array.from(files).forEach((file) => formData.append('files', file));
+    }
+
+    this._file.upload(formData).subscribe({
+      next: (res : any) => {
+        this.project.files = [...this.project.files, ...res.data]
+      }
+    })
   }
 
 }

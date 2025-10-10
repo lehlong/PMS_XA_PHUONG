@@ -1,11 +1,13 @@
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Minio;
 using NLog;
 using NLog.Web;
 using Project.Core;
 using Project.Service;
-using Project.Service.Services.AD;
 using Project.Service.Common;
+using Project.Service.Dtos.CM;
+using Project.Service.Services.AD;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -29,6 +31,19 @@ try
     {
         options.Configuration = builder.Configuration["Redis:ConnectionString"];
         options.InstanceName = builder.Configuration["Redis:InstanceName"];
+    });
+
+    builder.Services.Configure<MinioConfigDto>(builder.Configuration.GetSection("Minio"));
+
+    builder.Services.AddSingleton(sp =>
+    {
+        var config = builder.Configuration.GetSection("Minio").Get<MinioConfigDto>();
+
+        return new MinioClient()
+            .WithEndpoint(config.Endpoint, config.Port)
+            .WithCredentials(config.AccessKey, config.SecretKey)
+            .WithSSL(config.UseSSL)
+            .Build();
     });
 
     builder.Services.AddHangfire(config =>

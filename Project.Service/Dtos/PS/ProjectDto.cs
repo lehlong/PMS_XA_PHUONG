@@ -2,6 +2,7 @@
 using Project.Core.Common;
 using Project.Core.Entities.MD;
 using Project.Core.Entities.PS;
+using Project.Service.Dtos.CM;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -35,7 +36,7 @@ namespace Project.Service.Dtos.PS
         public string? RefrenceFileId { get; set; }
         public List<ProjectStructDto>? ListGiaiDoan { get; set; } = new List<ProjectStructDto>();
         public List<ProjectStructDto>? Struct { get; set; } = new List<ProjectStructDto>();
-
+        public List<FileDto>? Files { get; set; } = new List<FileDto>(); 
         public void Mapping(Profile profile)
         {
             profile.CreateMap<PsProject, ProjectDto>().ReverseMap();

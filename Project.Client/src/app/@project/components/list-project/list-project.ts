@@ -15,6 +15,7 @@ import { AccountService } from '../../../@system-manager/services/account.servic
 import { CapDuAnService } from '../../../@master-data/services/cap-du-an.service';
 import { CustomerService } from '../../../@master-data/services/customer.service';
 import { Router } from '@angular/router';
+import { FileService } from '../../../services/common/file.service';
 
 @Component({
   selector: 'app-list-project',
@@ -52,6 +53,7 @@ export class ListProject implements OnInit, OnDestroy {
     private _capDuAn: CapDuAnService,
     private _customer: CustomerService,
     private router: Router,
+    private _file : FileService
   ) {
     this.global.setBreadcrumb([
       {
@@ -187,6 +189,24 @@ export class ListProject implements OnInit, OnDestroy {
 
   openDetailProject(projectId: any) {
     this.router.navigate([`/project/${projectId}`]);
+  }
+
+  upload(e: any) {
+    const input = e.target as HTMLInputElement;
+    const files = input.files;
+
+    if (!files?.length) return;
+
+    const formData = new FormData();
+    if (files?.length) {
+      Array.from(files).forEach((file) => formData.append('files', file));
+    }
+
+    this._file.upload(formData).subscribe({
+      next: (res : any) => {
+        this.dto.files = [...this.dto.files, ...res.data]
+      }
+    })
   }
 }
 
