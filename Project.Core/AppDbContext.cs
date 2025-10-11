@@ -118,11 +118,14 @@ namespace Project.Core
         public DbSet<MdCurrency> MdCurrency { get; set; }
         public DbSet<MdConfigStruct> MdConfigStruct { get; set; }
         public DbSet<MdCustomer> MdCustomer { get; set; }
+        public DbSet<MdTitle> MdTitle { get; set; }
+        public DbSet<MdProjectRole> MdProjectRole { get; set; }
         #endregion
 
         #region Project
         public DbSet<PsProject> PsProject { get; set; }
         public DbSet<PsProjectStruct> PsProjectStruct { get; set; }
+        public DbSet<PsProjectPerson> PsProjectPerson { get; set; }
         #endregion
 
         #region Common

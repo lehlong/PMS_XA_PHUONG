@@ -7,6 +7,8 @@ import { Customer } from "./components/customer/customer";
 import { Unit } from "./components/unit/unit";
 import { Currency } from "./components/currency/currency";
 import { ConfigStruct } from "./components/config-struct/config-struct";
+import { Title } from "./components/title/title";
+import { ProjectRole } from "./components/project-role/project-role";
 
 export const masterDataRoutes: Routes = [
   { path: 'organize', component: Organize },
@@ -17,4 +19,6 @@ export const masterDataRoutes: Routes = [
   { path: 'unit', component: Unit },
   { path: 'currency', component: Currency },
   { path: 'config-struct', component: ConfigStruct },
+  { path: 'title', component: Title },
+  { path: 'project-role', component: ProjectRole },
 ]

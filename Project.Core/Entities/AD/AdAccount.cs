@@ -13,5 +13,6 @@ namespace Project.Core.Entities.AD
         public string? Email { get; set; }
         public string? Address { get; set; }
         public string? OrgId { get; set; }
+        public string? TitleCode { get; set; }
     }
 }

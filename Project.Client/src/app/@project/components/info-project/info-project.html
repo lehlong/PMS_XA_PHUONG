@@ -415,7 +415,6 @@
                             <th nzAlign="center">Trạng thái <br> công việc</th>
                             <th nzAlign="center">Cán bộ <br> phụ trách</th>
                             <th nzAlign="center">Tình trạng</th>
-                            <th nzAlign="center"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -440,25 +439,19 @@
                             <td [nzIndentSize]="item.level! * 20" [nzShowExpand]="!!item.children"
                                 [(nzExpand)]="item.expanded"
                                 (nzExpandChange)="collapse(mapOfExpandedData[data.id], item, $event)">
-                                <span>{{ item.name }}</span>
+                                <span
+                                    *ngIf="item.type != projectStructType.HangMuc && item.type != projectStructType.CongViec">{{
+                                    item.name }}</span>
+                                <span *ngIf="item.type == projectStructType.HangMuc"><a style="color: goldenrod;">{{
+                                        item.name }}</a></span>
+                                <span *ngIf="item.type == projectStructType.CongViec"><a>{{ item.name }}</a></span>
                             </td>
                             <td nzAlign="center">{{ item.startDate | date: 'dd/MM/yyyy' }}</td>
                             <td nzAlign="center">{{ item.endDate | date: 'dd/MM/yyyy' }}</td>
-                            <td nzAlign="center">13/10/2000</td>
                             <td nzAlign="center"></td>
                             <td nzAlign="center"></td>
                             <td nzAlign="center"></td>
-                            <td nzAlign="center">
-                                <button *ngIf="item.type == projectStructType.HangMuc" nz-button nzType="default"
-                                    nzSize="small" nz-tooltip="Tạo công việc">
-                                    <nz-icon nzType="plus" nzTheme="outline" />
-                                </button>
-
-                                <button *ngIf="item.type == projectStructType.CongViec" nz-button nzType="default"
-                                    nzSize="small" nz-tooltip="Chi tiết công việc">
-                                    <nz-icon nzType="edit" nzTheme="outline" />
-                                </button>
-                            </td>
+                            <td nzAlign="center"></td>
                         </tr>
                         }
                         }

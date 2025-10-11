@@ -14,6 +14,7 @@ namespace Project.Service.Dtos.AD
         public string? Email { get; set; }
         public string? Address { get; set; }
         public string? OrgId { get; set; }
+        public string? TitleCode { get; set; }
         public List<AdAccountGroup>? AccountGroups { get; set; }
         public List<string>? Rights { get; set; }
 

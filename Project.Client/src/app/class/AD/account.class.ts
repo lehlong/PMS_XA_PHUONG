@@ -8,6 +8,7 @@ export class AccountDto extends BaseFilter {
     email: string = '';
     address: string = '';
     orgId: string = '';
+    titleCode: string = '';
     accountGroups: AccountGroupDto[] = [];
     rights: string[] = [];
 }

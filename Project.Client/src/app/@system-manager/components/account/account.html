@@ -106,125 +106,136 @@
     <ng-container *nzDrawerContent>
 
         @if(isEdit){
-            <nz-tabs nzCentered>
-                <nz-tab [nzTitle]="tt">
-                    <ng-template #tt>
-                        <nz-icon nzType="info-circle" nzTheme="outline" />
-                        Thông tin
+        <nz-tabs nzCentered>
+            <nz-tab [nzTitle]="tt">
+                <ng-template #tt>
+                    <nz-icon nzType="info-circle" nzTheme="outline" />
+                    Thông tin
+                </ng-template>
+
+                <div>
+                    <label>Tài khoản</label>
+                    <input nz-input [(ngModel)]="dto.userName" [disabled]="isEdit" class="space-control" />
+
+                    <label>Tên đầy đủ</label>
+                    <input nz-input [(ngModel)]="dto.fullName" class="space-control" />
+
+                    <label>Đơn vị</label>
+                    <input nz-input [(ngModel)]="dto.orgId" [disabled]="true" class="space-control" />
+
+                    <label>Chức danh</label>
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.titleCode" class="space-control">
+                        <nz-option *ngFor="let i of lstTitle" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
+                    </nz-select>
+
+                    <label>Số điện thoại</label>
+                    <input nz-input [(ngModel)]="dto.phone" class="space-control" />
+
+                    <label>Email</label>
+                    <input nz-input [(ngModel)]="dto.email" class="space-control" />
+
+                    <label>Địa chỉ</label>
+                    <input nz-input [(ngModel)]="dto.address" class="space-control" />
+
+                    <nz-radio-group [(ngModel)]="dto.isActive">
+                        <label nz-radio [nzValue]="true">Kích hoạt</label>
+                        <label nz-radio [nzValue]="false">Khoá</label>
+                    </nz-radio-group>
+                </div>
+
+            </nz-tab>
+            <nz-tab [nzTitle]="ntk">
+                <ng-template #ntk>
+                    <nz-icon nzType="usergroup-add" nzTheme="outline" />
+                    Nhóm tài khoản
+                </ng-template>
+
+                <nz-table #accountGroup nzBordered [nzData]="dataAccountGroup.data" nzSize="small"
+                    [nzFrontPagination]="false">
+                    <thead>
+                        <tr>
+                            <th nzAlign="center" nzWidth="40px"></th>
+                            <th>Nhóm tài khoản</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of accountGroup.data; let i = index; trackBy: trackById">
+                            <td nzAlign="center" [nzChecked]="checkAccountGroup(item.id)"
+                                (nzCheckedChange)="onChangeAccountGroup($event, item.id)">
+                            </td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.notes }}</td>
+                        </tr>
+                    </tbody>
+                </nz-table>
+
+            </nz-tab>
+            <nz-tab [nzTitle]="dsq">
+                <ng-template #dsq>
+                    <nz-icon nzType="lock" nzTheme="outline" />
+                    Danh sách quyền
+                </ng-template>
+
+                <div>
+                    <nz-input-group [nzSuffix]="suffixIconSearchRight" style="margin-bottom: 12px;">
+                        <input type="text" nz-input placeholder="Tìm kiếm quyền" [(ngModel)]="searchRight" />
+                    </nz-input-group>
+                    <ng-template #suffixIconSearchRight>
+                        <nz-icon nzType="search" />
                     </ng-template>
 
-                    <div>
-                        <label>Tài khoản</label>
-                        <input nz-input [(ngModel)]="dto.userName" [disabled]="isEdit" class="space-control" />
-
-                        <label>Tên đầy đủ</label>
-                        <input nz-input [(ngModel)]="dto.fullName" class="space-control" />
-
-                        <label>Đơn vị</label>
-                        <input nz-input [(ngModel)]="dto.orgId" [disabled]="true" class="space-control" />
-
-                        <label>Số điện thoại</label>
-                        <input nz-input [(ngModel)]="dto.phone" class="space-control" />
-
-                        <label>Email</label>
-                        <input nz-input [(ngModel)]="dto.email" class="space-control" />
-
-                        <label>Địa chỉ</label>
-                        <input nz-input [(ngModel)]="dto.address" class="space-control" />
-
-                        <nz-radio-group [(ngModel)]="dto.isActive">
-                            <label nz-radio [nzValue]="true">Kích hoạt</label>
-                            <label nz-radio [nzValue]="false">Khoá</label>
-                        </nz-radio-group>
-                    </div>
-
-                </nz-tab>
-                <nz-tab [nzTitle]="ntk">
-                    <ng-template #ntk>
-                        <nz-icon nzType="usergroup-add" nzTheme="outline" />
-                        Nhóm tài khoản
-                    </ng-template>
-
-                    <nz-table #accountGroup nzBordered [nzData]="dataAccountGroup.data" nzSize="small"
-                        [nzFrontPagination]="false">
-                        <thead>
-                            <tr>
-                                <th nzAlign="center" nzWidth="40px"></th>
-                                <th>Nhóm tài khoản</th>
-                                <th>Ghi chú</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let item of accountGroup.data; let i = index; trackBy: trackById">
-                                <td nzAlign="center" [nzChecked]="checkAccountGroup(item.id)" (nzCheckedChange)="onChangeAccountGroup($event, item.id)">
-                                </td>
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.notes }}</td>
-                            </tr>
-                        </tbody>
-                    </nz-table>
-
-                </nz-tab>
-                <nz-tab [nzTitle]="dsq">
-                    <ng-template #dsq>
-                        <nz-icon nzType="lock" nzTheme="outline" />
-                        Danh sách quyền
-                    </ng-template>
-
-                    <div>
-                        <nz-input-group [nzSuffix]="suffixIconSearchRight" style="margin-bottom: 12px;">
-                            <input type="text" nz-input placeholder="Tìm kiếm quyền" [(ngModel)]="searchRight" />
-                        </nz-input-group>
-                        <ng-template #suffixIconSearchRight>
-                            <nz-icon nzType="search" />
-                        </ng-template>
-
-                        <nz-tree #treeComRight [nzData]="displayedRightTree" nzBlockNode nzCheckable
-                            [nzTreeTemplate]="nzTreeRightTemplate" [nzExpandedIcon]="multiExpandedIconTplRight"
-                            nzCheckStrictly="true" (nzCheckboxChange)="onChangeRight($event)">
-                            <ng-template #nzTreeRightTemplate let-node>
-                                <div class="item-menu">
-                                    <div>
-                                        <nz-tag nzColor="default">{{node.origin.id}}</nz-tag>
-                                        <span>{{ node.origin.name || node.title.split('_')[1] }}</span>
-                                    </div>
+                    <nz-tree #treeComRight [nzData]="displayedRightTree" nzBlockNode nzCheckable
+                        [nzTreeTemplate]="nzTreeRightTemplate" [nzExpandedIcon]="multiExpandedIconTplRight"
+                        nzCheckStrictly="true" (nzCheckboxChange)="onChangeRight($event)">
+                        <ng-template #nzTreeRightTemplate let-node>
+                            <div class="item-menu">
+                                <div>
+                                    <nz-tag nzColor="default">{{node.origin.id}}</nz-tag>
+                                    <span>{{ node.origin.name || node.title.split('_')[1] }}</span>
                                 </div>
-                            </ng-template>
-                            <ng-template #multiExpandedIconTplRight let-node let-origin="origin">
-                                <span *ngIf="node.children.length > 0" nz-icon style="font-size: 10px"
-                                    [nzType]="node.isExpanded ? 'caret-down' : 'caret-right'" nzTheme="outline"></span>
-                            </ng-template>
-                        </nz-tree>
-                    </div>
-                </nz-tab>
-            </nz-tabs>
+                            </div>
+                        </ng-template>
+                        <ng-template #multiExpandedIconTplRight let-node let-origin="origin">
+                            <span *ngIf="node.children.length > 0" nz-icon style="font-size: 10px"
+                                [nzType]="node.isExpanded ? 'caret-down' : 'caret-right'" nzTheme="outline"></span>
+                        </ng-template>
+                    </nz-tree>
+                </div>
+            </nz-tab>
+        </nz-tabs>
         }
 
         @else {
-            <div>
-                <label>Tài khoản</label>
-                <input nz-input [(ngModel)]="dto.userName" class="space-control" />
+        <div>
+            <label>Tài khoản</label>
+            <input nz-input [(ngModel)]="dto.userName" class="space-control" />
 
-                <label>Tên đầy đủ</label>
-                <input nz-input [(ngModel)]="dto.fullName" class="space-control" />
+            <label>Tên đầy đủ</label>
+            <input nz-input [(ngModel)]="dto.fullName" class="space-control" />
 
-                <label>Đơn vị</label>
-                <input nz-input [(ngModel)]="dto.orgId" [disabled]="true" class="space-control" />
+            <label>Đơn vị</label>
+            <input nz-input [(ngModel)]="dto.orgId" [disabled]="true" class="space-control" />
 
-                <label>Số điện thoại</label>
-                <input nz-input [(ngModel)]="dto.phone" class="space-control" />
+            <label>Chức danh</label>
+            <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.titleCode" class="space-control">
+                <nz-option *ngFor="let i of lstTitle" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
+            </nz-select>
 
-                <label>Email</label>
-                <input nz-input [(ngModel)]="dto.email" class="space-control" />
+            <label>Số điện thoại</label>
+            <input nz-input [(ngModel)]="dto.phone" class="space-control" />
 
-                <label>Địa chỉ</label>
-                <input nz-input [(ngModel)]="dto.address" class="space-control" />
+            <label>Email</label>
+            <input nz-input [(ngModel)]="dto.email" class="space-control" />
 
-                <nz-radio-group [(ngModel)]="dto.isActive">
-                    <label nz-radio [nzValue]="true">Kích hoạt</label>
-                    <label nz-radio [nzValue]="false">Khoá</label>
-                </nz-radio-group>
-            </div>
+            <label>Địa chỉ</label>
+            <input nz-input [(ngModel)]="dto.address" class="space-control" />
+
+            <nz-radio-group [(ngModel)]="dto.isActive">
+                <label nz-radio [nzValue]="true">Kích hoạt</label>
+                <label nz-radio [nzValue]="false">Khoá</label>
+            </nz-radio-group>
+        </div>
         }
 
     </ng-container>

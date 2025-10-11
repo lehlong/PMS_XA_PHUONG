@@ -14,6 +14,7 @@ import { AccountGroupDto } from '../../../class/AD/account-group.class';
 import { AccountAccountGroupDto } from '../../../class/AD/account-account-group.class';
 import { AccountAccountGroupService } from '../../services/account-account-group.service';
 import { AccountRightDto } from '../../../class/AD/account-right.class';
+import { TitleService } from '../../../@master-data/services/title.service';
 
 @Component({
   selector: 'app-account',
@@ -42,12 +43,15 @@ export class Account {
   accountRights: any[] = [];
   displayedRightTree: any[] = [];
 
+  lstTitle: any[] = [];
+
   constructor(private global: GlobalService,
     private service: AccountService,
     private accountGroup: AccountGroupService,
     private accountAccountGroup: AccountAccountGroupService,
     private org: OrganizeService,
-    private right: RightService
+    private right: RightService,
+    private _title: TitleService
   ) {
     this.global.setBreadcrumb([
       {
@@ -59,6 +63,7 @@ export class Account {
 
   ngOnInit(): void {
     this.getOrgs();
+    this.getTitle();
   }
 
   search() {
@@ -66,6 +71,15 @@ export class Account {
       .subscribe({
         next: (res: any) => {
           this.data = res
+        }
+      })
+  }
+
+  getTitle() {
+    this._title.getAll().pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.lstTitle = res
         }
       })
   }
@@ -208,8 +222,8 @@ export class Account {
     payload.isRemoved = !e.node.isChecked;
 
     this.service.updateAccountRight(payload).subscribe({
-      next : (res) => {
-        
+      next: (res) => {
+
       }
     })
   }
