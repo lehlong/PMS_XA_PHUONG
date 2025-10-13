@@ -213,5 +213,9 @@ export class ListProject implements OnInit, OnDestroy {
       }
     })
   }
+
+  deleteFile(f : any){
+    this.dto.files = this.dto.files.filter(x => x.id != f.id)
+  }
 }
 
