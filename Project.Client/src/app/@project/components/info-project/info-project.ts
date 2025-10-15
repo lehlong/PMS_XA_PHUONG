@@ -47,7 +47,7 @@ export class InfoProject implements OnInit {
     private _account: AccountService,
     private _capDuAn: CapDuAnService,
     private _customer: CustomerService,
-    private _file : FileService
+    private _file: FileService
   ) { }
 
   ngOnInit(): void {
@@ -189,10 +189,33 @@ export class InfoProject implements OnInit {
     }
 
     this._file.upload(formData).subscribe({
-      next: (res : any) => {
+      next: (res: any) => {
         this.project.files = [...this.project.files, ...res.data]
       }
     })
+  }
+
+  visibleHangMuc: boolean = false;
+  visibleCongViec: boolean = false;
+
+  titleHangMuc: string = 'TẠO MỚI CÔNG VIỆC'
+  titleCongViec: string = 'THÔNG TIN CÔNG VIỆC'
+
+  closeDrawerHangMuc() {
+    this.visibleHangMuc = false;
+  }
+
+  closeDrawerCongViec() {
+    this.visibleCongViec = false;
+  }
+
+  openDrawerHangMuc(data: any) {
+    this.visibleHangMuc = true;
+  }
+
+  openDrawerCongViec(data: any) {
+    this.titleCongViec = 'CÔNG VIỆC: ' + data.name;
+    this.visibleCongViec = true;
   }
 
 }

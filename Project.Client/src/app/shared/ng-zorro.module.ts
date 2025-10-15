@@ -32,8 +32,10 @@ import { NzTooltipModule } from "ng-zorro-antd/tooltip";
 import { NzTreeModule } from "ng-zorro-antd/tree";
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTimelineModule } from 'ng-zorro-antd/timeline';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 export const NgModule = [
+    NzDropDownModule,
     ScrollingModule,
     CommonModule,
     FormsModule,

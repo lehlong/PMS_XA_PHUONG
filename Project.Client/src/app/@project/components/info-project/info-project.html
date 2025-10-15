@@ -324,7 +324,9 @@
 
                                     <div nz-col nzSpan="24">
                                         <div class="file-upload-area" (click)="fileInput.click()">
-                                            <div style="font-size: 36px;">📁</div>
+                                            <div>
+                                                <img src="img/folder_upload.png" class="img-upload">
+                                            </div>
                                             <h3>Tải lên file đính kèm dự án</h3>
                                             <p style="color: #666; font-size: 14px;">Hỗ trợ các định dạng: PDF, DOC,
                                                 DOCX,
@@ -406,15 +408,16 @@
                             <th nzWidth="40px" [nzChecked]="checkedStruct" [nzIndeterminate]="indeterminateStruct"
                                 (nzCheckedChange)="onAllCheckedStruct($event)">
                             </th>
-                            <th nzWidth="60px"></th>
+                            <th nzWidth="40px"></th>
                             <th nzWidth="100px">Mã</th>
                             <th>Tên Hạng mục | Công việc</th>
                             <th nzWidth="140px" nzAlign="center">Ngày bắt đầu</th>
                             <th nzWidth="140px" nzAlign="center">Ngày kết thúc</th>
                             <th nzWidth="140px" nzAlign="center">Ngày hoàn thành</th>
-                            <th nzAlign="center">Trạng thái <br> công việc</th>
-                            <th nzAlign="center">Cán bộ <br> phụ trách</th>
+                            <th nzAlign="center">Trạng thái công việc</th>
+                            <th nzAlign="center">Cán bộ phụ trách</th>
                             <th nzAlign="center">Tình trạng</th>
+                            <th nzWidth="40px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -444,7 +447,8 @@
                                     item.name }}</span>
                                 <span *ngIf="item.type == projectStructType.HangMuc"><a style="color: goldenrod;">{{
                                         item.name }}</a></span>
-                                <span *ngIf="item.type == projectStructType.CongViec"><a>{{ item.name }}</a></span>
+                                <span *ngIf="item.type == projectStructType.CongViec"><a
+                                        (click)="openDrawerCongViec(item)">{{ item.name }}</a></span>
                             </td>
                             <td nzAlign="center">{{ item.startDate | date: 'dd/MM/yyyy' }}</td>
                             <td nzAlign="center">{{ item.endDate | date: 'dd/MM/yyyy' }}</td>
@@ -452,6 +456,12 @@
                             <td nzAlign="center"></td>
                             <td nzAlign="center"></td>
                             <td nzAlign="center"></td>
+                            <td nzAlign="center">
+                                <button *ngIf="item.type == projectStructType.HangMuc" nz-button nzType="primary"
+                                    nzSize="small" nz-tooltip="Tạo công việc" (click)="openDrawerHangMuc(item)">
+                                    <nz-icon nzType="plus" nzTheme="outline" />
+                                </button>
+                            </td>
                         </tr>
                         }
                         }
@@ -466,3 +476,32 @@
 </div>
 
 <input type="file" #fileInput hidden multiple (change)="upload($event)" />
+
+<nz-drawer nzWidth="50%" [nzClosable]="false" [nzVisible]="visibleHangMuc" nzPlacement="right"
+    [nzTitle]="titleHangMuc" (nzOnClose)="closeDrawerHangMuc()" [nzExtra]="extraHangMuc">
+    <ng-container *nzDrawerContent>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+    </ng-container>
+
+    <ng-template #extraHangMuc>
+        <nz-space>
+            <button *nzSpaceItem nz-button nzType="primary" class="btn-green">
+                <nz-icon nzType="save" nzTheme="outline" /> Lưu
+            </button>
+            <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="closeDrawerHangMuc()">
+                <nz-icon nzType="close" nzTheme="outline" />
+            </button>
+        </nz-space>
+    </ng-template>
+</nz-drawer>
+
+<nz-drawer nzWidth="calc(100vw - 254px)" [nzClosable]="false" [nzVisible]="visibleCongViec" nzPlacement="right"
+    [nzTitle]="titleCongViec" (nzOnClose)="closeDrawerCongViec()">
+    <ng-container *nzDrawerContent>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+    </ng-container>
+</nz-drawer>
