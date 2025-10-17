@@ -20,6 +20,7 @@ label{
     padding-left: 12px;
     padding-right: 12px;
     margin-bottom: 8px;
+    margin-top: 18px;
 }
 
 .project-workflow {
@@ -112,4 +113,12 @@ label{
 .img-upload {
     width: 36px;
     margin-bottom: 12px;
+}
+
+.process-project{
+    display: flex
+;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
 }

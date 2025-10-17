@@ -27,6 +27,7 @@ export class InfoProject implements OnInit {
   indexTabProject: number = 1
   projectId: string = '';
   project: ProjectDto = new ProjectDto();
+  giaiDoanHienTai: any = {}
 
   loaiDuAn: any[] = []
   capDuAn: any[] = []
@@ -59,7 +60,7 @@ export class InfoProject implements OnInit {
         this.listOfMapDataStruct.forEach(i => {
           this.mapOfExpandedData[i.id] = this.convertTreeToList(i);
         });
-
+        this.giaiDoanHienTai = this.project.listGiaiDoan[this.project.giaiDoan];
         this.global.setBreadcrumb([
           { name: 'Danh sách dự án', path: 'project/list-project' },
           { name: this.project.name, path: 'project/' + this.project.id },
