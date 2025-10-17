@@ -32,7 +32,7 @@ interface ChatMessage {
   styleUrl: './main-layout.scss'
 })
 export class MainLayout implements OnInit, OnDestroy {
-  isCollapsed = false;
+  isCollapsed : boolean = window.innerWidth <= 768;
   isVisibleAI = false;
   isVisibleChangePass = false;
   breadcrumbs: any[] = [];

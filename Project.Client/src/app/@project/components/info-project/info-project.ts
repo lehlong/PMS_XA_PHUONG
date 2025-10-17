@@ -23,6 +23,7 @@ import { FileService } from '../../../services/common/file.service';
 })
 export class InfoProject implements OnInit {
 
+  isMobileView: boolean = window.innerWidth <= 768;
   private destroy$ = new Subject<void>();
   indexTabProject: number = 1
   projectId: string = '';

@@ -33,8 +33,8 @@
                 </button>
             </div>
             <div>
-                <nz-splitter>
-                    <nz-splitter-panel nzDefaultSize="26%">
+                <nz-splitter [nzLayout]="isMobileView ? 'vertical' : 'horizontal'">
+                    <nz-splitter-panel [nzDefaultSize]="isMobileView ? '' : '26%'">
                         <div class="box">
                             <div class="project-workflow">
                                 <div>
@@ -185,7 +185,7 @@
                             </div>
                         </div>
                     </nz-splitter-panel>
-                    <nz-splitter-panel >
+                    <nz-splitter-panel>
                         <div class="box">
                             <div class="project-detail">
                                 <div nz-row [nzGutter]="12">
@@ -325,7 +325,7 @@
                             </div>
                         </div>
                     </nz-splitter-panel>
-                    <nz-splitter-panel nzDefaultSize="22%">
+                    <nz-splitter-panel [nzDefaultSize]="isMobileView ? '' : '22%'">
                         <div class="box">
                             <div>
                                 <nz-divider nzText="GIAI ĐOẠN DỰ ÁN"></nz-divider>
@@ -345,10 +345,11 @@
                             </div>
                             <div class="project-step">
                                 <nz-steps [nzCurrent]="project.giaiDoan" nzDirection="vertical">
-                                    <nz-step *ngFor="let i of project.listGiaiDoan" [nzTitle]="i.name" [nzDescription]="i.name"></nz-step>
+                                    <nz-step *ngFor="let i of project.listGiaiDoan" [nzTitle]="i.name"
+                                        [nzDescription]=" 'Mã giai đoạn: ' + i.code"></nz-step>
                                 </nz-steps>
                             </div>
-                            
+
                         </div>
                     </nz-splitter-panel>
                 </nz-splitter>
@@ -491,8 +492,8 @@
 
 <input type="file" #fileInput hidden multiple (change)="upload($event)" />
 
-<nz-drawer nzWidth="50%" [nzClosable]="false" [nzVisible]="visibleHangMuc" nzPlacement="right"
-    [nzTitle]="titleHangMuc" (nzOnClose)="closeDrawerHangMuc()" [nzExtra]="extraHangMuc">
+<nz-drawer nzWidth="50%" [nzClosable]="false" [nzVisible]="visibleHangMuc" nzPlacement="right" [nzTitle]="titleHangMuc"
+    (nzOnClose)="closeDrawerHangMuc()" [nzExtra]="extraHangMuc">
     <ng-container *nzDrawerContent>
         <p>Some contents...</p>
         <p>Some contents...</p>
