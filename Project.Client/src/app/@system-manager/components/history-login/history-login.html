@@ -6,16 +6,16 @@
             <input *nzSpaceItem nz-input placeholder="Tìm kiếm nhanh" [(ngModel)]="filter.keyWord"
                 (keydown.enter)="search()" />
 
-            <button *nzSpaceItem nz-button (click)="reset()">
-                <nz-icon nzType="sync" nzTheme="outline" />
+            <button *nzSpaceItem nz-button (click)="reset()" class="icon-only">
+                <i class="bi bi-arrow-clockwise"></i>
             </button>
 
-            <button *nzSpaceItem nz-button (click)="search()">
-                <nz-icon nzType="search" nzTheme="outline" />
+            <button *nzSpaceItem nz-button (click)="search()" class="icon-only">
+                <i class="bi bi-search"></i>
             </button>
 
             <button *nzSpaceItem nz-button nzDanger nzType="primary" (click)="delHistory()">
-                <nz-icon nzType="delete" nzTheme="outline" /> Xoá lịch sử
+                <i class="bi bi-trash3"></i> Xoá lịch sử
             </button>
         </nz-space>
     </nz-page-header-extra>
@@ -42,8 +42,8 @@
             </thead>
             <tbody>
                 <tr *ngFor="let item of list.data; trackBy: trackById">
-                    <td [nzChecked]="setOfCheckedId.has(item.id)"
-                        (nzCheckedChange)="onItemChecked(item.id, $event)"></td>
+                    <td [nzChecked]="setOfCheckedId.has(item.id)" (nzCheckedChange)="onItemChecked(item.id, $event)">
+                    </td>
                     <td>{{ item.userName }}</td>
                     <td nzAlign="center">{{ item.logonTime | date: 'dd/MM/yyyy HH:mm' }}</td>
                     <td nzAlign="center">{{ item.browser }}</td>

@@ -1,15 +1,28 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Router } from '@angular/router';
-import { GlobalService } from '../../services/common/global.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { DeepSeekService } from '../../services/chatbot-ai/deep-seek.service';
-import { NgModule } from '../../shared/ng-zorro.module';
+
+import { GlobalService } from '../../services/common/global.service';
 import { MainLayoutService } from '../../services/common/main-layout.service';
+import { DeepSeekService } from '../../services/chatbot-ai/deep-seek.service';
 import { LocalStorageUtils } from '../../services/utilities/local-storage.ultis';
 import { StringUtils } from '../../services/utilities/string.ultis';
 import { TreeUtils } from '../../services/utilities/tree.ultis';
+import { NgModule } from '../../shared/ng-zorro.module';
+
+interface ChangePasswordModel {
+  userName: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+interface ChatMessage {
+  role: 'User' | 'DeepSeek';
+  content: string;
+}
 
 @Component({
   selector: 'app-main-layout',
@@ -19,31 +32,27 @@ import { TreeUtils } from '../../services/utilities/tree.ultis';
   styleUrl: './main-layout.scss'
 })
 export class MainLayout implements OnInit, OnDestroy {
-  isCollapsed: boolean = false;
-  isVisibleAI: boolean = false;
-  isVisibleChangePass: boolean = false;
-  language: string = 'vi';
-  breadcrumbs: any = [];
+  isCollapsed = false;
+  isVisibleAI = false;
+  isVisibleChangePass = false;
+  breadcrumbs: any[] = [];
+  chatAi: ChatMessage[] = [];
+  inputChatbot = '';
+  searchMenu = '';
+  menuTree: any[] = [];
+  displayedMenuTree: any[] = [];
+  accountInfo: any;
 
-  chatAi: any[] = [];
-  inputChatbot: string = '';
-
-  modelChangePass: any = {
+  modelChangePass: ChangePasswordModel = {
     userName: '',
     currentPassword: '',
     newPassword: '',
     confirmNewPassword: ''
   };
 
-  searchMenu: string = '';
-  menuTree: any[] = [];
-  displayedMenuTree: any[] = [];
-
-  accountInfo: any;
-
   private lastCheckedToken = 0;
-  private checkIntervalToken = 60 * 1000;
-  private destroy$ = new Subject<void>();
+  private readonly CHECK_INTERVAL = 60 * 1000;
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
     private global: GlobalService,
@@ -52,29 +61,37 @@ export class MainLayout implements OnInit, OnDestroy {
     private router: Router,
     private deepSeek: DeepSeekService
   ) {
-    this.accountInfo = LocalStorageUtils.getItem('accountInfo')
+    this.accountInfo = LocalStorageUtils.getItem('accountInfo');
   }
-
-  fullscreenListener = () => {
-    this.isCollapsed = !!document.fullscreenElement;
-  };
 
   ngOnInit(): void {
-    this.breadcrumbs = this.global.breadcrumb || [];
-
-    this.global.breadcrumbSubject
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(value => {
-        this.breadcrumbs = value;
-      });
-
+    this.initBreadcrumbs();
     this.getAllMenu();
-    this.listenToVisibilityChange();
-
-    document.addEventListener('fullscreenchange', this.fullscreenListener);
+    this.initEventListeners();
   }
 
-  getAllMenu() {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    document.removeEventListener('fullscreenchange', this.handleFullscreen);
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+  }
+
+  // ===== INITIALIZATION =====
+  private initBreadcrumbs(): void {
+    this.breadcrumbs = this.global.breadcrumb || [];
+    this.global.breadcrumbSubject
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((value : any) => this.breadcrumbs = value);
+  }
+
+  private initEventListeners(): void {
+    document.addEventListener('fullscreenchange', this.handleFullscreen);
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+  }
+
+  // ===== MENU MANAGEMENT =====
+  getAllMenu(): void {
     this.service.getAllMenu()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -86,66 +103,58 @@ export class MainLayout implements OnInit, OnDestroy {
 
   onOpenChange(changedMenu: any): void {
     if (changedMenu.level !== 1) return;
-
+    
     this.menuTree.forEach(menu => {
       if (menu !== changedMenu && menu.level === 1) {
         menu.open = false;
       }
     });
-
-    changedMenu.open = true;
+    changedMenu.open = !changedMenu.open;
   }
 
-  onSearchChangeMenu() {
-    if (!this.searchMenu?.trim()) {
-      this.displayedMenuTree = this.menuTree;
-    } else {
-      this.displayedMenuTree = this.filterMenuTree(this.menuTree, this.searchMenu.toLowerCase());
-    }
+  onSearchChangeMenu(): void {
+    const keyword = this.searchMenu?.trim().toLowerCase();
+    this.displayedMenuTree = keyword 
+      ? this.filterMenuTree(this.menuTree, keyword)
+      : this.menuTree;
   }
 
-  filterMenuTree(menuTree: any[], keyword: string): any[] {
-    const result: any[] = [];
-
-    for (const node of menuTree) {
-      const childrenMatched = node.children ? this.filterMenuTree(node.children, keyword) : [];
-
+  private filterMenuTree(menuTree: any[], keyword: string): any[] {
+    return menuTree.reduce((result: any[], node) => {
+      const childrenMatched = node.children 
+        ? this.filterMenuTree(node.children, keyword) 
+        : [];
       const nameMatched = node.name.toLowerCase().includes(keyword);
 
       if (nameMatched || childrenMatched.length > 0) {
         result.push({
           ...node,
-          children: childrenMatched.length > 0 ? childrenMatched : node.children ? [] : null,
+          children: childrenMatched.length > 0 ? childrenMatched : node.children || null,
           open: childrenMatched.length > 0 || node.open
         });
       }
-    }
-
-    return result;
+      return result;
+    }, []);
   }
 
-  openAI() {
+  // ===== AI CHATBOT =====
+  openAI(): void {
     this.isVisibleAI = true;
   }
 
-  closeAI() {
+  closeAI(): void {
     this.isVisibleAI = false;
   }
 
-  resetAI() {
+  resetAI(): void {
     this.chatAi = [];
   }
 
-  onAskChatbot() {
-    this.chatAi.push({
-      role: 'User',
-      content: this.inputChatbot,
-    });
+  onAskChatbot(): void {
+    if (!this.inputChatbot.trim()) return;
 
-    let aiMessage = {
-      role: 'DeepSeek',
-      content: ''
-    };
+    this.chatAi.push({ role: 'User', content: this.inputChatbot });
+    const aiMessage: ChatMessage = { role: 'DeepSeek', content: '' };
     this.chatAi.push(aiMessage);
 
     this.deepSeek.sendMessage(this.inputChatbot)
@@ -153,37 +162,25 @@ export class MainLayout implements OnInit, OnDestroy {
       .subscribe({
         next: (chunk) => {
           const formattedText = StringUtils.removeEmoji(chunk)
-            .replaceAll('"', '')
-            .replaceAll('[', '')
-            .replaceAll(']', '')
-            .replaceAll(',', '')
+            .replace(/["[\],]/g, '')
             .replace(/\\n/g, '<br>');
-
           aiMessage.content += formattedText;
         },
-        error: (err) => {
-          console.error('API error:', err);
-        }
+        error: (err) => console.error('API error:', err)
       });
 
     this.inputChatbot = '';
   }
 
-  changeLanguage(language: string) {
-    this.language = language;
-  }
-
-  navigateRoute(route: any) {
-    this.router.navigate([route]);
-  }
-
-  changePassOpen() {
+  // ===== PASSWORD MANAGEMENT =====
+  changePassOpen(): void {
     this.resetModelChangePass();
     this.isVisibleChangePass = true;
   }
 
-  changePassOk() {
+  changePassOk(): void {
     const { currentPassword, newPassword, confirmNewPassword } = this.modelChangePass;
+
     if (!currentPassword || !newPassword || !confirmNewPassword) {
       this.notification.error('Lỗi', 'Vui lòng nhập đầy đủ thông tin!');
       return;
@@ -194,28 +191,40 @@ export class MainLayout implements OnInit, OnDestroy {
       return;
     }
 
+    this.startLogoutCountdown();
+  }
+
+  changePassCancel(): void {
+    this.resetModelChangePass();
+    this.isVisibleChangePass = false;
+  }
+
+  private resetModelChangePass(): void {
+    this.modelChangePass = {
+      userName: '',
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: ''
+    };
+  }
+
+  private startLogoutCountdown(): void {
     let countdown = 5;
     const notiKey = 'countdown';
-
-    this.notification.success(
-      'Đổi mật khẩu thành công!',
-      `Hệ thống sẽ khởi động lại sau ${countdown}s!`,
-      {
-        nzKey: notiKey,
-        nzDuration: 0
-      }
-    );
-
-    const timer = setInterval(() => {
-      countdown--;
+    
+    const updateNotification = () => {
       this.notification.success(
         'Đổi mật khẩu thành công!',
         `Hệ thống sẽ khởi động lại sau ${countdown}s!`,
-        {
-          nzKey: notiKey,
-          nzDuration: 0
-        }
+        { nzKey: notiKey, nzDuration: 0 }
       );
+    };
+
+    updateNotification();
+
+    const timer = setInterval(() => {
+      countdown--;
+      updateNotification();
 
       if (countdown === 0) {
         clearInterval(timer);
@@ -225,41 +234,33 @@ export class MainLayout implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  changePassCancel() {
-    this.resetModelChangePass();
-    this.isVisibleChangePass = false;
+  // ===== NAVIGATION & AUTH =====
+  navigateRoute(route: string): void {
+    this.router.navigate([route]);
   }
 
-  resetModelChangePass() {
-    this.modelChangePass = {
-      userName: '',
-      currentPassword: '',
-      newPassword: '',
-      confirmNewPassword: ''
-    };
-  }
-
-  logOut() {
+  logOut(): void {
     LocalStorageUtils.clear();
     this.navigateRoute('login');
   }
 
+  // ===== TOKEN VALIDATION =====
   @HostListener('document:mousemove')
   @HostListener('document:keydown')
   @HostListener('document:click')
   onUserInteraction(): void {
     const now = Date.now();
-    if (now - this.lastCheckedToken > this.checkIntervalToken) {
+    if (now - this.lastCheckedToken > this.CHECK_INTERVAL) {
       this.checkToken();
       this.lastCheckedToken = now;
     }
   }
 
-  private listenToVisibilityChange(): void {
-    document.addEventListener('visibilitychange', this.onVisibilityChange);
-  }
+  private handleFullscreen = (): void => {
+    this.isCollapsed = !!document.fullscreenElement;
+  };
 
-  private onVisibilityChange = () => {
+  private handleVisibilityChange = (): void => {
     if (document.visibilityState === 'visible') {
       this.checkToken();
     }
@@ -277,16 +278,8 @@ export class MainLayout implements OnInit, OnDestroy {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return Date.now() > payload.exp * 1000;
-    } catch (e) {
+    } catch {
       return true;
     }
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-
-    document.removeEventListener('fullscreenchange', this.fullscreenListener);
-    document.removeEventListener('visibilitychange', this.onVisibilityChange);
   }
 }

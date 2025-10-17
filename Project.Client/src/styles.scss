@@ -16,6 +16,10 @@
     border-radius: 0px;
 }
 
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
 /* Loading toàn cục hệ thống */
 #global-loading {
     position: fixed;
@@ -215,3 +219,13 @@
     align-items: center;
     gap: 6px;
 }
+
+button[nz-button] i.bi {
+   margin-right: 4px;
+}
+
+button[nz-button].icon-only {
+  padding: 0px 8px 0px 10px;
+  text-align: center;
+}
+

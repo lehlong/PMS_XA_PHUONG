@@ -1,36 +1,10 @@
+<!-- HTML Template -->
 <nz-layout>
-    <nz-sider [nzWidth]="255" [nzCollapsedWidth]="0" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
+    <nz-sider [nzWidth]="246" [nzCollapsedWidth]="0" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
         <div class="logo">
+        </div>
 
-            <div class="logo-img">
-
-            </div>
-
-            <div class="button-sider">
-                <button class="button-menu" nz-button nzType="default" nz-tooltip="Đăng xuất" (click)="logOut()">
-                    <nz-icon nzType="poweroff" nzTheme="outline" [style.color]="'#dc3545'" />
-                </button>
-
-                <button class="button-menu" nz-button nzType="default" nz-tooltip="Thông tin cá nhân"
-                    (click)="navigateRoute('system-manager/profile')">
-                    <nz-icon nzType="user" nzTheme="outline" [style.color]="'#007bff'" />
-                </button>
-
-                <button class="button-menu" nz-button nzType="default" nz-tooltip="Đổi mật khẩu"
-                    (click)="changePassOpen()">
-                    <nz-icon nzType="lock" nzTheme="outline" [style.color]="'#28a745'" />
-                </button>
-
-                <button class="button-menu" nz-button nzType="default" nz-tooltip="Hỗ trợ hệ thống"
-                    (click)="navigateRoute('system-manager/document-system')">
-                    <nz-icon nzType="info-circle" nzTheme="outline" [style.color]="'#ffc107'" />
-                </button>
-
-                <button class="button-menu" nz-button nzType="default" nz-tooltip="Hỏi đáp AI" (click)="openAI()">
-                    <nz-icon nzType="open-a-i" nzTheme="outline" />
-                </button>
-            </div>
-
+        <div class="input-search">
             <!-- Tìm kiếm menu -->
             <nz-input-group [nzSuffix]="suffixIconSearch">
                 <input type="text" nz-input placeholder="Tìm kiếm chức năng" [(ngModel)]="searchMenu"
@@ -40,30 +14,31 @@
                 <nz-icon nzType="search" />
             </ng-template>
         </div>
+
+
         <ul nz-menu nzTheme="light" nzMode="inline" class="overflow-menu">
             <ng-container *ngTemplateOutlet="menuTpl; context: { $implicit: displayedMenuTree }"></ng-container>
 
             <ng-template #menuTpl let-menus>
-                <ng-container *ngFor="let menu of menus; let i = index">
+                <ng-container *ngFor="let menu of menus">
 
                     <!-- Menu không có con -->
                     <ng-container *ngIf="!menu.children; else submenuTpl">
-                        <li nz-menu-item [nzPaddingLeft]="menu.level * 24" [ngClass]="{
-                                'border-menu': menu.level === 1,
-                                'menu-level-1': menu.level === 1
-                                }" (click)="navigateRoute(menu.url)">
-                            <ng-container *ngIf="menu.icon">
-                                <span nz-icon [nzType]="menu.icon"></span>
-                            </ng-container>
+                        <li nz-menu-item [nzPaddingLeft]="menu.level * 24" [routerLink]="menu.url"
+                            routerLinkActive="ant-menu-item-selected" [routerLinkActiveOptions]="{exact: true}">
+                            <i *ngIf="menu.icon" [class]="'bi bi-' + menu.icon"></i>
                             <span>{{ menu.name }}</span>
                         </li>
                     </ng-container>
 
                     <!-- Menu có submenu -->
                     <ng-template #submenuTpl>
-                        <li nz-submenu [nzPaddingLeft]="menu.level * 24" [nzOpen]="menu.expanded"
-                            (nzOpenChange)="onOpenChange(menu)" [nzTitle]="menu.name" [nzIcon]="menu?.icon"
-                            [ngClass]="{ 'border-menu': menu.level === 1 }">
+                        <li nz-submenu [nzPaddingLeft]="menu.level * 24" [nzOpen]="menu.open"
+                            (nzOpenChange)="onOpenChange(menu)" [nzTitle]="submenuTitle">
+                            <ng-template #submenuTitle>
+                                <i *ngIf="menu.icon" [class]="'bi bi-' + menu.icon"></i>
+                                <span style="padding-left: 6px;">{{ menu.name }}</span>
+                            </ng-template>
                             <ul>
                                 <ng-container
                                     *ngTemplateOutlet="menuTpl; context: { $implicit: menu.children }"></ng-container>
@@ -73,39 +48,53 @@
 
                 </ng-container>
             </ng-template>
-
         </ul>
+        <div></div>
     </nz-sider>
     <nz-layout>
         <nz-header>
-            <nz-icon class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" (click)="isCollapsed = !isCollapsed" />
-                
+            <i [class]="isCollapsed ? 'bi bi-text-indent-left trigger' : 'bi bi-text-indent-right trigger'"
+                (click)="isCollapsed = !isCollapsed"></i>
+
             <nz-breadcrumb>
-                <nz-breadcrumb-item><a routerLink="/home"><span nz-icon nzType="home"></span></a></nz-breadcrumb-item>
+                <nz-breadcrumb-item><a routerLink="/home"><i class="bi bi-house-fill"></i></a></nz-breadcrumb-item>
                 @if(breadcrumbs){
                 <nz-breadcrumb-item *ngFor="let i of breadcrumbs">
                     <a [routerLink]="i?.path">{{ i?.name }}</a>
                 </nz-breadcrumb-item>
                 }
-
             </nz-breadcrumb>
+
             <div class="user">
                 <nz-badge [nzCount]="5" nzSize="small">
                     <img src="img/bell.png" nz-popover [nzPopoverTitle]="titleNotification"
                         [nzPopoverContent]="contentNotification" nzPopoverTrigger="click" width="20">
                 </nz-badge>
-                
-                <img src="img/vietnam.png" *ngIf="language == 'vi'" (click)="changeLanguage('en')" class="flag-language"
-                    alt="Việt Nam">
-                <img src="img/united-kingdom.png" *ngIf="language == 'en'" (click)="changeLanguage('vi')"
-                    class="flag-language" alt="United Kingdom">
-
                 <div class="user-solid"></div>
-                <div class="circle">
-                    <img src="img/user.png" alt="Avatar User">
+
+                <div class="user-item" nz-dropdown [nzDropdownMenu]="menu">
+                    <div class="circle">
+                        <img src="img/user.png" alt="Avatar User">
+                    </div>
+                    <div>{{accountInfo?.fullName}}</div>
                 </div>
 
-                <div class="full-name">{{accountInfo?.fullName}}</div>
+
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                    <ul nz-menu>
+                        <li nz-menu-item nzDisabled style="font-weight: 600;"><i class="bi bi-person-circle"></i>
+                            {{accountInfo?.fullName}}</li>
+                        <li nz-menu-divider></li>
+                        <li nz-menu-item (click)="navigateRoute('system-manager/profile')"><i class="bi bi-person"></i>
+                            Thông tin cá nhân</li>
+                        <li nz-menu-item (click)="changePassOpen()"><i class="bi bi-key-fill"></i> Đổi mật khẩu</li>
+                        <li nz-menu-item (click)="navigateRoute('system-manager/document-system')"><i
+                                class="bi bi-info-circle"></i> Hỗ trợ hệ thống</li>
+                        <li nz-menu-item (click)="openAI()"><i class="bi bi-openai"></i> Hỏi đáp AI</li>
+                        <li nz-menu-divider></li>
+                        <li nz-menu-item nzDanger (click)="logOut()"><i class="bi bi-power"></i> Đăng xuất</li>
+                    </ul>
+                </nz-dropdown-menu>
             </div>
         </nz-header>
         <nz-content>
@@ -136,6 +125,7 @@
         <a>Xem tất cả</a>
     </div>
 </ng-template>
+
 <ng-template #contentNotification>
     <div class="list-noti">
         <div class="noti-item-readed">
@@ -171,7 +161,6 @@
             <div *ngIf="data.role == 'User'" class="message-item-right">{{data.content}}</div>
             <div *ngIf="data.role == 'DeepSeek'" class="message-item-left" [innerHTML]="data.content"></div>
             }
-
         </div>
     </ng-container>
 
