@@ -34,9 +34,10 @@ namespace Project.Service.Dtos.PS
         public int? GiaiDoan { get; set; }
         public string? Notes { get; set; }
         public string? RefrenceFileId { get; set; }
-        public List<ProjectStructDto>? ListGiaiDoan { get; set; } = new List<ProjectStructDto>();
-        public List<ProjectStructDto>? Struct { get; set; } = new List<ProjectStructDto>();
-        public List<FileDto>? Files { get; set; } = new List<FileDto>(); 
+        public ICollection<ProjectStructDto>? ListGiaiDoan { get; set; }
+        public ICollection<ProjectStructDto>? Structs { get; set; } 
+        public ICollection<FileDto>? Files { get; set; }
+        public MdOrganize? DonViPhuTrachRef { get; set; }
         public void Mapping(Profile profile)
         {
             profile.CreateMap<PsProject, ProjectDto>().ReverseMap();

@@ -1,4 +1,6 @@
 ﻿using Project.Core.Common;
+using Project.Core.Entities.CM;
+using Project.Core.Entities.MD;
 using System.ComponentModel.DataAnnotations;
 
 namespace Project.Core.Entities.PS
@@ -25,5 +27,9 @@ namespace Project.Core.Entities.PS
         public int? GiaiDoan { get; set; }
         public string? Notes { get; set; }
         public string? RefrenceFileId { get; set; }
+        public virtual MdOrganize? DonViPhuTrachRef { get; set; }
+        public virtual ICollection<CmFile>? Files { get; set; }
+        public virtual ICollection<PsProjectStruct>? Structs { get; set; }
+
     }
 }

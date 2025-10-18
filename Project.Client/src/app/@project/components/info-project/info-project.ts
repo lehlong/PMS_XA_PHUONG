@@ -56,8 +56,9 @@ export class InfoProject implements OnInit {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
     this.service.detail(this.projectId).subscribe({
       next: (res: any) => {
+        console.log(res)
         this.project = res;
-        this.listOfMapDataStruct = TreeUtils.buildNzPrjectTree(this.project.struct);
+        this.listOfMapDataStruct = TreeUtils.buildNzPrjectTree(this.project.structs);
         this.listOfMapDataStruct.forEach(i => {
           this.mapOfExpandedData[i.id] = this.convertTreeToList(i);
         });
@@ -115,8 +116,8 @@ export class InfoProject implements OnInit {
   setOfCheckedIdStruct = new Set<any>();
 
   refreshCheckedStatusStruct(): void {
-    this.checkedStruct = this.project.struct.every((i: any) => this.setOfCheckedIdStruct.has(i.id));
-    this.indeterminateStruct = this.project.struct.some((i: any) => this.setOfCheckedIdStruct.has(i.id)) && !this.checkedStruct;
+    this.checkedStruct = this.project.structs.every((i: any) => this.setOfCheckedIdStruct.has(i.id));
+    this.indeterminateStruct = this.project.structs.some((i: any) => this.setOfCheckedIdStruct.has(i.id)) && !this.checkedStruct;
   }
 
   updateCheckedSetStruct(id: any, checked: boolean): void {
@@ -134,7 +135,7 @@ export class InfoProject implements OnInit {
 
 
   onAllCheckedStruct(checked: boolean): void {
-    this.project.struct
+    this.project.structs
       .forEach((i: any) => this.updateCheckedSetStruct(i.id, checked));
     this.refreshCheckedStatusStruct();
   }

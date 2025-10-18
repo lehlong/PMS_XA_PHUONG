@@ -12,5 +12,6 @@ namespace Project.Core.Entities.PS
         public string? ProjectRoleCode { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public virtual PsProject? Project { get; set; }
     }
 }

@@ -20,7 +20,7 @@ export class ProjectDto extends BaseFilter {
     giaiDoan: number = 0;
     notes: string = '';
     refrenceFileId: string = '';
-    struct: any[] = []
+    structs: any[] = []
     listGiaiDoan: any[] = []
     files: any[] = []
     personnel: any[] = []

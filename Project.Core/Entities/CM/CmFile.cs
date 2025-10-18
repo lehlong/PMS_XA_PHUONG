@@ -1,4 +1,5 @@
 ﻿using Project.Core.Common;
+using Project.Core.Entities.PS;
 using System.ComponentModel.DataAnnotations;
 
 namespace Project.Core.Entities.CM
@@ -13,5 +14,6 @@ namespace Project.Core.Entities.CM
         public string? Extention { get; set; }
         public string? Icon { get; set; }
         public string? RefrenceFileId { get; set; }
+        public virtual PsProject? Project { get; set; }
     }
 }

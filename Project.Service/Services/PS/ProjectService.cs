@@ -99,7 +99,11 @@ namespace Project.Service.Services.PS
         {
             try
             {
-                var _project = await _dbContext.PsProject.FirstOrDefaultAsync(x => x.Id == projectId);
+                var _project = await _dbContext.PsProject.Include(x => x.DonViPhuTrachRef)
+                    .Include(x => x.Files)
+                    .Include(x => x.Structs)
+                    .FirstOrDefaultAsync(x => x.Id == projectId);
+
                 if (_project == null)
                 {
                     this.MessageObject.Message = "Dự án không tồn tại trên hệ thống!";
@@ -109,14 +113,8 @@ namespace Project.Service.Services.PS
 
                 var project = _mapper.Map<ProjectDto>(_project);
 
-                var _lstProjectStruct = await _dbContext.PsProjectStruct.Where(x => x.ProjectId == projectId).OrderBy(x => x.OrderNumber).ToListAsync();
-                var lstProjectStruct = _mapper.Map<List<ProjectStructDto>>(_lstProjectStruct);
-                project.Struct = lstProjectStruct;
-                project.ListGiaiDoan = lstProjectStruct.Where(x => x.Type == ProjectStructType.GiaiDoan).ToList();
+                project.ListGiaiDoan = project.Structs?.Where(x => x.Type == ProjectStructType.GiaiDoan).ToList();
 
-                var _lstFile = await _dbContext.CmFile.Where(x => x.RefrenceFileId == project.RefrenceFileId).ToListAsync();
-                var lstFile = _mapper.Map<List<FileDto>>(_lstFile);
-                project.Files = lstFile;
 
                 return project;
             }
