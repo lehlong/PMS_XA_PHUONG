@@ -1,0 +1,30 @@
+<div class="button-action">
+    <button nz-button nzType="primary" class="btn-green">
+        <nz-icon nzType="save" nzTheme="outline" /> Cập nhật thông tin
+    </button>
+    <button nz-button nzType="primary">
+        <nz-icon nzType="plus" nzTheme="outline" /> Thêm nhân sự
+    </button>
+    <button nz-button nzType="primary" nzDanger="">
+        <nz-icon nzType="delete" nzTheme="outline" /> Xoá nhân sự
+    </button>
+</div>
+
+<nz-table #personnelTable nzBordered [nzData]="personnel" nzSize="small" [nzFrontPagination]="false"
+    [nzScroll]="{ y: 'calc(100vh - 226px)' }">
+    <thead>
+        <tr>
+            <th nzAlign="center" nzWidth="60px">STT</th>
+            <th>Nhân sự</th>
+            <th>Chức danh</th>
+            <th>Số điện thoại</th>
+            <th>Email</th>
+            <th>Vai trò dự án</th>
+            <th>Từ ngày</th>
+            <th>Đến ngày</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</nz-table>

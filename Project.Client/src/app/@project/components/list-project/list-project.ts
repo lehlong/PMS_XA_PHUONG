@@ -22,7 +22,7 @@ import { AreaService } from '../../../@master-data/services/area.service';
   selector: 'app-list-project',
   imports: [NgModule],
   templateUrl: './list-project.html',
-  styleUrl: './list-project.scss'
+  styleUrls: ['../../project.scss']
 })
 export class ListProject implements OnInit, OnDestroy {
 

@@ -1,522 +1,339 @@
+<div class="button-action">
+    <button nz-button nzType="primary">
+        <nz-icon nzType="send" nzTheme="outline" /> Trình duyệt
+    </button>
+
+    <button nz-button nzType="primary" class="btn-green">
+        <nz-icon nzType="check" nzTheme="outline" /> Phê duyệt
+    </button>
+
+    <button nz-button nzType="primary" nzDanger="">
+        <nz-icon nzType="close" nzTheme="outline" /> Từ chối
+    </button>
+
+    <button nz-button nzType="primary" class="btn-green">
+        <nz-icon nzType="save" nzTheme="outline" /> Cập nhật thông tin
+    </button>
+
+    <button nz-button nzType="default">
+        <nz-icon nzType="history" nzTheme="outline" /> Lịch sử hành động
+    </button>
+</div>
 <div>
-    <nz-tabs [nzSelectedIndex]="indexTabProject">
-        <nz-tab [nzTitle]="dashboard">
-            <ng-template #dashboard>
-                <i class="bi bi-grid"></i> DASHBOARD
-            </ng-template>
+    <nz-splitter>
+        <nz-splitter-panel [nzDefaultSize]="'26%'">
+            <div class="box">
+                <div class="project-workflow">
+                    <div>
 
-        </nz-tab>
-        <nz-tab [nzTitle]="information">
-            <ng-template #information>
-                <i class="bi bi-info-square"></i> THÔNG TIN DỰ ÁN
-            </ng-template>
+                    </div>
+                    <nz-timeline>
+                        <nz-timeline-item nzColor="#339933">
+                            <div class="item-workflow">
+                                <div class="name-step-workflow-done">
+                                    BƯỚC 1
+                                </div>
+                                <div class="detail-workflow">
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="calendar" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Ngày xử lý:</span>
+                                        <span>10/10/2025</span>
+                                    </div>
 
-            <div class="button-action">
-                <button nz-button nzType="primary">
-                    <nz-icon nzType="send" nzTheme="outline" /> Trình duyệt
-                </button>
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="user" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Người xử lý:</span>
+                                        <span>10/10/2025</span>
+                                    </div>
 
-                <button nz-button nzType="primary" class="btn-green">
-                    <nz-icon nzType="check" nzTheme="outline" /> Phê duyệt
-                </button>
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="bars" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Trạng thái:</span>
+                                        <span>
+                                            <nz-tag nzColor="success">
+                                                <nz-icon nzType="check-circle" />
+                                                <span>Hoàn thành</span>
+                                            </nz-tag>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </nz-timeline-item>
+                        <nz-timeline-item nzColor="#1890FF">
+                            <div class="item-workflow">
+                                <div class="name-step-workflow-processing">
+                                    TRÌNH DUYỆT
+                                </div>
+                                <div class="detail-workflow">
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="calendar" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Ngày xử lý:</span>
+                                        <span>10/10/2025</span>
+                                    </div>
 
-                <button nz-button nzType="primary" nzDanger="">
-                    <nz-icon nzType="close" nzTheme="outline" /> Từ chối
-                </button>
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="user" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Người xử lý:</span>
+                                        <span>10/10/2025</span>
+                                    </div>
 
-                <button nz-button nzType="primary" class="btn-green">
-                    <nz-icon nzType="save" nzTheme="outline" /> Cập nhật thông tin
-                </button>
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="bars" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Trạng thái:</span>
+                                        <span>
+                                            <nz-tag nzColor="processing">
+                                                <nz-icon nzType="sync" nzSpin />
+                                                <span>Đang xử lý</span>
+                                            </nz-tag>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </nz-timeline-item>
 
-                <button nz-button nzType="default">
-                    <nz-icon nzType="history" nzTheme="outline" /> Lịch sử hành động
-                </button>
+                        <nz-timeline-item nzColor="gray">
+                            <div class="item-workflow">
+                                <div class="name-step-workflow-gray">
+                                    XÁC NHẬN
+                                </div>
+                                <div class="detail-workflow">
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="user" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Người xử lý:</span>
+                                        <span>10/10/2025</span>
+                                    </div>
+
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="bars" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Trạng thái:</span>
+                                        <span>
+                                            <nz-tag nzColor="default">
+                                                <nz-icon nzType="clock-circle" />
+                                                <span>Chưa bắt đầu</span>
+                                            </nz-tag>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </nz-timeline-item>
+
+                        <nz-timeline-item nzColor="gray">
+                            <div class="item-workflow">
+                                <div class="name-step-workflow-gray">
+                                    XÁC NHẬN
+                                </div>
+                                <div class="detail-workflow">
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="user" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Người xử lý:</span>
+                                        <span>10/10/2025</span>
+                                    </div>
+
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="bars" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Trạng thái:</span>
+                                        <span>
+                                            <nz-tag nzColor="default">
+                                                <nz-icon nzType="clock-circle" />
+                                                <span>Chưa bắt đầu</span>
+                                            </nz-tag>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </nz-timeline-item>
+
+                        <nz-timeline-item nzColor="gray">
+                            <div class="item-workflow">
+                                <div class="name-step-workflow-gray">
+                                    PHÊ DUYỆT
+                                </div>
+                                <div class="detail-workflow">
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="user" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Người xử lý:</span>
+                                        <span>10/10/2025</span>
+                                    </div>
+
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="bars" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Trạng thái:</span>
+                                        <span>
+                                            <nz-tag nzColor="default">
+                                                <nz-icon nzType="clock-circle" />
+                                                <span>Chưa bắt đầu</span>
+                                            </nz-tag>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </nz-timeline-item>
+                    </nz-timeline>
+                </div>
             </div>
-            <div>
-                <nz-splitter [nzLayout]="isMobileView ? 'vertical' : 'horizontal'">
-                    <nz-splitter-panel [nzDefaultSize]="isMobileView ? '' : '26%'">
-                        <div class="box">
-                            <div class="project-workflow">
+        </nz-splitter-panel>
+        <nz-splitter-panel>
+            <div class="box">
+                <div class="project-detail">
+                    <div nz-row [nzGutter]="12">
+
+                        <div nz-col nzSpan="6">
+                            <label>Mã dự án</label>
+                            <input nz-input [(ngModel)]="project.code" class="space-control" />
+                        </div>
+                        <div nz-col nzSpan="18">
+                            <label>Tên dự án</label>
+                            <input nz-input [(ngModel)]="project.name" class="space-control" />
+                        </div>
+
+                        <div nz-col nzSpan="24">
+                            <label>Đơn vị phụ trách</label>
+                            <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.donViPhuTrach"
+                                class="space-control" [nzDisabled]="true">
+                                <nz-option *ngFor="let i of lstOrganize" [nzLabel]="i.name"
+                                    [nzValue]="i.id"></nz-option>
+                            </nz-select>
+                        </div>
+                        <div nz-col nzSpan="6">
+                            <label>Lãnh đạo phụ trách</label>
+                            <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.lanhDaoPhuTrach"
+                                class="space-control">
+                                <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
+                                    [nzValue]="i.userName"></nz-option>
+                            </nz-select>
+                        </div>
+                        <div nz-col nzSpan="6">
+                            <label>PM dự án</label>
+                            <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.pmDuAn" class="space-control">
+                                <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
+                                    [nzValue]="i.userName"></nz-option>
+                            </nz-select>
+                        </div>
+
+                        <div nz-col nzSpan="6">
+                            <label>Phụ trách dự án</label>
+                            <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.phuTrachDuAn"
+                                class="space-control">
+                                <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
+                                    [nzValue]="i.userName"></nz-option>
+                            </nz-select>
+                        </div>
+                        <div nz-col nzSpan="6">
+                            <label>Quản lý hợp đồng</label>
+                            <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.quanLyHopDong"
+                                class="space-control">
+                                <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
+                                    [nzValue]="i.userName"></nz-option>
+                            </nz-select>
+                        </div>
+
+
+                        <div nz-col nzSpan="24">
+                            <label>Khách hàng</label>
+                            <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.khachHang" class="space-control">
+                                <nz-option *ngFor="let i of lstCustomer" [nzLabel]="i.name"
+                                    [nzValue]="i.code"></nz-option>
+                            </nz-select>
+                        </div>
+
+                        <div nz-col nzSpan="6">
+                            <label>Cấp dự án</label>
+                            <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.capDuAn" class="space-control">
+                                <nz-option *ngFor="let i of capDuAn" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
+                            </nz-select>
+                        </div>
+
+                        <div nz-col nzSpan="6">
+                            <label>Loại dự án</label>
+                            <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.loaiDuAn" class="space-control">
+                                <nz-option *ngFor="let i of loaiDuAn" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
+                            </nz-select>
+                        </div>
+                        <div nz-col nzSpan="6">
+                            <label>Ngày bắt đầu</label>
+                            <nz-date-picker [(ngModel)]="project.startDate" class="space-control"
+                                [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
+                        </div>
+                        <div nz-col nzSpan="6">
+                            <label>Ngày kết thúc</label>
+                            <nz-date-picker [(ngModel)]="project.endDate" class="space-control"
+                                [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
+                        </div>
+                        <div nz-col nzSpan="6">
+                            <label>Khu vực</label>
+                            <input nz-input [(ngModel)]="project.khuVuc" class="space-control" />
+                        </div>
+                        <div nz-col nzSpan="6">
+                            <label>Địa điểm</label>
+                            <input nz-input [(ngModel)]="project.diaDiem" class="space-control" />
+                        </div>
+                        <div nz-col nzSpan="12">
+                            <label>Quy trình</label>
+                            <input nz-input [(ngModel)]="project.diaDiem" class="space-control" />
+                        </div>
+                        <div nz-col nzSpan="24">
+                            <label>Ghi chú</label>
+                            <input nz-input [(ngModel)]="project.notes" class="space-control" />
+                        </div>
+
+                        <div nz-col nzSpan="8" *ngFor="let f of project.files">
+                            <div class="file-item">
+                                <div><img [src]="f.icon" width="30" style="margin-right: 12px;"></div>
                                 <div>
-
+                                    <span style="font-weight: 600;">{{f.fileName}}</span><br>
+                                    <span style="font-size:12px; color: gray">{{ f.fileSize < 1048576 ? (f.fileSize /
+                                            1024 | number : "1.1-1" ) + " KB" : (f.fileSize / 1048576 | number : "1.1-1"
+                                            ) + " MB" }}</span>
                                 </div>
-                                <nz-timeline>
-                                    <nz-timeline-item nzColor="#339933">
-                                        <div class="item-workflow">
-                                            <div class="name-step-workflow-done">
-                                                BƯỚC 1
-                                            </div>
-                                            <div class="detail-workflow">
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="calendar" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Ngày xử lý:</span>
-                                                    <span>10/10/2025</span>
-                                                </div>
-
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="user" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Người xử lý:</span>
-                                                    <span>10/10/2025</span>
-                                                </div>
-
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="bars" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Trạng thái:</span>
-                                                    <span>
-                                                        <nz-tag nzColor="success">
-                                                            <nz-icon nzType="check-circle" />
-                                                            <span>Hoàn thành</span>
-                                                        </nz-tag>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </nz-timeline-item>
-                                    <nz-timeline-item nzColor="#1890FF">
-                                        <div class="item-workflow">
-                                            <div class="name-step-workflow-processing">
-                                                TRÌNH DUYỆT
-                                            </div>
-                                            <div class="detail-workflow">
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="calendar" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Ngày xử lý:</span>
-                                                    <span>10/10/2025</span>
-                                                </div>
-
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="user" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Người xử lý:</span>
-                                                    <span>10/10/2025</span>
-                                                </div>
-
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="bars" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Trạng thái:</span>
-                                                    <span>
-                                                        <nz-tag nzColor="processing">
-                                                            <nz-icon nzType="sync" nzSpin />
-                                                            <span>Đang xử lý</span>
-                                                        </nz-tag>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </nz-timeline-item>
-
-                                    <nz-timeline-item nzColor="gray">
-                                        <div class="item-workflow">
-                                            <div class="name-step-workflow-gray">
-                                                XÁC NHẬN
-                                            </div>
-                                            <div class="detail-workflow">
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="user" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Người xử lý:</span>
-                                                    <span>10/10/2025</span>
-                                                </div>
-
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="bars" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Trạng thái:</span>
-                                                    <span>
-                                                        <nz-tag nzColor="default">
-                                                            <nz-icon nzType="clock-circle" />
-                                                            <span>Chưa bắt đầu</span>
-                                                        </nz-tag>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </nz-timeline-item>
-
-                                    <nz-timeline-item nzColor="gray">
-                                        <div class="item-workflow">
-                                            <div class="name-step-workflow-gray">
-                                                XÁC NHẬN
-                                            </div>
-                                            <div class="detail-workflow">
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="user" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Người xử lý:</span>
-                                                    <span>10/10/2025</span>
-                                                </div>
-
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="bars" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Trạng thái:</span>
-                                                    <span>
-                                                        <nz-tag nzColor="default">
-                                                            <nz-icon nzType="clock-circle" />
-                                                            <span>Chưa bắt đầu</span>
-                                                        </nz-tag>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </nz-timeline-item>
-
-                                    <nz-timeline-item nzColor="gray">
-                                        <div class="item-workflow">
-                                            <div class="name-step-workflow-gray">
-                                                PHÊ DUYỆT
-                                            </div>
-                                            <div class="detail-workflow">
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="user" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Người xử lý:</span>
-                                                    <span>10/10/2025</span>
-                                                </div>
-
-                                                <div class="item-detail">
-                                                    <span><nz-icon nzType="bars" nzTheme="outline" /></span>
-                                                    <span style="font-weight: 600;">Trạng thái:</span>
-                                                    <span>
-                                                        <nz-tag nzColor="default">
-                                                            <nz-icon nzType="clock-circle" />
-                                                            <span>Chưa bắt đầu</span>
-                                                        </nz-tag>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </nz-timeline-item>
-                                </nz-timeline>
-                            </div>
-                        </div>
-                    </nz-splitter-panel>
-                    <nz-splitter-panel>
-                        <div class="box">
-                            <div class="project-detail">
-                                <div nz-row [nzGutter]="12">
-
-                                    <div nz-col nzSpan="6">
-                                        <label>Mã dự án</label>
-                                        <input nz-input [(ngModel)]="project.code" class="space-control" />
-                                    </div>
-                                    <div nz-col nzSpan="18">
-                                        <label>Tên dự án</label>
-                                        <input nz-input [(ngModel)]="project.name" class="space-control" />
-                                    </div>
-
-                                    <div nz-col nzSpan="24">
-                                        <label>Đơn vị phụ trách</label>
-                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.donViPhuTrach"
-                                            class="space-control" [nzDisabled]="true">
-                                            <nz-option *ngFor="let i of lstOrganize" [nzLabel]="i.name"
-                                                [nzValue]="i.id"></nz-option>
-                                        </nz-select>
-                                    </div>
-                                    <div nz-col nzSpan="6">
-                                        <label>Lãnh đạo phụ trách</label>
-                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.lanhDaoPhuTrach"
-                                            class="space-control">
-                                            <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
-                                                [nzValue]="i.userName"></nz-option>
-                                        </nz-select>
-                                    </div>
-                                    <div nz-col nzSpan="6">
-                                        <label>PM dự án</label>
-                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.pmDuAn"
-                                            class="space-control">
-                                            <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
-                                                [nzValue]="i.userName"></nz-option>
-                                        </nz-select>
-                                    </div>
-
-                                    <div nz-col nzSpan="6">
-                                        <label>Phụ trách dự án</label>
-                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.phuTrachDuAn"
-                                            class="space-control">
-                                            <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
-                                                [nzValue]="i.userName"></nz-option>
-                                        </nz-select>
-                                    </div>
-                                    <div nz-col nzSpan="6">
-                                        <label>Quản lý hợp đồng</label>
-                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.quanLyHopDong"
-                                            class="space-control">
-                                            <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
-                                                [nzValue]="i.userName"></nz-option>
-                                        </nz-select>
-                                    </div>
-
-
-                                    <div nz-col nzSpan="24">
-                                        <label>Khách hàng</label>
-                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.khachHang"
-                                            class="space-control">
-                                            <nz-option *ngFor="let i of lstCustomer" [nzLabel]="i.name"
-                                                [nzValue]="i.code"></nz-option>
-                                        </nz-select>
-                                    </div>
-
-                                    <div nz-col nzSpan="6">
-                                        <label>Cấp dự án</label>
-                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.capDuAn"
-                                            class="space-control">
-                                            <nz-option *ngFor="let i of capDuAn" [nzLabel]="i.name"
-                                                [nzValue]="i.code"></nz-option>
-                                        </nz-select>
-                                    </div>
-
-                                    <div nz-col nzSpan="6">
-                                        <label>Loại dự án</label>
-                                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="project.loaiDuAn"
-                                            class="space-control">
-                                            <nz-option *ngFor="let i of loaiDuAn" [nzLabel]="i.name"
-                                                [nzValue]="i.code"></nz-option>
-                                        </nz-select>
-                                    </div>
-                                    <div nz-col nzSpan="6">
-                                        <label>Ngày bắt đầu</label>
-                                        <nz-date-picker [(ngModel)]="project.startDate" class="space-control"
-                                            [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
-                                    </div>
-                                    <div nz-col nzSpan="6">
-                                        <label>Ngày kết thúc</label>
-                                        <nz-date-picker [(ngModel)]="project.endDate" class="space-control"
-                                            [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
-                                    </div>
-                                    <div nz-col nzSpan="6">
-                                        <label>Khu vực</label>
-                                        <input nz-input [(ngModel)]="project.khuVuc" class="space-control" />
-                                    </div>
-                                    <div nz-col nzSpan="6">
-                                        <label>Địa điểm</label>
-                                        <input nz-input [(ngModel)]="project.diaDiem" class="space-control" />
-                                    </div>
-                                    <div nz-col nzSpan="12">
-                                        <label>Quy trình</label>
-                                        <input nz-input [(ngModel)]="project.diaDiem" class="space-control" />
-                                    </div>
-                                    <div nz-col nzSpan="24">
-                                        <label>Ghi chú</label>
-                                        <input nz-input [(ngModel)]="project.notes" class="space-control" />
-                                    </div>
-
-                                    <div nz-col nzSpan="8" *ngFor="let f of project.files">
-                                        <div class="file-item">
-                                            <div><img [src]="f.icon" width="30" style="margin-right: 12px;"></div>
-                                            <div>
-                                                <span style="font-weight: 600;">{{f.fileName}}</span><br>
-                                                <span style="font-size:12px; color: gray">{{ f.fileSize < 1048576 ?
-                                                        (f.fileSize / 1024 | number : "1.1-1" ) + " KB" : (f.fileSize /
-                                                        1048576 | number : "1.1-1" ) + " MB" }}</span>
-                                            </div>
-                                            <div style="margin-left: auto;color: rgb(220, 53, 69);;">
-                                                <nz-icon nzType="delete" nzTheme="outline" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div nz-col nzSpan="24">
-                                        <div class="file-upload-area" (click)="fileInput.click()">
-                                            <div>
-                                                <img src="img/folder_upload.png" class="img-upload">
-                                            </div>
-                                            <h3>Tải lên file đính kèm dự án</h3>
-                                            <p style="color: #666; font-size: 14px;">Hỗ trợ các định dạng: PDF, DOC,
-                                                DOCX,
-                                                XLS, XLSX, PNG, JPG</p>
-                                        </div>
-                                    </div>
+                                <div style="margin-left: auto;color: rgb(220, 53, 69);;">
+                                    <nz-icon nzType="delete" nzTheme="outline" />
                                 </div>
                             </div>
                         </div>
-                    </nz-splitter-panel>
-                    <nz-splitter-panel [nzDefaultSize]="isMobileView ? '' : '22%'">
-                        <div class="box">
-                            <div>
-                                <nz-divider nzText="GIAI ĐOẠN DỰ ÁN"></nz-divider>
-                            </div>
-                            <div class="process-project">
-                                <nz-tag nzColor="processing" *ngIf="giaiDoanHienTai" style="margin-bottom: 12px;">
-                                    <nz-icon nzType="sync" nzSpin />
-                                    <span>{{giaiDoanHienTai.name}}</span>
-                                </nz-tag>
-                                <nz-tag nzColor="success" *ngIf="!giaiDoanHienTai" style="margin-bottom: 12px;">
-                                    <nz-icon nzType="check-circle" />
-                                    <span>Hoàn thành</span>
-                                </nz-tag>
-                                <button nz-button nzType="default" (click)="chuyenTiepGiaiDoan()">
-                                    <nz-icon nzType="double-right" nzTheme="outline" /> Chuyển tiếp giai đoạn
-                                </button>
-                            </div>
-                            <div class="project-step">
-                                <nz-steps [nzCurrent]="project.giaiDoan" nzDirection="vertical">
-                                    <nz-step *ngFor="let i of project.listGiaiDoan" [nzTitle]="i.name"
-                                        [nzDescription]=" 'Mã giai đoạn: ' + i.code"></nz-step>
-                                </nz-steps>
-                            </div>
 
+                        <div nz-col nzSpan="24">
+                            <div class="file-upload-area" (click)="fileInput.click()">
+                                <div>
+                                    <img src="img/folder_upload.png" class="img-upload">
+                                </div>
+                                <h3>Tải lên file đính kèm dự án</h3>
+                                <p style="color: #666; font-size: 14px;">Hỗ trợ các định dạng: PDF, DOC,
+                                    DOCX,
+                                    XLS, XLSX, PNG, JPG</p>
+                            </div>
                         </div>
-                    </nz-splitter-panel>
-                </nz-splitter>
+                    </div>
+                </div>
             </div>
+        </nz-splitter-panel>
+        <nz-splitter-panel [nzDefaultSize]="'22%'">
+            <div class="box">
+                <div>
+                    <nz-divider nzText="GIAI ĐOẠN DỰ ÁN"></nz-divider>
+                </div>
+                <div class="process-project">
+                    <nz-tag nzColor="processing" *ngIf="giaiDoanHienTai" style="margin-bottom: 12px;">
+                        <nz-icon nzType="sync" nzSpin />
+                        <span>{{giaiDoanHienTai.name}}</span>
+                    </nz-tag>
+                    <nz-tag nzColor="success" *ngIf="!giaiDoanHienTai" style="margin-bottom: 12px;">
+                        <nz-icon nzType="check-circle" />
+                        <span>Hoàn thành</span>
+                    </nz-tag>
+                    <button nz-button nzType="default" (click)="chuyenTiepGiaiDoan()">
+                        <nz-icon nzType="double-right" nzTheme="outline" /> Chuyển tiếp giai đoạn
+                    </button>
+                </div>
+                <div class="project-step">
+                    <nz-steps [nzCurrent]="project.giaiDoan" nzDirection="vertical">
+                        <nz-step *ngFor="let i of project.listGiaiDoan" [nzTitle]="i.name"
+                            [nzDescription]=" 'Mã giai đoạn: ' + i.code"></nz-step>
+                    </nz-steps>
+                </div>
 
-        </nz-tab>
-        <nz-tab [nzTitle]="personnel">
-            <ng-template #personnel>
-                <i class="bi bi-people"></i> NHÂN SỰ
-            </ng-template>
-
-            <div class="button-action">
-                <button nz-button nzType="primary" class="btn-green">
-                    <nz-icon nzType="save" nzTheme="outline" /> Cập nhật thông tin
-                </button>
-                <button nz-button nzType="primary">
-                    <nz-icon nzType="plus" nzTheme="outline" /> Thêm nhân sự
-                </button>
-                <button nz-button nzType="primary" nzDanger="">
-                    <nz-icon nzType="delete" nzTheme="outline" /> Xoá nhân sự
-                </button>
             </div>
-
-            <nz-table #personnelTable nzBordered [nzData]="project.personnel" nzSize="small" [nzFrontPagination]="false"
-                [nzScroll]="{ y: 'calc(100vh - 226px)' }">
-                <thead>
-                    <tr>
-                        <th nzAlign="center" nzWidth="60px">STT</th>
-                        <th>Nhân sự</th>
-                        <th>Chức danh</th>
-                        <th>Số điện thoại</th>
-                        <th>Email</th>
-                        <th>Vai trò dự án</th>
-                        <th>Từ ngày</th>
-                        <th>Đến ngày</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- <tr *ngFor="let item of personnelTable.data; let i = index; trackBy: trackById">
-                        <td nzAlign="center">{{(data.currentPage - 1) * data.pageSize + i + 1 }}</td>
-                        <td><a (click)="open(item, true)">{{ item.code }}</a></td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.notes }}</td>
-                        <td nzAlign="center">
-                            <nz-tag [nzColor]="item.isActive ? 'success' : 'error'">
-                                <nz-icon [nzType]="item.isActive ? 'check-circle' : 'close-circle'" />
-                                <span>{{item.isActive ? 'Kích hoạt' : 'Khoá'}}</span>
-                            </nz-tag>
-                        </td>
-                    </tr> -->
-                </tbody>
-            </nz-table>
-
-        </nz-tab>
-        <nz-tab [nzTitle]="workflow">
-            <ng-template #workflow>
-                <i class="bi bi-activity"></i> QUY TRÌNH
-            </ng-template>
-
-        </nz-tab>
-        <nz-tab [nzTitle]="struct">
-            <ng-template #struct>
-                <i class="bi bi-diagram-3"></i> HẠNG MỤC, CÔNG VIỆC
-            </ng-template>
-
-            <div class="project-struct">
-                <nz-table #structTable nzBordered [nzData]="listOfMapDataStruct" nzSize="small"
-                    [nzFrontPagination]="false">
-                    <thead>
-                        <tr>
-                            <th nzWidth="40px" [nzChecked]="checkedStruct" [nzIndeterminate]="indeterminateStruct"
-                                (nzCheckedChange)="onAllCheckedStruct($event)">
-                            </th>
-                            <th nzWidth="40px"></th>
-                            <th nzWidth="100px">Mã</th>
-                            <th>Tên Hạng mục | Công việc</th>
-                            <th nzWidth="140px" nzAlign="center">Ngày bắt đầu</th>
-                            <th nzWidth="140px" nzAlign="center">Ngày kết thúc</th>
-                            <th nzWidth="140px" nzAlign="center">Ngày hoàn thành</th>
-                            <th nzAlign="center">Trạng thái công việc</th>
-                            <th nzAlign="center">Cán bộ phụ trách</th>
-                            <th nzAlign="center">Tình trạng</th>
-                            <th nzWidth="40px"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (data of structTable.data; track data) {
-                        @for (item of mapOfExpandedData[data.id]; track item) {
-                        @if ((item.parent && item.parent.expanded) || !item.parent) {
-                        <tr>
-                            <td [nzChecked]="setOfCheckedIdStruct.has(item.id)"
-                                (nzCheckedChange)="onItemCheckedStruct(item.id, $event)">
-                            </td>
-                            <td nzAlign="center">
-                                <img *ngIf="item.type == projectStructType.Project" src="img/PROJECT.png"
-                                    nz-tooltip="Dự án">
-                                <img *ngIf="item.type == projectStructType.GiaiDoan" src="img/BOQ.png"
-                                    nz-tooltip="Giai đoạn">
-                                <img *ngIf="item.type == projectStructType.HangMuc" src="img/WBS.png"
-                                    nz-tooltip="Hạng mục">
-                                <img *ngIf="item.type == projectStructType.CongViec" src="img/ACTIVITY.png"
-                                    nz-tooltip="Công việc">
-                            </td>
-                            <td>{{ item.code }}</td>
-                            <td [nzIndentSize]="item.level! * 20" [nzShowExpand]="!!item.children"
-                                [(nzExpand)]="item.expanded"
-                                (nzExpandChange)="collapse(mapOfExpandedData[data.id], item, $event)">
-                                <span
-                                    *ngIf="item.type != projectStructType.HangMuc && item.type != projectStructType.CongViec">{{
-                                    item.name }}</span>
-                                <span *ngIf="item.type == projectStructType.HangMuc"><a style="color: goldenrod;">{{
-                                        item.name }}</a></span>
-                                <span *ngIf="item.type == projectStructType.CongViec"><a
-                                        (click)="openDrawerCongViec(item)">{{ item.name }}</a></span>
-                            </td>
-                            <td nzAlign="center">{{ item.startDate | date: 'dd/MM/yyyy' }}</td>
-                            <td nzAlign="center">{{ item.endDate | date: 'dd/MM/yyyy' }}</td>
-                            <td nzAlign="center"></td>
-                            <td nzAlign="center"></td>
-                            <td nzAlign="center"></td>
-                            <td nzAlign="center"></td>
-                            <td nzAlign="center">
-                                <button *ngIf="item.type == projectStructType.HangMuc" nz-button nzType="primary"
-                                    nzSize="small" nz-tooltip="Tạo công việc" (click)="openDrawerHangMuc(item)">
-                                    <nz-icon nzType="plus" nzTheme="outline" />
-                                </button>
-                            </td>
-                        </tr>
-                        }
-                        }
-                        }
-                    </tbody>
-                </nz-table>
-            </div>
-
-
-        </nz-tab>
-    </nz-tabs>
+        </nz-splitter-panel>
+    </nz-splitter>
 </div>
 
 <input type="file" #fileInput hidden multiple (change)="upload($event)" />
-
-<nz-drawer nzWidth="50%" [nzClosable]="false" [nzVisible]="visibleHangMuc" nzPlacement="right" [nzTitle]="titleHangMuc"
-    (nzOnClose)="closeDrawerHangMuc()" [nzExtra]="extraHangMuc">
-    <ng-container *nzDrawerContent>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-    </ng-container>
-
-    <ng-template #extraHangMuc>
-        <nz-space>
-            <button *nzSpaceItem nz-button nzType="primary" class="btn-green">
-                <nz-icon nzType="save" nzTheme="outline" /> Lưu
-            </button>
-            <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="closeDrawerHangMuc()">
-                <nz-icon nzType="close" nzTheme="outline" />
-            </button>
-        </nz-space>
-    </ng-template>
-</nz-drawer>
-
-<nz-drawer nzWidth="calc(100vw - 254px)" [nzClosable]="false" [nzVisible]="visibleCongViec" nzPlacement="right"
-    [nzTitle]="titleCongViec" (nzOnClose)="closeDrawerCongViec()">
-    <ng-container *nzDrawerContent>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-    </ng-container>
-</nz-drawer>

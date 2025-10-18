@@ -1,0 +1,38 @@
+<div>
+    <nz-tabs [nzSelectedIndex]="indexTabProject" [nzDestroyInactiveTabPane]="true">
+        <nz-tab [nzTitle]="dashboard">
+            <ng-template #dashboard>
+                <i class="bi bi-grid"></i> DASHBOARD
+            </ng-template>
+            <app-dashboard-project></app-dashboard-project>
+        </nz-tab>
+
+        <nz-tab [nzTitle]="information">
+            <ng-template #information>
+                <i class="bi bi-info-square"></i> THÔNG TIN DỰ ÁN
+            </ng-template>
+            <app-info-project></app-info-project>
+        </nz-tab>
+
+        <nz-tab [nzTitle]="personnel">
+            <ng-template #personnel>
+                <i class="bi bi-people"></i> NHÂN SỰ
+            </ng-template>
+            <app-person-project></app-person-project>
+        </nz-tab>
+
+        <nz-tab [nzTitle]="workflow">
+            <ng-template #workflow>
+                <i class="bi bi-activity"></i> QUY TRÌNH
+            </ng-template>
+            <app-workflow-project></app-workflow-project>
+        </nz-tab>
+
+        <nz-tab [nzTitle]="struct">
+            <ng-template #struct>
+                <i class="bi bi-diagram-3"></i> HẠNG MỤC, CÔNG VIỆC
+            </ng-template>
+            <app-struct-project></app-struct-project>
+        </nz-tab>
+    </nz-tabs>
+</div>

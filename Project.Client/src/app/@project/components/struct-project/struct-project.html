@@ -1,0 +1,62 @@
+<div class="project-struct">
+    <nz-table #structTable nzBordered [nzData]="listOfMapDataStruct" nzSize="small" [nzFrontPagination]="false">
+        <thead>
+            <tr>
+                <th nzWidth="40px" [nzChecked]="checkedStruct" [nzIndeterminate]="indeterminateStruct"
+                    (nzCheckedChange)="onAllCheckedStruct($event)">
+                </th>
+                <th nzWidth="40px"></th>
+                <th nzWidth="100px">Mã</th>
+                <th>Tên Hạng mục | Công việc</th>
+                <th nzWidth="140px" nzAlign="center">Ngày bắt đầu</th>
+                <th nzWidth="140px" nzAlign="center">Ngày kết thúc</th>
+                <th nzWidth="140px" nzAlign="center">Ngày hoàn thành</th>
+                <th nzAlign="center">Trạng thái công việc</th>
+                <th nzAlign="center">Cán bộ phụ trách</th>
+                <th nzAlign="center">Tình trạng</th>
+                <th nzWidth="40px"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (data of structTable.data; track data) {
+            @for (item of mapOfExpandedData[data.id]; track item) {
+            @if ((item.parent && item.parent.expanded) || !item.parent) {
+            <tr>
+                <td [nzChecked]="setOfCheckedIdStruct.has(item.id)"
+                    (nzCheckedChange)="onItemCheckedStruct(item.id, $event)">
+                </td>
+                <td nzAlign="center">
+                    <img *ngIf="item.type == projectStructType.Project" src="img/PROJECT.png" nz-tooltip="Dự án">
+                    <img *ngIf="item.type == projectStructType.GiaiDoan" src="img/BOQ.png" nz-tooltip="Giai đoạn">
+                    <img *ngIf="item.type == projectStructType.HangMuc" src="img/WBS.png" nz-tooltip="Hạng mục">
+                    <img *ngIf="item.type == projectStructType.CongViec" src="img/ACTIVITY.png" nz-tooltip="Công việc">
+                </td>
+                <td>{{ item.code }}</td>
+                <td [nzIndentSize]="item.level! * 20" [nzShowExpand]="!!item.children" [(nzExpand)]="item.expanded"
+                    (nzExpandChange)="collapse(mapOfExpandedData[data.id], item, $event)">
+                    <span *ngIf="item.type != projectStructType.HangMuc && item.type != projectStructType.CongViec">{{
+                        item.name }}</span>
+                    <span *ngIf="item.type == projectStructType.HangMuc"><a style="color: goldenrod;">{{
+                            item.name }}</a></span>
+                    <span *ngIf="item.type == projectStructType.CongViec"><a>{{
+                            item.name }}</a></span>
+                </td>
+                <td nzAlign="center">{{ item.startDate | date: 'dd/MM/yyyy' }}</td>
+                <td nzAlign="center">{{ item.endDate | date: 'dd/MM/yyyy' }}</td>
+                <td nzAlign="center"></td>
+                <td nzAlign="center"></td>
+                <td nzAlign="center"></td>
+                <td nzAlign="center"></td>
+                <td nzAlign="center">
+                    <button *ngIf="item.type == projectStructType.HangMuc" nz-button nzType="primary" nzSize="small"
+                        nz-tooltip="Tạo công việc">
+                        <nz-icon nzType="plus" nzTheme="outline" />
+                    </button>
+                </td>
+            </tr>
+            }
+            }
+            }
+        </tbody>
+    </nz-table>
+</div>
