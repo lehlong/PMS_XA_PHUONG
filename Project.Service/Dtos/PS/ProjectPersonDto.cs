@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Project.Core.Common;
+using Project.Core.Entities.AD;
 using Project.Core.Entities.PS;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace Project.Service.Dtos.PS
         public string? ProjectRoleCode { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public AdAccount? Person { get; set; }
 
         public void Mapping(Profile profile)
         {

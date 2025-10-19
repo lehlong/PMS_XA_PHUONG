@@ -24,6 +24,8 @@ namespace Project.Service.Dtos.PS
         public int? Type { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public string? RefrenceFileId { get; set; }
+        public string? Notes { get; set; }
 
         public void Mapping(Profile profile)
         {

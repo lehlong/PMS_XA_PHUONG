@@ -1,4 +1,5 @@
 ﻿using Project.Core.Common;
+using Project.Core.Entities.AD;
 using System.ComponentModel.DataAnnotations;
 
 namespace Project.Core.Entities.PS
@@ -13,5 +14,6 @@ namespace Project.Core.Entities.PS
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public virtual PsProject? Project { get; set; }
+        public virtual AdAccount? Person { get; set; }
     }
 }

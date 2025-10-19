@@ -20,7 +20,17 @@ export class ProjectService {
 
     detail(data: string) { return this.common.get(`Project/Detail/${data}`, {}, false) }
 
+    getGiaiDoan(data: string) { return this.common.get(`Project/GetGiaiDoan/${data}`, {}, false) }
+
     delete(data: string) { return this.common.delete(`Project/Delete/${data}`, {}, false) }
 
     updateOrder(data: any) { return this.common.put(`Project/UpdateOrder`, data, false) }
+
+    trinhDuyet(data: ProjectDto) { return this.common.put('Project/TrinhDuyet', data, false) }
+
+    xacNhan(data: ProjectDto) { return this.common.put('Project/XacNhan', data, false) }
+
+    pheDuyet(data: ProjectDto) { return this.common.put('Project/PheDuyet', data, false) }
+    
+    tuChoi(data: ProjectDto) { return this.common.put('Project/TuChoi', data, false) }
 }

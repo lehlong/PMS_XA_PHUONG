@@ -20,6 +20,8 @@ export class DashboardProject implements OnInit {
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
+
+    console.log('Đã load tab dashboard!')
   }
 
   ngOnDestroy(): void {

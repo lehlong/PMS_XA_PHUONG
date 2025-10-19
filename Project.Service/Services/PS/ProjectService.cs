@@ -14,6 +14,7 @@ namespace Project.Service.Services.PS
     {
         Task<string> CreateProject(ProjectDto request);
         Task<ProjectDto> GetProjectDetail(string projectId);
+        Task<List<ProjectStructDto>> GetGiaiDoan(string projectId);
     }
 
     public class ProjectService(AppDbContext dbContext, IMapper mapper) : GenericService<PsProject, ProjectDto>(dbContext, mapper), IProjectService
@@ -75,7 +76,7 @@ namespace Project.Service.Services.PS
 
                 var lstFile = _mapper.Map<List<CmFile>>(request.Files);
 
-                foreach(var f in lstFile)
+                foreach (var f in lstFile)
                 {
                     f.RefrenceFileId = project.RefrenceFileId;
                 }
@@ -94,14 +95,12 @@ namespace Project.Service.Services.PS
             }
         }
 
-
         public async Task<ProjectDto> GetProjectDetail(string projectId)
         {
             try
             {
                 var _project = await _dbContext.PsProject.Include(x => x.DonViPhuTrachRef)
                     .Include(x => x.Files)
-                    .Include(x => x.Structs)
                     .FirstOrDefaultAsync(x => x.Id == projectId);
 
                 if (_project == null)
@@ -110,19 +109,28 @@ namespace Project.Service.Services.PS
                     this.Status = false;
                     return new ProjectDto();
                 }
-
-                var project = _mapper.Map<ProjectDto>(_project);
-
-                project.ListGiaiDoan = project.Structs?.Where(x => x.Type == ProjectStructType.GiaiDoan).ToList();
-
-
-                return project;
+                return _mapper.Map<ProjectDto>(_project); ;
             }
             catch (Exception ex)
             {
                 this.Status = false;
                 this.Exception = ex;
                 return new ProjectDto();
+            }
+        }
+
+        public async Task<List<ProjectStructDto>> GetGiaiDoan(string projectId)
+        {
+            try
+            {
+                var _struct = await _dbContext.PsProjectStruct.Where(x => x.ProjectId == projectId && x.Type == ProjectStructType.GiaiDoan).OrderBy(x => x.OrderNumber).ToListAsync();
+                return _mapper.Map<List<ProjectStructDto>>(_struct); ;
+            }
+            catch (Exception ex)
+            {
+                this.Status = false;
+                this.Exception = ex;
+                return new List<ProjectStructDto>();
             }
         }
     }

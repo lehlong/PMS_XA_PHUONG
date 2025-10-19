@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { NgModule } from '../../../shared/ng-zorro.module';
 import { ProjectStructType } from '../../../shared/statics/project-struct-type.static';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { GlobalService } from '../../../services/common/global.service';
 import { ProjectStructService } from '../../services/project-struct.service';
 import { TreeUtils } from '../../../services/utilities/tree.ultis';
+import { ProjectStructDto } from '../../../class/PS/project-struct.class';
+import { FileService } from '../../../services/common/file.service';
 
 @Component({
   selector: 'app-struct-project',
@@ -17,20 +19,43 @@ export class StructProject implements OnInit {
 
   private destroy$ = new Subject<void>();
   projectId: string = '';
-
+  visibleAddCv = false;
+  titleAddCv: string = '';
   projectStructType = ProjectStructType;
+
+  listOfMapDataStruct: any[] = [];
+  mapOfExpandedData: { [id: string]: any[] } = {};
+
+  checkedStruct: boolean = false;
+  indeterminateStruct: boolean = false;
+  setOfCheckedIdStruct = new Set<any>();
+
   structs: any[] = [];
+
+  dto: ProjectStructDto = new ProjectStructDto();
 
   constructor(
     private route: ActivatedRoute,
     private global: GlobalService,
-    private service: ProjectStructService
+    private service: ProjectStructService,
+    private _file: FileService
   ) { }
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
-    this.service.getProjectStruct(this.projectId).subscribe({
-      next: (res: any) => { 
+    this.getProjectStruct();
+    console.log('Đã load tab cấu trúc dự án!')
+  }
+
+  ngOnDestroy(): void {
+    this.global.setBreadcrumb([]);
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  getProjectStruct() {
+    this.service.getProjectStruct(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
         this.structs = res;
         this.listOfMapDataStruct = TreeUtils.buildNzPrjectTree(res);
         this.listOfMapDataStruct.forEach(i => {
@@ -41,18 +66,6 @@ export class StructProject implements OnInit {
     })
   }
 
-  ngOnDestroy(): void {
-    this.global.setBreadcrumb([]);
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  listOfMapDataStruct: any[] = [];
-  mapOfExpandedData: { [id: string]: any[] } = {};
-
-  checkedStruct: boolean = false;
-  indeterminateStruct: boolean = false;
-  setOfCheckedIdStruct = new Set<any>();
 
   refreshCheckedStatusStruct(): void {
     this.checkedStruct = this.structs.every((i: any) => this.setOfCheckedIdStruct.has(i.id));
@@ -117,5 +130,50 @@ export class StructProject implements OnInit {
       hashMap[node.id] = true;
       array.push(node);
     }
+  }
+
+  closeAddCv() {
+    this.titleAddCv = '';
+    this.visibleAddCv = false;
+    this.dto = new ProjectStructDto();
+  }
+
+  openAddCv(data: any) {
+    this.titleAddCv = data?.name;
+    this.dto.projectId = this.projectId;
+    this.dto.type = this.projectStructType.CongViec;
+    this.dto.pId = data.id;
+    this.visibleAddCv = true;
+  }
+
+  addCv() {
+    this.service.insert(this.dto).pipe(takeUntil(this.destroy$)).subscribe({
+      next :(res) => {
+        this.closeAddCv();
+        this.getProjectStruct();
+      }
+    })
+  }
+
+  upload(e: any) {
+    const input = e.target as HTMLInputElement;
+    const files = input.files;
+
+    if (!files?.length) return;
+
+    const formData = new FormData();
+    if (files?.length) {
+      Array.from(files).forEach((file) => formData.append('files', file));
+    }
+
+    this._file.upload(formData).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.dto.files = [...this.dto.files, ...res.data]
+      }
+    })
+  }
+
+  deleteFile(f: any) {
+    this.dto.files = this.dto.files.filter(x => x.id != f.id)
   }
 }

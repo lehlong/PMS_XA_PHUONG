@@ -10,6 +10,7 @@ namespace Project.Service.Services.PS
     public interface IProjectStructService : IGenericService<PsProjectStruct, ProjectStructDto>
     {
         Task<List<ProjectStructDto>> GetProjectStruct(string projectId);
+        Task Insert(ProjectStructDto request);
     }
 
     public class ProjectStructService(AppDbContext dbContext, IMapper mapper) : GenericService<PsProjectStruct, ProjectStructDto>(dbContext, mapper), IProjectStructService
@@ -26,6 +27,22 @@ namespace Project.Service.Services.PS
                 this.Status = false;
                 this.Exception = ex;
                 return new List<ProjectStructDto>();
+            }
+        }
+
+        public async Task Insert(ProjectStructDto request)
+        {
+            try
+            {
+                request.Id = Guid.NewGuid().ToString();
+                var entities = _mapper.Map<PsProjectStruct>(request);
+                await _dbContext.PsProjectStruct.AddAsync(entities);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                this.Status = false;
+                this.Exception = ex;
             }
         }
     }

@@ -27,22 +27,6 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
 
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
-        {
-            var res = new TransferObject();
-            var data = await _service.GetAll();
-            if (_service.Status)
-            {
-                res.Data = data;
-            }
-            else
-            {
-                await res.GetMessage("0001", _service);
-            }
-            return Ok(res);
-        }
-
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] ProjectDto request)
         {
@@ -76,11 +60,11 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
 
-        [HttpGet("Detail/{code}")]
-        public async Task<IActionResult> Detail([FromRoute] string code)
+        [HttpGet("Detail/{projectId}")]
+        public async Task<IActionResult> Detail([FromRoute] string projectId)
         {
             var res = new TransferObject();
-            var data = await _service.GetProjectDetail(code);
+            var data = await _service.GetProjectDetail(projectId);
             if (_service.Status)
             {
                 res.Data = data;
@@ -92,18 +76,83 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
 
-        [HttpDelete("Delete/{code}")]
-        public async Task<IActionResult> Delete([FromRoute] string code)
+        [HttpGet("GetGiaiDoan/{projectId}")]
+        public async Task<IActionResult> GetGiaiDoan([FromRoute] string projectId)
         {
             var res = new TransferObject();
-            await _service.Delete(code);
+            var data = await _service.GetGiaiDoan(projectId);
             if (_service.Status)
             {
-                await res.GetMessage("0105", _service);
+                res.Data = data;
             }
             else
             {
-                await res.GetMessage("0106", _service);
+                await res.GetMessage("0001", _service);
+            }
+            return Ok(res);
+        }
+
+
+        [HttpPut("TrinhDuyet")]
+        public async Task<IActionResult> TrinhDuyet([FromBody] ProjectDto request)
+        {
+            var res = new TransferObject();
+            await _service.Update(request);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
+            }
+            return Ok(res);
+        }
+
+        [HttpPut("PheDuyet")]
+        public async Task<IActionResult> PheDuyet([FromBody] ProjectDto request)
+        {
+            var res = new TransferObject();
+            await _service.Update(request);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
+            }
+            return Ok(res);
+        }
+
+        [HttpPut("XacNhan")]
+        public async Task<IActionResult> XacNhan([FromBody] ProjectDto request)
+        {
+            var res = new TransferObject();
+            await _service.Update(request);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
+            }
+            return Ok(res);
+        }
+
+        [HttpPut("TuChoi")]
+        public async Task<IActionResult> TuChoi([FromBody] ProjectDto request)
+        {
+            var res = new TransferObject();
+            await _service.Update(request);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
             }
             return Ok(res);
         }

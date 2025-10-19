@@ -11,6 +11,8 @@ import { LoaiDuAnService } from '../../../@master-data/services/loai-du-an.servi
 import { OrganizeService } from '../../../@master-data/services/organize.service';
 import { AccountService } from '../../../@system-manager/services/account.service';
 import { FileService } from '../../../services/common/file.service';
+import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
+import { PaginationResult } from '../../../class/common/pagination-result.class';
 
 @Component({
   selector: 'app-info-project',
@@ -22,13 +24,17 @@ export class InfoProject implements OnInit {
   private destroy$ = new Subject<void>();
   projectId: string = '';
   project: ProjectDto = new ProjectDto();
+  lstGiaiDoan: any[] = [];
   giaiDoanHienTai: any = {}
+
+  isVisibleHistory = false;
 
   loaiDuAn: any[] = []
   capDuAn: any[] = []
   lstOrganize: any[] = []
   lstAccount: any[] = []
   lstCustomer: any[] = []
+  lstHistory: PaginationResult = new PaginationResult();
 
   constructor(
     private route: ActivatedRoute,
@@ -39,7 +45,8 @@ export class InfoProject implements OnInit {
     private _account: AccountService,
     private _capDuAn: CapDuAnService,
     private _customer: CustomerService,
-    private _file: FileService
+    private _file: FileService,
+    private nzContextMenuService: NzContextMenuService
   ) { }
 
   ngOnInit(): void {
@@ -48,13 +55,19 @@ export class InfoProject implements OnInit {
     this.service.detail(this.projectId).subscribe({
       next: (res: any) => {
         this.project = res;
-        this.giaiDoanHienTai = this.project.listGiaiDoan[this.project.giaiDoan];
         this.global.setBreadcrumb([
           { name: 'Danh sách dự án', path: 'project/list-project' },
           { name: this.project.name, path: 'project/' + this.project.id },
         ]);
       }
     });
+
+    this.service.getGiaiDoan(this.projectId).subscribe({
+      next: (res: any) => {
+        this.lstGiaiDoan = res;
+        this.giaiDoanHienTai = this.lstGiaiDoan[this.project.giaiDoan];
+      }
+    })
     this.getMasterData();
   }
 
@@ -87,6 +100,14 @@ export class InfoProject implements OnInit {
     })
   }
 
+  update() {
+    this.service.update(this.project).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res) => {
+        this.ngOnInit();
+      }
+    })
+  }
+
   ngOnDestroy(): void {
     this.global.setBreadcrumb([]);
     this.destroy$.next();
@@ -104,6 +125,61 @@ export class InfoProject implements OnInit {
     this._file.upload(formData).subscribe({
       next: (res: any) => {
         this.project.files = [...this.project.files, ...res.data]
+      }
+    })
+  }
+
+  deleteFile(file: any) {
+    this.project.files = this.project.files.filter(f => f.id !== file.id);
+  }
+
+  downloadFile(file: any) {
+
+  }
+
+  viewFile(file: any) {
+  }
+
+  contextMenu($event: MouseEvent, menu: NzDropdownMenuComponent): void {
+    this.nzContextMenuService.create($event, menu);
+  }
+
+  historyClose() {
+    this.isVisibleHistory = false;
+  }
+
+  historyOpen() {
+    this.isVisibleHistory = true;
+  }
+
+  trinhDuyet() {
+    this.service.trinhDuyet(this.project).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res) => {
+        this.ngOnInit();
+      }
+    })
+  }
+
+  xacNhan() {
+    this.service.xacNhan(this.project).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res) => {
+        this.ngOnInit();
+      }
+    })
+  }
+
+  pheDuyet() {
+    this.service.pheDuyet(this.project).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res) => {
+        this.ngOnInit();
+      }
+    })
+  }
+
+  tuChoi() {
+    this.service.tuChoi(this.project).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res) => {
+        this.ngOnInit();
       }
     })
   }

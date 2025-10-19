@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project.Service.Common;
+using Project.Service.Dtos.MD;
+using Project.Service.Dtos.PS;
 using Project.Service.Services.PS;
 
 namespace Project.Api.Controllers.PS
@@ -23,6 +25,22 @@ namespace Project.Api.Controllers.PS
             else
             {
                 await res.GetMessage("0001", _service);
+            }
+            return Ok(res);
+        }
+
+        [HttpPost("Insert")]
+        public async Task<IActionResult> Insert([FromBody] ProjectStructDto request)
+        {
+            var res = new TransferObject();
+            await _service.Insert(request);
+            if (_service.Status)
+            {
+                await res.GetMessage("0100", _service);
+            }
+            else
+            {
+                await res.GetMessage("0101", _service);
             }
             return Ok(res);
         }

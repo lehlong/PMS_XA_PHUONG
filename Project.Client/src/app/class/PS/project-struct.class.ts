@@ -12,4 +12,7 @@ export class ProjectStructDto extends BaseFilter {
     type: number = 0;
     startDate: any;
     endDate: any;
+    refrenceFileId: string = '';
+    notes: string = '';
+    files: any[] = []
 }

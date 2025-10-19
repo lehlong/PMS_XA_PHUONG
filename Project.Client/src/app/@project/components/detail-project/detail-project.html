@@ -1,38 +1,60 @@
 <div>
-    <nz-tabs [nzSelectedIndex]="indexTabProject" [nzDestroyInactiveTabPane]="true">
+    <nz-tabs [nzSelectedIndex]="indexTabProject" (nzSelectedIndexChange)="onTabChange($event)"
+        [nzDestroyInactiveTabPane]="true">
+
         <nz-tab [nzTitle]="dashboard">
             <ng-template #dashboard>
                 <i class="bi bi-grid"></i> DASHBOARD
             </ng-template>
-            <app-dashboard-project></app-dashboard-project>
+            @if (loadedTabs.has(0)) {
+            <div [attr.data-key]="tabKeys[0]">
+                <app-dashboard-project></app-dashboard-project>
+            </div>
+            }
         </nz-tab>
 
         <nz-tab [nzTitle]="information">
             <ng-template #information>
                 <i class="bi bi-info-square"></i> THÔNG TIN DỰ ÁN
             </ng-template>
-            <app-info-project></app-info-project>
+            @if (loadedTabs.has(1)) {
+            <div [attr.data-key]="tabKeys[1]">
+                <app-info-project></app-info-project>
+            </div>
+            }
         </nz-tab>
 
         <nz-tab [nzTitle]="personnel">
             <ng-template #personnel>
                 <i class="bi bi-people"></i> NHÂN SỰ
             </ng-template>
-            <app-person-project></app-person-project>
+            @if (loadedTabs.has(2)) {
+            <div [attr.data-key]="tabKeys[2]">
+                <app-person-project></app-person-project>
+            </div>
+            }
         </nz-tab>
 
         <nz-tab [nzTitle]="workflow">
             <ng-template #workflow>
                 <i class="bi bi-activity"></i> QUY TRÌNH
             </ng-template>
-            <app-workflow-project></app-workflow-project>
+            @if (loadedTabs.has(3)) {
+            <div [attr.data-key]="tabKeys[3]">
+                <app-workflow-project></app-workflow-project>
+            </div>
+            }
         </nz-tab>
 
         <nz-tab [nzTitle]="struct">
             <ng-template #struct>
                 <i class="bi bi-diagram-3"></i> HẠNG MỤC, CÔNG VIỆC
             </ng-template>
-            <app-struct-project></app-struct-project>
+            @if (loadedTabs.has(4)) {
+            <div [attr.data-key]="tabKeys[4]">
+                <app-struct-project></app-struct-project>
+            </div>
+            }
         </nz-tab>
     </nz-tabs>
 </div>
