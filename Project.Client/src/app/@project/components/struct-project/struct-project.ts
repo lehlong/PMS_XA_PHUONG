@@ -93,18 +93,19 @@ export class StructProject implements OnInit {
   }
 
   collapse(array: any[], data: any, $event: boolean): void {
-    if (!$event) {
-      if (data.children) {
-        data.children.forEach((d: any) => {
-          const target = array.find(a => a.id === d.id)!;
+  if (!$event) {
+    if (data.children) {
+      data.children.forEach((d: any) => {
+        const target = array.find(a => a.id === d.id);
+        if (target) {
           target.expand = false;
+          target.expanded = false;
           this.collapse(array, target, false);
-        });
-      } else {
-        return;
-      }
+        }
+      });
     }
   }
+}
 
   convertTreeToList(root: any): any[] {
     const stack: any[] = [];
