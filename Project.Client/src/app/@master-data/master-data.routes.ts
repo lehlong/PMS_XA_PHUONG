@@ -9,6 +9,8 @@ import { Currency } from "./components/currency/currency";
 import { ConfigStruct } from "./components/config-struct/config-struct";
 import { Title } from "./components/title/title";
 import { ProjectRole } from "./components/project-role/project-role";
+import { WorkflowProject } from "./components/workflow-project/workflow-project";
+import { WorkflowTask } from "./components/workflow-task/workflow-task";
 
 export const masterDataRoutes: Routes = [
   { path: 'organize', component: Organize },
@@ -21,4 +23,6 @@ export const masterDataRoutes: Routes = [
   { path: 'config-struct', component: ConfigStruct },
   { path: 'title', component: Title },
   { path: 'project-role', component: ProjectRole },
+  { path: 'workflow-project', component: WorkflowProject },
+  { path: 'workflow-task', component: WorkflowTask },
 ]
