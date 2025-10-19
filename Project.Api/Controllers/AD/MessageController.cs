@@ -47,10 +47,9 @@ namespace Project.Api.Controllers.AD
         public async Task<IActionResult> Insert([FromBody] MessageDto request)
         {
             var res = new TransferObject();
-            var result = await _service.Add(request);
+             await _service.Add(request);
             if (_service.Status)
             {
-                res.Data = result;
                 await res.GetMessage("0100", _service);
             }
             else

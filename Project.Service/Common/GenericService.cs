@@ -18,26 +18,19 @@ namespace Project.Service.Common
         where TEntity : BaseEntity
         where TDto : BaseDto
     {
-        DbContext GetDbContext();
         Task<PagedResponseDto> Search(TDto filter);
         Task<IList<TDto>> GetAll();
         Task<TDto> GetById(object id);
-        Task<TDto> Add(IDto dto);
+        Task Add(IDto dto);
         Task Update(IDto dto);
         Task Delete(object code);
         Task<PagedResponseDto> Paging(IQueryable<TEntity> query, TDto filter);
-
-
     }
-    public abstract class GenericService<TEntity, TDto>(AppDbContext dbContext, IMapper mapper) : BaseService(dbContext, mapper), IGenericService<TEntity, TDto>
+    public abstract class GenericService<TEntity, TDto>(AppDbContext dbContext, IMapper mapper)
+        : BaseService(dbContext, mapper), IGenericService<TEntity, TDto>
         where TEntity : BaseEntity
         where TDto : BaseDto
     {
-        public DbContext GetDbContext()
-        {
-            return _dbContext;
-        }
-
         public virtual async Task<PagedResponseDto> Search(TDto filter)
         {
             try
@@ -53,7 +46,6 @@ namespace Project.Service.Common
                 return null;
             }
         }
-
         public virtual async Task<IList<TDto>> GetAll()
         {
             try
@@ -69,7 +61,6 @@ namespace Project.Service.Common
                 return null;
             }
         }
-
         public virtual async Task<TDto> GetById(object id)
         {
             try
@@ -84,61 +75,45 @@ namespace Project.Service.Common
                 return null;
             }
         }
-
-        public virtual async Task<TDto> Add(IDto dto)
+        public virtual async Task Add(IDto dto)
         {
             try
             {
                 var entity = _mapper.Map<TEntity>(dto);
-
-                var keyProperties = dto.GetType()
-                    .GetProperties()
-                    .Where(p => Attribute.IsDefined(p, typeof(KeyAttribute)))
+                var keyProps = typeof(TEntity).GetProperties()
+                    .Where(p => p.GetCustomAttribute<KeyAttribute>() != null)
                     .ToList();
 
-                if (keyProperties.Any())
+                if (keyProps.Any())
                 {
-                    var query = _dbContext.Set<TEntity>().AsQueryable();
+                    var param = Expression.Parameter(typeof(TEntity), "e");
+                    Expression expr = null;
 
-                    foreach (var prop in keyProperties)
+                    foreach (var prop in keyProps)
                     {
-                        var keyName = prop.Name;
-                        var keyValue = prop.GetValue(dto);
+                        var value = prop.GetValue(entity);
+                        if (value == null || (value is string s && string.IsNullOrWhiteSpace(s)))
+                            throw new InvalidOperationException($"Trường thông tin '{prop.Name}' không được để trống");
 
-                        if (keyValue == null) continue;
-
-                        var parameter = Expression.Parameter(typeof(TEntity), "e");
-                        var left = Expression.Call(
-                            typeof(EF),
-                            nameof(EF.Property),
-                            new[] { typeof(object) },
-                            parameter,
-                            Expression.Constant(keyName)
-                        );
-                        var right = Expression.Constant(keyValue);
-                        var equal = Expression.Equal(left, right);
-                        var lambda = Expression.Lambda<Func<TEntity, bool>>(equal, parameter);
-
-                        query = query.Where(lambda);
+                        var eq = Expression.Equal(Expression.Property(param, prop), Expression.Constant(value));
+                        expr = expr == null ? eq : Expression.AndAlso(expr, eq);
                     }
 
-                    if (await query.AnyAsync())
+                    var lambda = Expression.Lambda<Func<TEntity, bool>>(expr, param);
+                    if (await _dbContext.Set<TEntity>().AnyAsync(lambda))
                     {
-                        throw new InvalidOperationException("Mã đã tồn tại! Vui lòng nhập mã khác!");
+                        var keyValues = string.Join(", ", keyProps.Select(p => $"{p.Name} = '{p.GetValue(entity)}'"));
+                        throw new InvalidOperationException($"Thông tin [{keyValues}] đã tồn tại trên hệ thống! Vui lòng nhập thông tin khác!");
                     }
                 }
 
-                var entityResult = await _dbContext.Set<TEntity>().AddAsync(entity);
+                await _dbContext.Set<TEntity>().AddAsync(entity);
                 await _dbContext.SaveChangesAsync();
-
-                var dtoResult = _mapper.Map<TDto>(entityResult.Entity);
-                return dtoResult;
             }
             catch (Exception ex)
             {
                 Status = false;
                 Exception = ex;
-                return null;
             }
         }
         public virtual async Task Delete(object code)
@@ -161,52 +136,12 @@ namespace Project.Service.Common
                 Exception = ex;
             }
         }
-
-        private static PropertyInfo? GetKeyField(IDto dto)
-        {
-            PropertyInfo keyProperty = null;
-            Type t = dto.GetType();
-            foreach (PropertyInfo pi in t.GetProperties())
-            {
-                object[] attrs = pi.GetCustomAttributes(typeof(KeyAttribute), false);
-                if (attrs != null && attrs.Length == 1)
-                {
-                    keyProperty = pi;
-                    break;
-                }
-            }
-            return keyProperty;
-        }
-        private static object? GetValueOfKeyField(IDto dto, PropertyInfo keyProperty)
-        {
-            object value = null;
-            if (keyProperty != null)
-            {
-                value = keyProperty.GetValue(dto, null);
-            }
-            return value;
-        }
-
         public virtual async Task Update(IDto dto)
         {
             try
             {
-                var keyField = GenericService<TEntity, TDto>.GetKeyField(dto);
-                if (keyField == null)
-                {
-                    Status = false;
-                    MessageObject.Code = "0002";
-                    return;
-                }
-                var keyValue = GenericService<TEntity, TDto>.GetValueOfKeyField(dto, keyField);
-                var entityInDB = await _dbContext.Set<TEntity>().FindAsync(keyValue);
-                if (entityInDB == null)
-                {
-                    Status = false;
-                    MessageObject.Code = "0003";
-                    return;
-                }
-                _mapper.Map(dto, entityInDB);
+                var entities = _mapper.Map<TEntity>(dto);
+                _dbContext.Set<TEntity>().Update(entities);
                 await _dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -215,7 +150,6 @@ namespace Project.Service.Common
                 Exception = ex;
             }
         }
-
         public virtual async Task<PagedResponseDto> Paging(IQueryable<TEntity> query, TDto filter)
         {
             try
