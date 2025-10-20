@@ -3,12 +3,7 @@ using Project.Core.Common;
 using Project.Core.Entities.MD;
 using Project.Core.Entities.PS;
 using Project.Service.Dtos.CM;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Project.Service.Dtos.PS
 {
@@ -35,12 +30,18 @@ namespace Project.Service.Dtos.PS
         public string? Notes { get; set; }
         public string? RefrenceFileId { get; set; }
         public ICollection<ProjectStructDto>? ListGiaiDoan { get; set; }
-        public ICollection<ProjectStructDto>? Structs { get; set; } 
+        public ICollection<ProjectStructDto>? Structs { get; set; }
         public ICollection<FileDto>? Files { get; set; }
         public MdOrganize? DonViPhuTrachRef { get; set; }
+
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<PsProject, ProjectDto>().ReverseMap();
+            profile.CreateMap<PsProject, ProjectDto>();
+
+            profile.CreateMap<ProjectDto, PsProject>()
+                .ForMember(dest => dest.Structs, opt => opt.Ignore())
+                .ForMember(dest => dest.Files, opt => opt.Ignore())
+                .ForMember(dest => dest.DonViPhuTrachRef, opt => opt.Ignore());
         }
     }
 }

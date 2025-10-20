@@ -281,7 +281,8 @@
                         </div>
 
                         <div nz-col nzSpan="12" *ngFor="let f of project.files" style="margin-bottom: 12px;">
-                            <div class="file-item" (contextmenu)="contextMenu($event, menu)" (click)="viewFileOpen(f, 'view')">
+                            <div class="file-item" (contextmenu)="contextMenu($event, menu)"
+                                (click)="viewFileOpen(f, 'view')">
                                 <div><img [src]="f.icon" width="30" style="margin-right: 12px;"></div>
                                 <div>
                                     <span class="file-name">{{f.fileName}}</span><br>
@@ -291,7 +292,8 @@
                                 </div>
                                 <nz-dropdown-menu #menu="nzDropdownMenu">
                                     <ul nz-menu>
-                                        <li nz-menu-item (click)="viewFileOpen(f, 'view')"><i class="bi bi-eye"></i> Xem file
+                                        <li nz-menu-item (click)="viewFileOpen(f, 'view')"><i class="bi bi-eye"></i> Xem
+                                            file
                                         </li>
                                         <li nz-menu-item (click)="downloadFile(f)"><i class="bi bi-vector-pen"></i> Ký
                                             số</li>
@@ -375,14 +377,34 @@
     </ng-container>
 </nz-modal>
 
-<nz-modal [nzStyle]="{ top: '10px' }" nzWidth="50%" [(nzVisible)]="isVisibleViewFile" nzTitle="XEM FILE"
-    (nzOnCancel)="viewFileClose()" [nzFooter]="null">
+<nz-modal [nzStyle]="{ top: '4px' }" nzWidth="50%" [(nzVisible)]="isVisibleViewFile" [nzTitle]="nzTitle"
+    (nzOnCancel)="viewFileClose()" [nzFooter]="null" [nzMaskClosable]="false" [nzClosable]="false">
     <ng-container *nzModalContent>
         <div class="view-file-container">
             <iframe *ngIf="filePreview && idTab" [src]="filePreview" [id]="idTab"
                 style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
     </ng-container>
+    <ng-template #nzTitle>
+        <div class="btn-action-modal-file">
+            <nz-space>
+
+                <button *nzSpaceItem nz-button nzType="default">
+                    <i class="bi bi-vector-pen"></i> Ký số
+                </button>
+                <button *nzSpaceItem nz-button nzType="default">
+                    <i class="bi bi-pen"></i> Chỉnh sửa
+                </button>
+                <button *nzSpaceItem nz-button nzType="default">
+                    <i class="bi bi-cloud-download"></i> Tải xuống
+                </button>
+                <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="viewFileClose()">
+                    <nz-icon nzType="close" nzTheme="outline" />
+                </button>
+            </nz-space>
+        </div>
+
+    </ng-template>
 </nz-modal>
 
 <input type="file" #fileInput hidden multiple (change)="upload($event)" />

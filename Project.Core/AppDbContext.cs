@@ -30,14 +30,12 @@ namespace Project.Core
         public override int SaveChanges()
         {
             TrackChanges();
-            IgnoreNavigationProperties();
             return base.SaveChanges();
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             TrackChanges();
-            IgnoreNavigationProperties();
             return base.SaveChangesAsync(cancellationToken);
         }
 
@@ -47,9 +45,7 @@ namespace Project.Core
             if (string.IsNullOrWhiteSpace(header)) return null;
 
             var parts = header.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var token = parts.Length > 1 && parts[0].Equals("Bearer", StringComparison.OrdinalIgnoreCase)
-                ? parts[1]
-                : parts[0];
+            var token = parts.Length > 1 && parts[0].Equals("Bearer", StringComparison.OrdinalIgnoreCase) ? parts[1] : parts[0];
 
             if (string.IsNullOrWhiteSpace(token) || token == "null") return null;
 
@@ -94,34 +90,6 @@ namespace Project.Core
                             softDelete.DeleteDate = DateTime.Now;
                         }
                         break;
-                }
-            }
-        }
-
-        private void IgnoreNavigationProperties()
-        {
-            foreach (var entry in ChangeTracker.Entries())
-            {
-                if (entry.State == EntityState.Added || entry.State == EntityState.Modified)
-                {
-                    foreach (var navigation in entry.Navigations)
-                    {
-                        if (navigation.CurrentValue != null)
-                        {
-                            if (navigation.Metadata.IsCollection)
-                            {
-                                navigation.IsModified = false;
-                            }
-                            else
-                            {
-                                var referenceEntry = entry.Context.Entry(navigation.CurrentValue);
-                                if (referenceEntry != null && referenceEntry.State == EntityState.Added)
-                                {
-                                    referenceEntry.State = EntityState.Unchanged;
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }

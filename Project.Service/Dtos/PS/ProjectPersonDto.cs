@@ -2,12 +2,7 @@
 using Project.Core.Common;
 using Project.Core.Entities.AD;
 using Project.Core.Entities.PS;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Project.Service.Dtos.PS
 {
@@ -24,7 +19,10 @@ namespace Project.Service.Dtos.PS
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<PsProjectPerson, ProjectPersonDto>().ReverseMap();
+            profile.CreateMap<PsProjectPerson, PsProjectPerson>();
+
+            profile.CreateMap<ProjectPersonDto, PsProjectPerson>()
+                .ForMember(dest => dest.Person, opt => opt.Ignore());
         }
     }
 }

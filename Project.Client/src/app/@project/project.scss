@@ -43,7 +43,8 @@ label {
     background: #f0f7ff;
 }
 
-.project-struct, .project-personal {
+.project-struct,
+.project-personal {
     padding: 0 12px;
 }
 
@@ -148,6 +149,13 @@ label {
     transform: translateX(0);
 }
 
-.view-file-container{
+.view-file-container {
     height: calc(100vh - 76px);
+}
+
+.btn-action-modal-file {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
 }

@@ -78,7 +78,6 @@ namespace Project.Service.Services.PS
 
                 foreach (var f in lstFile)
                 {
-                    f.Id = Guid.NewGuid().ToString();
                     f.RefrenceFileId = project.RefrenceFileId;
                 }
 
