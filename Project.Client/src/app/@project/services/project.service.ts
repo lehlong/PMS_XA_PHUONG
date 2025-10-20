@@ -8,7 +8,7 @@ import { ProjectDto } from '../../class/PS/project.class';
 export class ProjectService {
     constructor(private common: CommonService) { }
 
-    search(params: ProjectDto) { return this.common.get('Project/Search', params, false) }
+    search(params: ProjectDto) { return this.common.get('Project/Search', params, true) }
 
     getAll() { return this.common.get('Project/GetAll', {}, false) }
 

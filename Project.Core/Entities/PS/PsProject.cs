@@ -1,7 +1,9 @@
 ﻿using Project.Core.Common;
 using Project.Core.Entities.CM;
 using Project.Core.Entities.MD;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project.Core.Entities.PS
 {

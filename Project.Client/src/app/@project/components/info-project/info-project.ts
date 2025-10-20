@@ -13,6 +13,8 @@ import { AccountService } from '../../../@system-manager/services/account.servic
 import { FileService } from '../../../services/common/file.service';
 import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
 import { PaginationResult } from '../../../class/common/pagination-result.class';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { EnvironmentService } from '../../../services/common/environment.service';
 
 @Component({
   selector: 'app-info-project',
@@ -28,6 +30,7 @@ export class InfoProject implements OnInit {
   giaiDoanHienTai: any = {}
 
   isVisibleHistory = false;
+  isVisibleViewFile = false;
 
   loaiDuAn: any[] = []
   capDuAn: any[] = []
@@ -46,7 +49,9 @@ export class InfoProject implements OnInit {
     private _capDuAn: CapDuAnService,
     private _customer: CustomerService,
     private _file: FileService,
-    private nzContextMenuService: NzContextMenuService
+    private sanitizer: DomSanitizer,
+    private nzContextMenuService: NzContextMenuService,
+    private env : EnvironmentService
   ) { }
 
   ngOnInit(): void {
@@ -137,9 +142,6 @@ export class InfoProject implements OnInit {
 
   }
 
-  viewFile(file: any) {
-  }
-
   contextMenu($event: MouseEvent, menu: NzDropdownMenuComponent): void {
     this.nzContextMenuService.create($event, menu);
   }
@@ -150,6 +152,54 @@ export class InfoProject implements OnInit {
 
   historyOpen() {
     this.isVisibleHistory = true;
+  }
+
+  viewFileClose() {
+    this.isVisibleViewFile = false;
+    this.filePreview = ''
+    this.idTab = '';
+  }
+
+  generateShortId() {
+    return '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  filePreview!: SafeResourceUrl;
+  idTab : string = '';
+  
+  viewFileOpen(data: any, mode: any) {
+    const idTab = this.generateShortId();
+    this.idTab = idTab;
+    this.filePreview = this.sanitizer.bypassSecurityTrustResourceUrl(this.env.getEnv('onlyOfficeViewerUrl'));
+    this.observeIframeAndPostMessage(idTab, {
+      file: data,
+      mode,
+      type: 1,
+      idTab: idTab,
+      environment: this.env.getEnv('API_BASE_URL'),
+      onlyOfficeUrl: this.env.getEnv('onlyOfficeServerUrl')
+    });
+    this.isVisibleViewFile = true;
+  }
+
+  observeIframeAndPostMessage(idTab: string, message: any) {
+    const iframe = document.getElementById(idTab) as HTMLIFrameElement;
+    if (iframe) {
+      iframe.onload = () => {
+        iframe.contentWindow?.postMessage(message, '*');
+      };
+    } else {
+      const observer = new MutationObserver(() => {
+        const iframe = document.getElementById(idTab) as HTMLIFrameElement;
+        if (iframe) {
+          iframe.onload = () => {
+            iframe.contentWindow?.postMessage(message, '*');
+          };
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
   }
 
   trinhDuyet() {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;
+using Minio.Exceptions;
 using Project.Core;
 using Project.Core.Entities.CM;
 using Project.Service.Common;
@@ -12,7 +13,8 @@ namespace Project.Service.Services.CM
 {
     public interface IFileService : IGenericService<CmFile, FileDto>
     {
-        Task<List<FileDto>> UploadFilesToMinio(List<IFormFile> files);
+        Task<List<FileDto>> Upload(List<IFormFile> files);
+        Task<(byte[], string, string)> Download(string fileId);
     }
 
     public class FileService(AppDbContext dbContext, IMapper mapper, IMinioClient minioClient, IOptions<MinioConfigDto> minioOptions) : GenericService<CmFile, FileDto>(dbContext, mapper), IFileService
@@ -20,7 +22,7 @@ namespace Project.Service.Services.CM
         private readonly MinioConfigDto _minioSettings = minioOptions.Value;
         private readonly IMinioClient _minioClient = minioClient;
 
-        public async Task<List<FileDto>> UploadFilesToMinio(List<IFormFile> files)
+        public async Task<List<FileDto>> Upload(List<IFormFile> files)
         {
             try
             {
@@ -81,6 +83,46 @@ namespace Project.Service.Services.CM
                 Status = false;
                 Exception = ex;
                 return new List<FileDto>();
+            }
+        }
+
+        public async Task<(byte[], string, string)> Download(string fileId)
+        {
+            try
+            {
+                var bucketName = _minioSettings.BucketName;
+                var objectName = fileId;
+
+                var statObjectArgs = new StatObjectArgs()
+                    .WithBucket(bucketName)
+                    .WithObject(objectName);
+                var stat = await _minioClient.StatObjectAsync(statObjectArgs);
+
+                var memoryStream = new MemoryStream();
+                var getObjectArgs = new GetObjectArgs()
+                    .WithBucket(bucketName)
+                    .WithObject(objectName)
+                    .WithCallbackStream(stream => stream.CopyTo(memoryStream));
+
+                await _minioClient.GetObjectAsync(getObjectArgs);
+
+                memoryStream.Position = 0;
+
+                var fileDb = _dbContext.CmFile.FirstOrDefault(x => x.Id == fileId);
+
+                return (memoryStream.ToArray(), fileDb == null ? stat.ObjectName : fileDb.FileName, stat.ContentType);
+            }
+            catch (ObjectNotFoundException)
+            {
+                Status = false;
+                Exception = new ArgumentException("File không tồn tại trên MinIO");
+                return (null, null, null);
+            }
+            catch (Exception ex)
+            {
+                Status = false;
+                Exception = ex;
+                return (null, null, null);
             }
         }
         public string GetFileIcon(string fileType)

@@ -147,3 +147,7 @@ label {
     visibility: visible;
     transform: translateX(0);
 }
+
+.view-file-container{
+    height: calc(100vh - 76px);
+}

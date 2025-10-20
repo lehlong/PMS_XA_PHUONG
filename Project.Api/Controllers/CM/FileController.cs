@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Minio.DataModel.Select;
 using Project.Service.Common;
 using Project.Service.Dtos.CM;
@@ -12,6 +13,13 @@ namespace Project.Api.Controllers.CM
     {
         public readonly IFileService _service = service;
 
+        [AllowAnonymous]
+        [HttpPost("CallbackWithoutError")]
+        public IActionResult CallbackWithoutError([FromBody] OnlyOfficeCallbackDto model)
+        {
+            return Ok(new { error = 0 });
+        }
+
         [HttpPost("Upload")]
         public async Task<IActionResult> Upload(List<IFormFile> files)
         {
@@ -23,7 +31,7 @@ namespace Project.Api.Controllers.CM
                 return Ok(res);
             }
 
-            var result = await _service.UploadFilesToMinio(files);
+            var result = await _service.Upload(files);
             if (_service.Status)
             {
                 res.Data = result;
@@ -37,6 +45,28 @@ namespace Project.Api.Controllers.CM
             }
 
             return Ok(res);
+        }
+
+        [HttpGet("Download/{fileId}")]
+        public async Task<IActionResult> Download(string fileId)
+        {
+            var (fileData, fileName, contentType) = await _service.Download(fileId);
+
+            if (_service.Status && fileData != null)
+            {
+                return File(fileData, contentType ?? "application/octet-stream", fileName);
+            }
+            else
+            {
+                return NotFound(new TransferObject
+                {
+                    Status = false,
+                    MessageObject = new MessageObject
+                    {
+                        Message = "File không tồn tại trên MinIO!"
+                    }
+                });
+            }
         }
     }
 
