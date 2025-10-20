@@ -31,6 +31,47 @@ namespace Project.Service.Services.PS
                     query = query.Where(x => x.Code.Contains(filter.KeyWord) || x.Name.Contains(filter.KeyWord));
                 }
 
+                if (!string.IsNullOrWhiteSpace(filter.DonViPhuTrach))
+                {
+                    query = query.Where(x => x.DonViPhuTrach == filter.DonViPhuTrach);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.LanhDaoPhuTrach))
+                {
+                    query = query.Where(x => x.LanhDaoPhuTrach == filter.LanhDaoPhuTrach);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.LoaiDuAn))
+                {
+                    query = query.Where(x => x.LoaiDuAn == filter.LoaiDuAn);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.PmDuAn))
+                {
+                    query = query.Where(x => x.PmDuAn == filter.PmDuAn);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.PmDuAn))
+                {
+                    query = query.Where(x => x.PmDuAn == filter.PmDuAn);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.CapDuAn))
+                {
+                    query = query.Where(x => x.CapDuAn == filter.CapDuAn);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.PmDuAn))
+                {
+                    query = query.Where(x => x.PmDuAn == filter.PmDuAn);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.KhuVuc))
+                {
+                    query = query.Where(x => x.KhuVuc == filter.KhuVuc);
+                }
+
+                query = query.OrderByDescending(x => x.CreateDate);
                 return await Paging(query, filter);
 
             }
@@ -75,6 +116,7 @@ namespace Project.Service.Services.PS
                     Expanded = true,
                     OrgId = request.DonViPhuTrach,
                     Type = ProjectStructType.Project,
+                    RefrenceFileId = Guid.NewGuid().ToString()
                 });
 
                 foreach (var i in lstConfigStruct)
@@ -93,6 +135,7 @@ namespace Project.Service.Services.PS
                         Expanded = true,
                         OrgId = i.OrgId,
                         Type = i.Type,
+                        RefrenceFileId = Guid.NewGuid().ToString()
                     });
 
                     idMapping[i.Id] = newId;

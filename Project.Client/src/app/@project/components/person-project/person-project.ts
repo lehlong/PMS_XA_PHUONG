@@ -46,11 +46,9 @@ export class PersonProject implements OnInit, OnDestroy {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
     this.getProjectRole();
     this.getProjectPerson();
-    console.log('Đã load tab nhân sự!')
   }
 
   ngOnDestroy(): void {
-    this.global.setBreadcrumb([]);
     this.destroy$.next();
     this.destroy$.complete();
   }

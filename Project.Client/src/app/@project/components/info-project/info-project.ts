@@ -114,7 +114,6 @@ export class InfoProject implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.global.setBreadcrumb([]);
     this.destroy$.next();
     this.destroy$.complete();
   }

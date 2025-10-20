@@ -20,12 +20,9 @@ export class WorkflowProject implements OnInit {
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
-
-    console.log('Đã load tab quy trình!')
   }
 
   ngOnDestroy(): void {
-    this.global.setBreadcrumb([]);
     this.destroy$.next();
     this.destroy$.complete();
   }
