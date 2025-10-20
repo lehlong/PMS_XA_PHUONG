@@ -33,7 +33,7 @@ namespace Project.Service.Services.MD
             {
                 Status = false;
                 Exception = ex;
-                return null;
+                return new PagedResponseDto();
             }
         }
         public async Task UpdateOrder(List<ConfigStructDto> request)

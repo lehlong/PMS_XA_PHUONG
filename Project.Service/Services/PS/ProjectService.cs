@@ -6,6 +6,7 @@ using Project.Core.Entities.PS;
 using Project.Core.Statics;
 using Project.Service.Common;
 using Project.Service.Dtos.CM;
+using Project.Service.Dtos.MD;
 using Project.Service.Dtos.PS;
 
 namespace Project.Service.Services.PS
@@ -19,6 +20,29 @@ namespace Project.Service.Services.PS
 
     public class ProjectService(AppDbContext dbContext, IMapper mapper) : GenericService<PsProject, ProjectDto>(dbContext, mapper), IProjectService
     {
+        public override async Task<PagedResponseDto> Search(ProjectDto filter)
+        {
+            try
+            {
+                var query = _dbContext.PsProject.AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(filter.KeyWord))
+                {
+                    query = query.Where(x => x.Code.Contains(filter.KeyWord) || x.Name.Contains(filter.KeyWord));
+                }
+
+                return await Paging(query, filter);
+
+            }
+            catch (Exception ex)
+            {
+                Status = false;
+                Exception = ex;
+                return new PagedResponseDto();
+            }
+        }
+
+
         public async Task<string> CreateProject(ProjectDto request)
         {
             try

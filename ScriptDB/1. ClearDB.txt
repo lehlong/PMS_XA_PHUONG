@@ -1,0 +1,6 @@
+DELETE AdHistoryLogin
+DELETE CmFile
+DELETE PsProject
+DELETE PsProjectHistory
+DELETE PsProjectPerson
+DELETE PsProjectStruct

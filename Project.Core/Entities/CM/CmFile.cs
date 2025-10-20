@@ -15,5 +15,6 @@ namespace Project.Core.Entities.CM
         public string? Icon { get; set; }
         public string? RefrenceFileId { get; set; }
         public virtual PsProject? Project { get; set; }
+        public virtual PsProjectStruct? ProjectStruct { get; set; }
     }
 }
