@@ -44,11 +44,9 @@ export class StructProject implements OnInit {
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
     this.getProjectStruct();
-    console.log('Đã load tab cấu trúc dự án!')
   }
 
   ngOnDestroy(): void {
-    this.global.setBreadcrumb([]);
     this.destroy$.next();
     this.destroy$.complete();
   }

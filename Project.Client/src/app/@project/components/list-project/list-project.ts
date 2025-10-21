@@ -193,7 +193,7 @@ export class ListProject implements OnInit, OnDestroy {
   }
 
   openDetailProject(projectId: any) {
-    this.router.navigate([`/project/${projectId}`]);
+    this.router.navigate([`/project/detail/${projectId}`]);
   }
 
   upload(e: any) {

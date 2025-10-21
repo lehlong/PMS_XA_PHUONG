@@ -6,55 +6,35 @@
             <ng-template #dashboard>
                 <i class="bi bi-grid"></i> DASHBOARD
             </ng-template>
-            @if (loadedTabs.has(0)) {
-            <div [attr.data-key]="tabKeys[0]">
-                <app-dashboard-project></app-dashboard-project>
-            </div>
-            }
+            <app-dashboard-project *ngIf="indexTabProject === 0"></app-dashboard-project>
         </nz-tab>
 
         <nz-tab [nzTitle]="information">
             <ng-template #information>
                 <i class="bi bi-info-square"></i> THÔNG TIN DỰ ÁN
             </ng-template>
-            @if (loadedTabs.has(1)) {
-            <div [attr.data-key]="tabKeys[1]">
-                <app-info-project></app-info-project>
-            </div>
-            }
+            <app-info-project *ngIf="indexTabProject === 1"></app-info-project>
         </nz-tab>
 
         <nz-tab [nzTitle]="personnel">
             <ng-template #personnel>
                 <i class="bi bi-people"></i> NHÂN SỰ
             </ng-template>
-            @if (loadedTabs.has(2)) {
-            <div [attr.data-key]="tabKeys[2]">
-                <app-person-project></app-person-project>
-            </div>
-            }
+            <app-person-project *ngIf="indexTabProject === 2"></app-person-project>
         </nz-tab>
 
         <nz-tab [nzTitle]="workflow">
             <ng-template #workflow>
                 <i class="bi bi-activity"></i> QUY TRÌNH
             </ng-template>
-            @if (loadedTabs.has(3)) {
-            <div [attr.data-key]="tabKeys[3]">
-                <app-workflow-project></app-workflow-project>
-            </div>
-            }
+            <app-workflow-project *ngIf="indexTabProject === 3"></app-workflow-project>
         </nz-tab>
 
         <nz-tab [nzTitle]="struct">
             <ng-template #struct>
                 <i class="bi bi-diagram-3"></i> HẠNG MỤC, CÔNG VIỆC
             </ng-template>
-            @if (loadedTabs.has(4)) {
-            <div [attr.data-key]="tabKeys[4]">
-                <app-struct-project></app-struct-project>
-            </div>
-            }
+            <app-struct-project *ngIf="indexTabProject === 4"></app-struct-project>
         </nz-tab>
     </nz-tabs>
 </div>

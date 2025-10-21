@@ -16,10 +16,11 @@ namespace Project.Service.Dtos.PS
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public AdAccount? Person { get; set; }
+        public PsProject? Project { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<PsProjectPerson, PsProjectPerson>();
+            profile.CreateMap<PsProjectPerson, ProjectPersonDto>();
 
             profile.CreateMap<ProjectPersonDto, PsProjectPerson>()
                 .ForMember(dest => dest.Person, opt => opt.Ignore());

@@ -6,6 +6,7 @@ using Project.Core.Entities.PS;
 using Project.Core.Statics;
 using Project.Service.Common;
 using Project.Service.Dtos.CM;
+using Project.Service.Dtos.MD;
 using Project.Service.Dtos.PS;
 
 namespace Project.Service.Services.PS
@@ -19,6 +20,70 @@ namespace Project.Service.Services.PS
 
     public class ProjectService(AppDbContext dbContext, IMapper mapper) : GenericService<PsProject, ProjectDto>(dbContext, mapper), IProjectService
     {
+        public override async Task<PagedResponseDto> Search(ProjectDto filter)
+        {
+            try
+            {
+                var query = _dbContext.PsProject.AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(filter.KeyWord))
+                {
+                    query = query.Where(x => x.Code.Contains(filter.KeyWord) || x.Name.Contains(filter.KeyWord));
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.DonViPhuTrach))
+                {
+                    query = query.Where(x => x.DonViPhuTrach == filter.DonViPhuTrach);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.LanhDaoPhuTrach))
+                {
+                    query = query.Where(x => x.LanhDaoPhuTrach == filter.LanhDaoPhuTrach);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.LoaiDuAn))
+                {
+                    query = query.Where(x => x.LoaiDuAn == filter.LoaiDuAn);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.PmDuAn))
+                {
+                    query = query.Where(x => x.PmDuAn == filter.PmDuAn);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.PmDuAn))
+                {
+                    query = query.Where(x => x.PmDuAn == filter.PmDuAn);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.CapDuAn))
+                {
+                    query = query.Where(x => x.CapDuAn == filter.CapDuAn);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.PmDuAn))
+                {
+                    query = query.Where(x => x.PmDuAn == filter.PmDuAn);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.KhuVuc))
+                {
+                    query = query.Where(x => x.KhuVuc == filter.KhuVuc);
+                }
+
+                query = query.OrderByDescending(x => x.CreateDate);
+                return await Paging(query, filter);
+
+            }
+            catch (Exception ex)
+            {
+                Status = false;
+                Exception = ex;
+                return new PagedResponseDto();
+            }
+        }
+
+
         public async Task<string> CreateProject(ProjectDto request)
         {
             try
@@ -51,6 +116,7 @@ namespace Project.Service.Services.PS
                     Expanded = true,
                     OrgId = request.DonViPhuTrach,
                     Type = ProjectStructType.Project,
+                    RefrenceFileId = Guid.NewGuid().ToString()
                 });
 
                 foreach (var i in lstConfigStruct)
@@ -69,6 +135,7 @@ namespace Project.Service.Services.PS
                         Expanded = true,
                         OrgId = i.OrgId,
                         Type = i.Type,
+                        RefrenceFileId = Guid.NewGuid().ToString()
                     });
 
                     idMapping[i.Id] = newId;

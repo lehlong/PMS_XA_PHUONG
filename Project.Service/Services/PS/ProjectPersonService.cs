@@ -20,10 +20,20 @@ namespace Project.Service.Services.PS
     {
         public async Task<List<ProjectPersonDto>> GetProjectPerson(string projectId)
         {
-            var entities = await _dbContext.PsProjectPerson.Include(x => x.Person)
-                .Where(x => x.ProjectId == projectId)
-                .ToListAsync();
-            return _mapper.Map<List<ProjectPersonDto>>(entities);
+            try
+            {
+                var entities = await _dbContext.PsProjectPerson.Include(x => x.Person)
+                                .Where(x => x.ProjectId == projectId)
+                                .ToListAsync();
+                return _mapper.Map<List<ProjectPersonDto>>(entities);
+            }
+            catch (Exception ex)
+            {
+                this.Status = false;
+                this.Exception = ex;
+                return new List<ProjectPersonDto>();
+            }
+
         }
 
         public async Task UpdateProjectPerson(List<ProjectPersonDto> request)

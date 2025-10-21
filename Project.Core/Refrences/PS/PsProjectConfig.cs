@@ -25,16 +25,6 @@ namespace Project.Core.Refrences.PS
                    .HasForeignKey(s => s.ProjectId)
                    .HasPrincipalKey(p => p.Id)
                    .OnDelete(DeleteBehavior.NoAction);
-
-
-            builder.Navigation(p => p.DonViPhuTrachRef)
-            .UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
-
-            builder.Navigation(p => p.Files)
-                   .UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
-
-            builder.Navigation(p => p.Structs)
-                   .UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
         }
     }
 }

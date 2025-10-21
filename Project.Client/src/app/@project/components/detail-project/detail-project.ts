@@ -21,15 +21,6 @@ export class DetailProject implements OnInit {
   projectId: string = '';
   indexTabProject: number = 1;
 
-  loadedTabs: Set<number> = new Set([1]);
-  tabKeys: { [key: number]: number } = {
-    0: Date.now(),
-    1: Date.now(),
-    2: Date.now(),
-    3: Date.now(),
-    4: Date.now()
-  };
-
   constructor(
     private route: ActivatedRoute,
     private global: GlobalService
@@ -41,8 +32,6 @@ export class DetailProject implements OnInit {
 
   onTabChange(index: number): void {
     this.indexTabProject = index;
-    this.loadedTabs.add(index);
-    this.tabKeys[index] = Date.now();
   }
 
   ngOnDestroy(): void {

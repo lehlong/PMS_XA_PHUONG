@@ -15,6 +15,8 @@ try
 {
     logger.Info("Application starting...");
 
+    var frontendFolder = "fe";
+
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Logging.ClearProviders();
@@ -53,6 +55,7 @@ try
     builder.Services.AddHangfireServer();
 
     builder.Services.AddControllers();
+    builder.Services.AddSpaStaticFiles(options => options.RootPath = frontendFolder);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
@@ -78,7 +81,62 @@ try
     app.UseHangfireDashboard("/hangfire");
     app.UseHttpsRedirection();
     app.UseAuthorization();
+
+    app.UseStaticFiles();
+
+    app.Use(async (context, next) =>
+    {
+        var path = context.Request.Path.Value?.ToLower() ?? "";
+
+        if (path.StartsWith("/api/"))
+        {
+            await next();
+
+            if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
+            {
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync("{\"error\":\"API endpoint not found\",\"path\":\"" + context.Request.Path + "\"}");
+                return;
+            }
+        }
+        else
+        {
+            await next();
+        }
+    });
+
     app.MapControllers();
+
+    if (Directory.Exists(Path.Combine(app.Environment.ContentRootPath, frontendFolder)))
+    {
+        app.UseSpaStaticFiles();
+        app.UseSpa(spa =>
+        {
+            spa.Options.SourcePath = frontendFolder;
+
+            spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    var requestPath = ctx.Context.Request.Path.Value?.ToLower() ?? "";
+
+                    if (requestPath.StartsWith("/api/") ||
+                        requestPath.StartsWith("/swagger") ||
+                        requestPath.StartsWith("/health") ||
+                        requestPath.StartsWith("/hangfire"))
+                    {
+                        ctx.Context.Response.StatusCode = 404;
+                        ctx.Context.Response.ContentLength = 0;
+                        ctx.Context.Response.Body = Stream.Null;
+                    }
+                }
+            };
+        });
+    }
+    else
+    {
+        logger.Warn($"Frontend folder '{frontendFolder}' not found. Running in API-only mode.");
+    }
 
     logger.Info("Application configuration completed successfully");
 
