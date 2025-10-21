@@ -106,6 +106,8 @@ namespace Project.Core
         public DbSet<MdCustomer> MdCustomer { get; set; }
         public DbSet<MdTitle> MdTitle { get; set; }
         public DbSet<MdProjectRole> MdProjectRole { get; set; }
+        public DbSet<MdWorkflow> MdWorkflow { get; set; }
+        public DbSet<MdWorkflowStep> MdWorkflowStep { get; set; }
         #endregion
 
         #region Project

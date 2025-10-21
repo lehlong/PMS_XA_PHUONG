@@ -7,7 +7,7 @@
         public const int HangMuc = 2;
         public const int CongViec = 3;
 
-        public static string GetText(int status) => status switch
+        public static string GetText(int i) => i switch
         {
             Project => "Dự án",
             GiaiDoan => "Giai đoạn",

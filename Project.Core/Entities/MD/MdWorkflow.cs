@@ -3,16 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Project.Core.Entities.MD
 {
-    public class MdConfigStruct : BaseEntity
+    public class MdWorkflow : BaseEntity
     {
         [Key]
         public string Id { get; set; } = string.Empty;
         public string? Code { get; set; }
         public string? Name { get; set; }
-        public string? PId { get; set; }
-        public int? OrderNumber { get; set; }
-        public bool? Expanded { get; set; }
+        public string? ProjectLevelCode { get; set; }
         public string? OrgId { get; set; }
         public int? Type { get; set; }
+        public string? Notes { get; set; }
     }
 }

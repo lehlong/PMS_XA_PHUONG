@@ -8,7 +8,7 @@
         public const int DaPheDuyet = 3;
         public const int TuChoi = 4;
 
-        public static string GetText(int status) => status switch
+        public static string GetText(int i) => i switch
         {
             KhoiTao => "Khởi tạo",
             DaTrinhDuyet => "Đã trình duyệt",
