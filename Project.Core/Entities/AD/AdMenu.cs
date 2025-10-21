@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Project.Core.Entities.AD
 {
-    public class AdMenu : SoftDeleteEntity
+    public class AdMenu : BaseEntity
     {
         [Key]
         public string Id { get; set; } = string.Empty;

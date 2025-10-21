@@ -73,7 +73,6 @@ namespace Project.Service.Services.PS
         {
             try
             {
-                _dbContext.UseSoftDelete = false;
                 await _dbContext.PsProjectPerson.Where(x => ids.Contains(x.Id)).ExecuteDeleteAsync();
                 await _dbContext.SaveChangesAsync();
             }

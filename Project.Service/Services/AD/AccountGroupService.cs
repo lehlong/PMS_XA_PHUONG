@@ -65,8 +65,6 @@ namespace Project.Service.Services.AD
 
         public async Task UpdateAccountGroup(AccountGroupDto request)
         {
-            _dbContext.UseSoftDelete = false;
-
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {

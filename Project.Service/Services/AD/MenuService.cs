@@ -37,8 +37,7 @@ namespace Project.Service.Services.AD
 
         public async Task UpdateMenu(MenuDto request)
         {
-            _dbContext.UseSoftDelete = false;
-
+            
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {

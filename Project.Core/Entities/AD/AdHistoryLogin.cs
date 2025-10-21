@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Project.Core.Entities.AD
 {
-    public class AdHistoryLogin : SoftDeleteEntity
+    public class AdHistoryLogin : BaseEntity
     {
         [Key]
         public string Id { get; set; } = string.Empty;

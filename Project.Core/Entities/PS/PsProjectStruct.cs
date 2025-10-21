@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Project.Core.Entities.PS
 {
-    public class PsProjectStruct : SoftDeleteEntity
+    public class PsProjectStruct : BaseEntity
     {
         [Key]
         public string Id { get; set; } = string.Empty;

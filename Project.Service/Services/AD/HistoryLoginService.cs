@@ -18,7 +18,6 @@ namespace Project.Service.Services.AD
         {
             try
             {
-                _dbContext.UseSoftDelete = false;
                 await _dbContext.AdHistoryLogin.Where(x => ids.Contains(x.Id)).ExecuteDeleteAsync();
                 await _dbContext.SaveChangesAsync();
             }

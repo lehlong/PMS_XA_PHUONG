@@ -39,7 +39,6 @@ namespace Project.Service.Services.AD
         {
             var messages = await _dbContext.AdMessage
                 .AsNoTracking()
-                .Where(m => m.IsDeleted == null || m.IsDeleted == false)
                 .ToListAsync(cancellationToken);
 
             var serialized = JsonSerializer.Serialize(messages);

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project.Core.Entities.PS
 {
-    public class PsProjectPerson : SoftDeleteEntity
+    public class PsProjectPerson : BaseEntity
     {
         [Key]
         public string Id { get; set; } = string.Empty;

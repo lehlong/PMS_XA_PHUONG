@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Project.Core.Entities.CM
 {
-    public class CmFile : SoftDeleteEntity
+    public class CmFile : BaseEntity
     {
         [Key]
         public string Id { get; set; } = string.Empty;

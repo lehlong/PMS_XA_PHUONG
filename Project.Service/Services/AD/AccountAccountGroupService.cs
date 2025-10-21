@@ -18,7 +18,6 @@ namespace Project.Service.Services.AD
         {
             try
             {
-                _dbContext.UseSoftDelete = false;
                 await _dbContext.AdAccountAccountGroup.Where(x => x.UserName == request.UserName && x.GroupId == request.GroupId).ExecuteDeleteAsync();
             }
             catch(Exception ex)

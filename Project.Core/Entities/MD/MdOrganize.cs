@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Project.Core.Entities.MD
 {
-    public class MdOrganize : SoftDeleteEntity
+    public class MdOrganize : BaseEntity
     {
         [Key]
         public string Id { get; set; } = string.Empty;

@@ -13,8 +13,6 @@ namespace Project.Core
     public class AppDbContext : DbContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public bool UseSoftDelete { get; set; } = true;
-
         public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor)
             : base(options)
         {
@@ -78,16 +76,6 @@ namespace Project.Core
                             entry.Property(nameof(IBaseEntity.CreateDate)).IsModified = false;
                             modifiedEntity.UpdateBy = user;
                             modifiedEntity.UpdateDate = DateTime.Now;
-                        }
-                        break;
-
-                    case EntityState.Deleted:
-                        if (UseSoftDelete && entry.Entity is ISoftDeleteEntity softDelete)
-                        {
-                            entry.State = EntityState.Unchanged;
-                            softDelete.IsDeleted = true;
-                            softDelete.DeleteBy = user;
-                            softDelete.DeleteDate = DateTime.Now;
                         }
                         break;
                 }

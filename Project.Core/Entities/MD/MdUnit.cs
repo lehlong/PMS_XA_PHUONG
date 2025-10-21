@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Project.Core.Entities.MD
 {
-    public class MdUnit : SoftDeleteEntity
+    public class MdUnit : BaseEntity
     {
         [Key]
         public string Code { get; set; } = string.Empty;
