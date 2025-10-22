@@ -22,7 +22,7 @@ namespace Project.Service.Services.PS
         {
             try
             {
-                var entities = await _dbContext.PsProjectPerson.Include(x => x.Person)
+                var entities = await _dbContext.PsProjectPerson.Include(x => x.Person).ThenInclude(x => x.Title)
                                 .Where(x => x.ProjectId == projectId)
                                 .ToListAsync();
                 return _mapper.Map<List<ProjectPersonDto>>(entities);

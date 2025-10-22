@@ -13,6 +13,7 @@ namespace Project.Service.Services.AD
         Task InsertAccount(AccountDto request);
         Task UpdateAccountRight(AccountRightDto request);
         Task<AccountDto> GetDetail(string userName);
+        Task UpdateAccount(AccountDto request);
     }
 
     public class AccountService(AppDbContext dbContext, IMapper mapper) : GenericService<AdAccount, AccountDto>(dbContext, mapper), IAccountService
@@ -41,6 +42,35 @@ namespace Project.Service.Services.AD
                 Status = false;
                 Exception = ex;
                 return null;
+            }
+        }
+
+        public async Task UpdateAccount(AccountDto request)
+        {
+            try
+            {
+                var user = await _dbContext.AdAccount.FirstOrDefaultAsync(x => x.UserName == request.UserName);
+                if (user != null)
+                {
+                    user.FullName = request.FullName;
+                    user.TitleCode = request.TitleCode;
+                    user.Phone = request.Phone;
+                    user.Email = request.Email;
+                    user.Address = request.Address;
+                    _dbContext.AdAccount.Update(user);
+                    await _dbContext.SaveChangesAsync();
+                }
+                else
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi dữ liệu đầu vào";
+                    this.MessageObject.MessageDetail = $"Hệ thống không tìm thấy tài khoản -{request.UserName}-";
+                }
+            }
+            catch (Exception ex)
+            {
+                Status = false;
+                Exception = ex;
             }
         }
 

@@ -63,7 +63,7 @@ namespace Project.Api.Controllers.AD
         public async Task<IActionResult> Update([FromBody] AccountDto request)
         {
             var res = new TransferObject();
-            await _service.Update(request);
+            await _service.UpdateAccount(request);
             if (_service.Status)
             {
                 await res.GetMessage("0103", _service);

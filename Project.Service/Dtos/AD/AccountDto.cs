@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Project.Core.Common;
 using Project.Core.Entities.AD;
+using Project.Core.Entities.MD;
 using System.ComponentModel.DataAnnotations;
 
 namespace Project.Service.Dtos.AD
@@ -17,10 +18,15 @@ namespace Project.Service.Dtos.AD
         public string? TitleCode { get; set; }
         public List<AdAccountGroup>? AccountGroups { get; set; }
         public List<string>? Rights { get; set; }
+        public virtual MdTitle? Title { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<AdAccount, AccountDto>().ReverseMap();
+            profile.CreateMap<AdAccount, AccountDto>();
+
+            profile.CreateMap<AccountDto, AdAccount>()
+                .ForMember(dest => dest.Title, opt => opt.Ignore());
+
         }
     }
 }

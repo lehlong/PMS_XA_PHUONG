@@ -64,62 +64,77 @@
 <nz-drawer nzWidth="50%" [nzClosable]="false" [nzVisible]="visibleAddCv" nzPlacement="right"
     [nzTitle]="'TẠO MỚI CÔNG VIỆC - ' + titleAddCv" (nzOnClose)="closeAddCv()" [nzExtra]="extra">
     <ng-container *nzDrawerContent>
-        <div nz-row [nzGutter]="12">
-            <div nz-col class="gutter-row" [nzSpan]="12">
-                <div class="inner-box">
-                    <div class="project-info">
-                        <label>Mã công việc</label>
-                        <input nz-input [(ngModel)]="dto.code" class="space-control" />
+        <nz-tabs>
 
-                        <label>Tên công việc</label>
-                        <input nz-input [(ngModel)]="dto.name" class="space-control" />
+            <nz-tab [nzTitle]="information">
+                <ng-template #information>
+                    <i class="bi bi-info-square"></i> THÔNG TIN CÔNG VIỆC
+                </ng-template>
+                <div nz-row [nzGutter]="12">
+                    <div nz-col class="gutter-row" [nzSpan]="12">
+                        <div class="inner-box">
+                            <div class="project-info">
+                                <label>Mã công việc</label>
+                                <input nz-input [(ngModel)]="dto.code" class="space-control" />
 
-                        <label>Hạn xử lý</label>
-                        <nz-date-picker [(ngModel)]="dto.endDate" class="space-control"
-                            [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
+                                <label>Tên công việc</label>
+                                <input nz-input [(ngModel)]="dto.name" class="space-control" />
+
+                                <label>Hạn xử lý</label>
+                                <nz-date-picker [(ngModel)]="dto.endDate" class="space-control"
+                                    [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
 
 
-                        <label>Ghi chú</label>
-                        <input nz-input [(ngModel)]="dto.notes" class="space-control" />
+                                <label>Ghi chú</label>
+                                <input nz-input [(ngModel)]="dto.notes" class="space-control" />
+                            </div>
+
+                        </div>
                     </div>
+                    <div nz-col class="gutter-row" [nzSpan]="12">
+                        <div class="inner-box">
 
-                </div>
-            </div>
-            <div nz-col class="gutter-row" [nzSpan]="12">
-                <div class="inner-box">
-
-                    <div nz-row [nzGutter]="12">
-                        <div nz-col class="gutter-row" [nzSpan]="24">
-                            <div class="inner-box">
-                                <div class="project-file">
-                                    <div class="file-upload-area" (click)="fileInput.click()">
-                                        <div>
-                                            <img src="img/folder_upload.png" class="img-upload">
+                            <div nz-row [nzGutter]="12">
+                                <div nz-col class="gutter-row" [nzSpan]="24">
+                                    <div class="inner-box">
+                                        <div class="project-file">
+                                            <div class="file-upload-area" (click)="fileInput.click()">
+                                                <div>
+                                                    <img src="img/folder_upload.png" class="img-upload">
+                                                </div>
+                                                <h3>Tải lên file đính kèm dự án</h3>
+                                                <p style="color: #666; font-size: 14px;">Hỗ trợ các định dạng: PDF, DOC,
+                                                    DOCX,
+                                                    XLS, XLSX, PNG, JPG</p>
+                                            </div>
                                         </div>
-                                        <h3>Tải lên file đính kèm dự án</h3>
-                                        <p style="color: #666; font-size: 14px;">Hỗ trợ các định dạng: PDF, DOC, DOCX,
-                                            XLS, XLSX, PNG, JPG</p>
-                                    </div>
-                                </div>
-                                <div *ngFor="let f of dto.files" class="file-item">
-                                    <div><img [src]="f.icon" width="30" style="margin-right: 12px;"></div>
-                                    <div>
-                                        <span style="font-weight: 600;">{{f.fileName}}</span><br>
-                                        <span style="font-size:12px; color: gray">{{ f.fileSize < 1048576 ? (f.fileSize
-                                                / 1024 | number : "1.1-1" ) + " KB" : (f.fileSize / 1048576 | number
-                                                : "1.1-1" ) + " MB" }}</span>
-                                    </div>
-                                    <div style="margin-left: auto;color: rgb(220, 53, 69);" nz-tooltip="Xoá file"
-                                        (click)="deleteFile(f)">
-                                        <nz-icon nzType="delete" nzTheme="outline" />
+                                        <div *ngFor="let f of dto.files" class="file-item">
+                                            <div><img [src]="f.icon" width="30" style="margin-right: 12px;"></div>
+                                            <div>
+                                                <span style="font-weight: 600;">{{f.fileName}}</span><br>
+                                                <span style="font-size:12px; color: gray">{{ f.fileSize < 1048576 ?
+                                                        (f.fileSize / 1024 | number : "1.1-1" ) + " KB" : (f.fileSize /
+                                                        1048576 | number : "1.1-1" ) + " MB" }}</span>
+                                            </div>
+                                            <div style="margin-left: auto;color: rgb(220, 53, 69);"
+                                                nz-tooltip="Xoá file" (click)="deleteFile(f)">
+                                                <nz-icon nzType="delete" nzTheme="outline" />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </nz-tab>
+
+            <nz-tab [nzTitle]="personnel">
+                <ng-template #personnel>
+                    <i class="bi bi-people"></i> GIAO THỰC HIỆN
+                </ng-template>
+            </nz-tab>
+        </nz-tabs>
 
     </ng-container>
     <ng-template #extra>

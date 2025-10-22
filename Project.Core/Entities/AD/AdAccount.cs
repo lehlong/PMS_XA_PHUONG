@@ -1,4 +1,5 @@
 ﻿using Project.Core.Common;
+using Project.Core.Entities.MD;
 using System.ComponentModel.DataAnnotations;
 
 namespace Project.Core.Entities.AD
@@ -14,5 +15,6 @@ namespace Project.Core.Entities.AD
         public string? Address { get; set; }
         public string? OrgId { get; set; }
         public string? TitleCode { get; set; }
+        public virtual MdTitle? Title { get; set; }
     }
 }
