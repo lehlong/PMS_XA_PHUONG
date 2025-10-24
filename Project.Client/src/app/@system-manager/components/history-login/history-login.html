@@ -3,19 +3,18 @@
     <nz-page-header-subtitle>Danh sách lịch sử đăng nhập</nz-page-header-subtitle>
     <nz-page-header-extra>
         <nz-space>
-            <input *nzSpaceItem nz-input placeholder="Tìm kiếm nhanh" [(ngModel)]="filter.keyWord"
-                (keydown.enter)="search()" />
+            <input *nzSpaceItem nz-input placeholder="Tìm kiếm nhanh" [(ngModel)]="filter.keyWord" (keydown.enter)="search()"/>
 
-            <button *nzSpaceItem nz-button (click)="reset()" class="icon-only">
-                <i class="bi bi-arrow-clockwise"></i>
+            <button *nzSpaceItem nz-button (click)="reset()">
+                <nz-icon nzType="sync" nzTheme="outline" />
             </button>
 
-            <button *nzSpaceItem nz-button (click)="search()" class="icon-only">
-                <i class="bi bi-search"></i>
+            <button *nzSpaceItem nz-button (click)="search()">
+                <nz-icon nzType="search" nzTheme="outline" />
             </button>
 
-            <button *nzSpaceItem nz-button nzDanger nzType="primary" (click)="delHistory()">
-                <i class="bi bi-trash3"></i> Xoá lịch sử
+            <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="delHistory()">
+                <nz-icon nzType="delete" nzTheme="outline" />Xoá lịch sử
             </button>
         </nz-space>
     </nz-page-header-extra>
