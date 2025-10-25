@@ -13,5 +13,6 @@ namespace Project.Core.Entities.MD
         public string? OrgId { get; set; }
         public int? Type { get; set; }
         public string? Notes { get; set; }
+        public virtual ICollection<MdWorkflowStep>? Steps { get; set; }
     }
 }

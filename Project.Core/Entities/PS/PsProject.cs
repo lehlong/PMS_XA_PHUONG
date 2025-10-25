@@ -28,6 +28,7 @@ namespace Project.Core.Entities.PS
         public int? TrangThai { get; set; }
         public int? GiaiDoan { get; set; }
         public string? Notes { get; set; }
+        public string? WorkflowId { get; set; }
         public string? RefrenceFileId { get; set; }
         public virtual MdOrganize? DonViPhuTrachRef { get; set; }
         public virtual ICollection<CmFile>? Files { get; set; }

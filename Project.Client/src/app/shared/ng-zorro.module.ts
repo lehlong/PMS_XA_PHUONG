@@ -33,8 +33,10 @@ import { NzTreeModule } from "ng-zorro-antd/tree";
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTimelineModule } from 'ng-zorro-antd/timeline';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
 
 export const NgModule = [
+    NzProgressModule,
     NzDropDownModule,
     ScrollingModule,
     CommonModule,

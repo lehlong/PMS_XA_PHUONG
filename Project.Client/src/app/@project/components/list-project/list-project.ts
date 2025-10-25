@@ -17,6 +17,7 @@ import { CustomerService } from '../../../@master-data/services/customer.service
 import { Router } from '@angular/router';
 import { FileService } from '../../../services/common/file.service';
 import { AreaService } from '../../../@master-data/services/area.service';
+import { WorkflowService } from '../../../@master-data/services/workflow.service';
 
 @Component({
   selector: 'app-list-project',
@@ -43,6 +44,7 @@ export class ListProject implements OnInit, OnDestroy {
   lstAccount: any[] = []
   lstCustomer: any[] = []
   lstArea: any[] = []
+  lstWorkflow: any[] = []
 
   constructor(
     private global: GlobalService,
@@ -56,7 +58,8 @@ export class ListProject implements OnInit, OnDestroy {
     private _customer: CustomerService,
     private _area: AreaService,
     private router: Router,
-    private _file : FileService
+    private _file: FileService,
+    private _workflow: WorkflowService
   ) {
     this.global.setBreadcrumb([
       {
@@ -78,7 +81,8 @@ export class ListProject implements OnInit, OnDestroy {
       lstAccount: this._account.getAll(),
       capDuAn: this._capDuAn.getAll(),
       lstCustomer: this._customer.getAll(),
-      lstArea: this._area.getAll()
+      lstArea: this._area.getAll(),
+      lstWorkflow: this._workflow.getAll(),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -89,6 +93,7 @@ export class ListProject implements OnInit, OnDestroy {
           this.capDuAn = res.capDuAn;
           this.lstCustomer = res.lstCustomer;
           this.lstArea = res.lstArea;
+          this.lstWorkflow = res.lstWorkflow;
         }
       });
   }
@@ -156,9 +161,6 @@ export class ListProject implements OnInit, OnDestroy {
   close() {
     this.visible = false;
     this.dto = new ProjectDto();
-    this.filterConfigStruct = new ConfigStructDto();
-    this.configStructTree = [];
-    this.displayedConfigStructTree = [];
   }
 
   openCreate() {
@@ -173,23 +175,6 @@ export class ListProject implements OnInit, OnDestroy {
         }
       }
     })
-  }
-
-  filterConfigStruct: ConfigStructDto = new ConfigStructDto();
-  configStructTree: any[] = [];
-  displayedConfigStructTree: any[] = [];
-
-  onChangeOrg(e: any) {
-    this.filterConfigStruct.orgId = e;
-    this.getConfigStructs();
-  }
-
-  getConfigStructs() {
-    this._configStruct.search(this.filterConfigStruct).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.configStructTree = this.displayedConfigStructTree = TreeUtils.buildNzConfigStructTree(res.data);
-      }
-    });
   }
 
   openDetailProject(projectId: any) {
@@ -208,13 +193,13 @@ export class ListProject implements OnInit, OnDestroy {
     }
 
     this._file.upload(formData).subscribe({
-      next: (res : any) => {
+      next: (res: any) => {
         this.dto.files = [...this.dto.files, ...res.data]
       }
     })
   }
 
-  deleteFile(f : any){
+  deleteFile(f: any) {
     this.dto.files = this.dto.files.filter(x => x.id != f.id)
   }
 }

@@ -7,8 +7,6 @@ label {
     gap: 6px;
     align-items: center;
     justify-content: flex-end;
-    margin-right: 12px;
-    margin-bottom: 24px;
 }
 
 .project-detail {
@@ -44,7 +42,8 @@ label {
 }
 
 .project-struct,
-.project-personal {
+.project-personal,
+.project-workflow {
     padding: 0 12px;
 }
 

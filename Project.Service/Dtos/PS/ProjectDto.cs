@@ -28,6 +28,7 @@ namespace Project.Service.Dtos.PS
         public int? TrangThai { get; set; }
         public int? GiaiDoan { get; set; }
         public string? Notes { get; set; }
+        public string? WorkflowId { get; set; }
         public string? RefrenceFileId { get; set; }
         public ICollection<ProjectStructDto>? ListGiaiDoan { get; set; }
         public ICollection<ProjectStructDto>? Structs { get; set; }

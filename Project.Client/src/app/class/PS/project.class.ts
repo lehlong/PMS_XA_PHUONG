@@ -20,6 +20,7 @@ export class ProjectDto extends BaseFilter {
     giaiDoan: number = 0;
     notes: string = '';
     refrenceFileId: string = '';
+    workflowId: string = '';
     structs: any[] = []
     listGiaiDoan: any[] = []
     files: any[] = []

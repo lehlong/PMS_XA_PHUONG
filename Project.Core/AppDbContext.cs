@@ -114,6 +114,7 @@ namespace Project.Core
         public DbSet<PsProject> PsProject { get; set; }
         public DbSet<PsProjectStruct> PsProjectStruct { get; set; }
         public DbSet<PsProjectPerson> PsProjectPerson { get; set; }
+        public DbSet<PsProjectWorkflowProcessing> PsProjectWorkflowProcessing { get; set; }
         #endregion
 
         #region Common

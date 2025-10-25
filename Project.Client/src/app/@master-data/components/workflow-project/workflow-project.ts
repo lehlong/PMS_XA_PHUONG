@@ -5,6 +5,10 @@ import { WorkflowDto } from '../../../class/MD/workflow.class';
 import { GlobalService } from '../../../services/common/global.service';
 import { WorkflowService } from '../../services/workflow.service';
 import { NgModule } from '../../../shared/ng-zorro.module';
+import { WorkflowProjectAction } from '../../../shared/statics/workflow-action.static';
+import { CapDuAnService } from '../../services/cap-du-an.service';
+import { OrganizeService } from '../../services/organize.service';
+import { WorkflowType } from '../../../shared/statics/workflow-type.static';
 
 @Component({
   selector: 'app-workflow-project',
@@ -20,8 +24,16 @@ export class WorkflowProject implements OnInit, OnDestroy {
   data: PaginationResult = new PaginationResult();
   dto: WorkflowDto = new WorkflowDto();
   filter: WorkflowDto = new WorkflowDto();
+  lstAction = WorkflowProjectAction.getList();
+  lstProjectLevel: any[] = [];
+  lstOrganize: any[] = [];
 
-  constructor(private global: GlobalService, private service: WorkflowService) {
+  constructor(
+    private global: GlobalService,
+    private service: WorkflowService,
+    private projectLevelService: CapDuAnService,
+    private organizeService: OrganizeService
+  ) {
     this.global.setBreadcrumb([
       {
         name: 'Workflow dự án',
@@ -32,6 +44,8 @@ export class WorkflowProject implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.search();
+    this.getProjectLevel();
+    this.getOrganize();
   }
 
   search() {
@@ -44,15 +58,32 @@ export class WorkflowProject implements OnInit, OnDestroy {
       })
   }
 
+  getProjectLevel() {
+    this.projectLevelService.getAll().pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.lstProjectLevel = res
+        }
+      })
+  }
+
+  getOrganize() {
+    this.organizeService.getAll().pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.lstOrganize = res
+        }
+      })
+  }
+
   trackById(index: number, item: any): any {
     return item.id || item.code;
   }
 
   open(data: any, isEdit: boolean) {
-    debugger
     this.isEdit = isEdit;
     if (isEdit) {
-      this.service.detail(data.code)
+      this.service.detail(data.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
@@ -73,12 +104,14 @@ export class WorkflowProject implements OnInit, OnDestroy {
   }
 
   save() {
+    this.dto.type = WorkflowType.Project;
     const action = this.isEdit ? 'update' : 'insert';
     this.service[action](this.dto)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
           this.search();
+          this.visible = false;
           if (!this.isEdit) this.dto = new WorkflowDto();
         }
       })
@@ -87,6 +120,19 @@ export class WorkflowProject implements OnInit, OnDestroy {
   reset() {
     this.filter = new WorkflowDto();
     this.search();
+  }
+
+  addStep(): void {
+    const step = {
+      step: this.dto.steps.length + 1,
+      id: '',
+      workflowId: '',
+      name: '',
+      hanXuLy: 0,
+      action: ''
+    };
+
+    this.dto.steps = [...this.dto.steps, step];
   }
 
   pageIndexChange(e: any) {

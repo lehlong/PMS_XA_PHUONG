@@ -3,7 +3,8 @@
     <nz-page-header-subtitle>Cấu hình các template workflow</nz-page-header-subtitle>
     <nz-page-header-extra>
         <nz-space>
-            <input *nzSpaceItem nz-input placeholder="Tìm kiếm nhanh" [(ngModel)]="filter.keyWord" (keydown.enter)="search()"/>
+            <input *nzSpaceItem nz-input placeholder="Tìm kiếm nhanh" [(ngModel)]="filter.keyWord"
+                (keydown.enter)="search()" />
 
             <button *nzSpaceItem nz-button (click)="reset()">
                 <nz-icon nzType="sync" nzTheme="outline" />
@@ -37,6 +38,8 @@
                     <td nzAlign="center">{{(data.currentPage - 1) * data.pageSize + i + 1}}</td>
                     <td><a (click)="open(item, true)">{{ item.code }}</a></td>
                     <td>{{ item.name }}</td>
+                    <td>{{ item.projectLevelCode }}</td>
+                    <td>{{ item.orgId }}</td>
                     <td>{{ item.notes }}</td>
                     <td nzAlign="center">
                         <nz-tag [nzColor]="item.isActive ? 'success' : 'error'">
@@ -57,23 +60,88 @@
     </nz-pagination>
 </div>
 
-<nz-drawer [nzWidth]="460" [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" [nzMask]="!isEdit"
+<nz-drawer nzWidth="50%" [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" [nzMask]="!isEdit"
     [nzExtra]="extra" [nzTitle]="isEdit ? 'CHỈNH SỬA' : 'TẠO MỚI'" (nzOnClose)="close()">
     <ng-container *nzDrawerContent>
-        <label>Mã </label>
-        <input nz-input [(ngModel)]="dto.code" [disabled]="isEdit" class="space-control" />
 
-        <label>Tên</label>
-        <input nz-input [(ngModel)]="dto.name" class="space-control" />
-
-        <label>Ghi chú</label>
-        <input nz-input [(ngModel)]="dto.notes" class="space-control" />
-
+        <div nz-row [nzGutter]="16">
+            <div nz-col class="gutter-row" [nzSpan]="12">
+                <div class="inner-box">
+                    <label>Mã </label>
+                    <input nz-input [(ngModel)]="dto.code" class="space-control" />
+                </div>
+            </div>
+            <div nz-col class="gutter-row" [nzSpan]="12">
+                <div class="inner-box">
+                    <label>Tên</label>
+                    <input nz-input [(ngModel)]="dto.name" class="space-control" />
+                </div>
+            </div>
+            <div nz-col class="gutter-row" [nzSpan]="12">
+                <div class="inner-box">
+                    <label>Cấp dự án</label>
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.projectLevelCode" class="space-control">
+                        <nz-option *ngFor="let i of lstProjectLevel" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
+                    </nz-select>
+                </div>
+            </div>
+            <div nz-col class="gutter-row" [nzSpan]="12">
+                <div class="inner-box">
+                    <label>Đơn vị</label>
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.orgId" class="space-control">
+                        <nz-option *ngFor="let i of lstOrganize" [nzLabel]="i.name" [nzValue]="i.id"></nz-option>
+                    </nz-select>
+                </div>
+            </div>
+            <div nz-col class="gutter-row" [nzSpan]="24">
+                <div class="inner-box">
+                    <label>Ghi chú</label>
+                    <input nz-input [(ngModel)]="dto.notes" class="space-control" />
+                </div>
+            </div>
+        </div>
 
         <nz-radio-group [(ngModel)]="dto.isActive">
             <label nz-radio [nzValue]="true">Kích hoạt</label>
             <label nz-radio [nzValue]="false">Khoá</label>
         </nz-radio-group>
+
+        <nz-table #configStep nzBordered [nzData]="dto.steps" nzSize="middle" [nzFrontPagination]="false"
+            [nzScroll]="{ y: 'calc(100vh - 226px)' }" style="margin-top:12px">
+            <thead>
+                <tr>
+                    <th colspan="4">CẤU HÌNH CÁC BƯỚC</th>
+                </tr>
+                <tr>
+                    <th nzAlign="center">STT</th>
+                    <th>Tên bước</th>
+                    <th>Số ngày xử lý</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of configStep.data; let i = index; trackBy: trackById">
+                    <td nzAlign="center" style="font-weight: 600;">Bước {{item.step}}</td>
+                    <td>
+                        <input nz-input [(ngModel)]="item.name" />
+                    </td>
+                    <td>
+                        <input nz-input [(ngModel)]="item.hanXuLy" type="number" />
+                    </td>
+                    <td>
+                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="item.action">
+                            <nz-option *ngFor="let i of lstAction" [nzLabel]="i.text" [nzValue]="i.value"></nz-option>
+                        </nz-select>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+
+        <div class="btn-add-step">
+            <button nz-button nzType="dashed" (click)="addStep()">
+                <nz-icon nzType="plus" nzTheme="outline" />Thêm bước
+            </button>
+        </div>
     </ng-container>
 
     <ng-template #extra>

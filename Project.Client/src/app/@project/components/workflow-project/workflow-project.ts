@@ -1,25 +1,47 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { GlobalService } from '../../../services/common/global.service';
+import { ProjectWorkflowProcessingService } from '../../services/project-workflow-processing.service';
+import { NgModule } from '../../../shared/ng-zorro.module';
+import { WorkflowProjectAction } from '../../../shared/statics/workflow-action.static';
 
 @Component({
   selector: 'app-workflow-project',
-  imports: [],
+  imports: [NgModule],
   templateUrl: './workflow-project.html',
   styleUrls: ['../../project.scss']
 })
 export class WorkflowProject implements OnInit {
   private destroy$ = new Subject<void>();
   projectId: string = '';
+  lstSteps: any[] = [];
+  workflowProjectAction = WorkflowProjectAction;
+  lstAction = WorkflowProjectAction.getList();
+  lstProjectLevel: any[] = [];
+  lstOrganize: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
-    private global: GlobalService
+    private global: GlobalService,
+    private service: ProjectWorkflowProcessingService
   ) { }
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
+    this.getSteps();
+  }
+
+  getSteps() {
+    this.service.getProjectWorkflowStep(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.lstSteps = res
+      }
+    })
+  }
+
+  update() {
+
   }
 
   ngOnDestroy(): void {

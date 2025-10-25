@@ -1,5 +1,5 @@
 <div class="project-personal">
-    <div class="button-action">
+    <!-- <div class="button-action">
         <button nz-button nzType="primary" class="btn-green" (click)="update()">
             <nz-icon nzType="save" nzTheme="outline" /> Cập nhật thông tin
         </button>
@@ -9,32 +9,45 @@
         <button nz-button nzType="primary" nzDanger (click)="delete()">
             <nz-icon nzType="delete" nzTheme="outline" /> Xoá nhân sự
         </button>
-    </div>
+    </div> -->
 
-    <nz-table #personnelTable nzBordered [nzData]="personnel" nzSize="small" [nzFrontPagination]="false"
-        [nzScroll]="{ y: 'calc(100vh - 226px)' }">
+    <nz-table #personnelTable nzBordered [nzData]="personnel" nzSize="small" [nzFrontPagination]="false">
         <thead>
+            <tr>
+                <th colspan="10">
+                    <div class="button-action">
+                        <button nz-button nzType="primary" class="btn-green" (click)="update()">
+                            <nz-icon nzType="save" nzTheme="outline" /> Cập nhật thông tin
+                        </button>
+                        <button nz-button nzType="primary" (click)="open()">
+                            <nz-icon nzType="plus" nzTheme="outline" /> Thêm nhân sự
+                        </button>
+                        <button nz-button nzType="primary" nzDanger (click)="delete()">
+                            <nz-icon nzType="delete" nzTheme="outline" /> Xoá nhân sự
+                        </button>
+                    </div>
+                </th>
+            </tr>
             <tr>
                 <th nzWidth="40px" [nzChecked]="checked" [nzIndeterminate]="indeterminate"
                     (nzCheckedChange)="onAllChecked($event)">
                 </th>
-                <th nzAlign="center" nzWidth="60px">STT</th>
-                <th>Tài khoản</th>
-                <th>Tên đầy đủ</th>
-                <th>Chức danh</th>
-                <th>Số điện thoại</th>
-                <th>Email</th>
-                <th>Vai trò dự án</th>
-                <th>Từ ngày</th>
-                <th>Đến ngày</th>
+                <th nzAlign="center" nzWidth="46px">STT</th>
+                <th nzAlign="center" nzWidth="120px">Tài khoản</th>
+                <th nzAlign="center">Tên đầy đủ</th>
+                <th nzAlign="center">Chức danh</th>
+                <th nzAlign="center">Số điện thoại</th>
+                <th nzAlign="center">Email</th>
+                <th nzAlign="center">Vai trò dự án</th>
+                <th nzAlign="center" nzWidth="146px">Từ ngày</th>
+                <th nzAlign="center" nzWidth="146px">Đến ngày</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let item of personnelTable.data; let i = index">
-                <td [nzChecked]="setOfCheckedId.has(item.id)"
-                    (nzCheckedChange)="onItemChecked(item.id, $event)">
+                <td [nzChecked]="setOfCheckedId.has(item.id)" (nzCheckedChange)="onItemChecked(item.id, $event)">
                 </td>
-                <td nzAlign="center">{{i + 1}}</td>
+                <td nzAlign="center" nzWidth="46px">{{i + 1}}</td>
                 <td>{{ item.userName }}</td>
                 <td>{{ item.person?.fullName }}</td>
                 <td>{{ item.person?.title?.name }}</td>

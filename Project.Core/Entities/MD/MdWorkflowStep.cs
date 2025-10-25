@@ -11,6 +11,7 @@ namespace Project.Core.Entities.MD
         public int? Step { get; set; }
         public string? Name { get; set; }
         public int? HanXuLy { get; set; }
-        public string? Action { get; set; }
+        public int? Action { get; set; }
+        public virtual MdWorkflow? Workflow { get; set; }
     }
 }

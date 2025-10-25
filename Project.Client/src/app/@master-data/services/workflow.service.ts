@@ -18,7 +18,7 @@ export class WorkflowService {
 
     update(data: WorkflowDto) { return this.common.put('Workflow/Update', data, false) }
 
-    detail(data: string) { return this.common.get(`Workflow/Detail/${data}`, {}, false) }
+    detail(data: string) { return this.common.get(`Workflow/Detail/${data}`, {}, true) }
 
     delete(data: string) { return this.common.delete(`Workflow/Delete/${data}`, {}, false) }
 

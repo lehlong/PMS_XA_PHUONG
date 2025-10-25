@@ -1,1 +1,90 @@
-<p>workflow-project works!</p>
+<div class="project-workflow">
+    <div nz-row [nzGutter]="12">
+        <div nz-col class="gutter-row" [nzSpan]="6">
+            <div class="inner-box" style="margin-top: 7px;">
+                <nz-timeline>
+                    <nz-timeline-item nzColor="gray" *ngFor="let i of lstSteps">
+                        <div class="item-workflow">
+                            <div class="name-step-workflow-gray">{{i.name}} </div>
+                            <div class="detail-workflow">
+                                <div class="item-detail">
+                                    <span><nz-icon nzType="user" nzTheme="outline" /></span>
+                                    <span style="font-weight: 600;">Người xử lý:</span>
+                                    @if(i.userName){
+                                    <span>{{i.userName}}</span>
+                                    }
+                                    @else {
+                                    <span>
+                                        <nz-tag nzColor="default">
+                                            <span>Chưa cấu hình</span>
+                                        </nz-tag>
+                                    </span>
+                                    }
+                                </div>
+
+                                <div class="item-detail">
+                                    <span><nz-icon nzType="bars" nzTheme="outline" /></span>
+                                    <span style="font-weight: 600;">Hành động:</span>
+                                    <span>
+                                        {{workflowProjectAction.getText(i.action)}}
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </nz-timeline-item>
+                </nz-timeline>
+            </div>
+        </div>
+        <div nz-col class="gutter-row" [nzSpan]="18">
+            <div class="inner-box">
+                <nz-table #workflowTable nzBordered [nzData]="lstSteps" nzSize="small" [nzFrontPagination]="false">
+                    <thead>
+                        <tr>
+                            <th colspan="5">
+                                <div class="button-action">
+                                    <button nz-button nzType="primary" class="btn-green" (click)="update()">
+                                        <nz-icon nzType="save" nzTheme="outline" /> Cập nhật cấu hình
+                                    </button>
+
+                                    <button nz-button nzType="primary" class="btn-green" (click)="update()">
+                                        <nz-icon nzType="step-forward" nzTheme="outline" /> Bắt đầu luồng quy trình
+                                    </button>
+
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th nzAlign="center" nzWidth="120px">STT</th>
+                            <th>Tên bước</th>
+                            <th nzWidth="120px" nzAlign="center">Số ngày xử lý</th>
+                            <th>Hành động</th>
+                            <th nzWidth="260px">Người thực hiện</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of workflowTable.data; let i = index;">
+                            <td nzAlign="center" style="font-weight: 600;">Bước {{item.step}}</td>
+                            <td>{{item.name}}</td>
+                            <td nzAlign="center">{{item.hanXuLy}}</td>
+                            <td>
+                                <nz-select nzShowSearch nzAllowClear [(ngModel)]="item.action">
+                                    <nz-option *ngFor="let i of lstAction" [nzLabel]="i.text"
+                                        [nzValue]="i.value"></nz-option>
+                                </nz-select>
+                            </td>
+                            <td>
+                                <nz-select nzShowSearch nzAllowClear [(ngModel)]="item.action">
+                                    <nz-option *ngFor="let i of lstAction" [nzLabel]="i.text"
+                                        [nzValue]="i.value"></nz-option>
+                                </nz-select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </nz-table>
+            </div>
+        </div>
+    </div>
+
+
+</div>

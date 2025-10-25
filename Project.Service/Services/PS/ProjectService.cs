@@ -88,6 +88,11 @@ namespace Project.Service.Services.PS
         {
             try
             {
+                #region Validate
+
+                #endregion
+
+                #region Xử lý thông tin dự án
                 var projectId = Guid.NewGuid().ToString();
                 var project = _mapper.Map<PsProject>(request);
                 project.Id = projectId;
@@ -95,7 +100,9 @@ namespace Project.Service.Services.PS
                 project.RefrenceFileId = Guid.NewGuid().ToString();
 
                 await _dbContext.PsProject.AddAsync(project);
+                #endregion
 
+                #region Xử lý cây cấu trúc
                 var lstConfigStruct = await _dbContext.MdConfigStruct
                     .Where(x => x.OrgId == request.DonViPhuTrach)
                     .OrderBy(x => x.OrderNumber)
@@ -140,13 +147,39 @@ namespace Project.Service.Services.PS
 
                     idMapping[i.Id] = newId;
                 }
+                #endregion
 
+                #region Xử lý file đính kèm
                 var lstFile = _mapper.Map<List<CmFile>>(request.Files);
 
                 foreach (var f in lstFile)
                 {
                     f.RefrenceFileId = project.RefrenceFileId;
                 }
+                #endregion
+
+                #region Xử lý workflow
+                var lstStepConfig = await _dbContext.MdWorkflowStep.Where(x => x.WorkflowId == request.WorkflowId).ToListAsync();
+                foreach (var i in lstStepConfig)
+                {
+                    var step = new PsProjectWorkflowProcessing
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ProjectId = projectId,
+                        Step = i.Step,
+                        Name = i.Name,
+                        HanXuLy = i.HanXuLy,
+                        Action = i.Action,
+                        IsDone = false,
+                        IsProcessing = false,
+                    };
+                    await _dbContext.PsProjectWorkflowProcessing.AddAsync(step);
+                }
+                #endregion
+
+                #region Lưu lịch sử
+
+                #endregion
 
                 await _dbContext.CmFile.AddRangeAsync(lstFile);
 
