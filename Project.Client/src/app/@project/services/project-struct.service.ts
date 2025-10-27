@@ -8,7 +8,7 @@ import { ProjectStructDto } from '../../class/PS/project-struct.class';
 export class ProjectStructService {
     constructor(private common: CommonService) { }
 
-    getProjectStruct(projectId: string) { return this.common.get(`ProjectStruct/GetProjectStruct/${projectId}`, {}, true) }
+    getProjectStruct(projectId: string) { return this.common.get(`ProjectStruct/GetProjectStruct/${projectId}`, {}, false) }
 
-    insert(data: ProjectStructDto) { return this.common.post('ProjectStruct/Insert', data, true) }
+    insert(data: ProjectStructDto) { return this.common.post('ProjectStruct/Insert', data, false) }
 }

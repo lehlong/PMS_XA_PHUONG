@@ -7,11 +7,11 @@ import { CommonService } from '../../services/common/common.service';
 export class ProjectPersonService {
     constructor(private common: CommonService) { }
 
-    getProjectPerson(projectId: string) { return this.common.get(`ProjectPerson/GetProjectPerson/${projectId}`, {}, true) }
+    getProjectPerson(projectId: string) { return this.common.get(`ProjectPerson/GetProjectPerson/${projectId}`, {}, false) }
 
-    updateProjectPerson(request: any) { return this.common.put(`ProjectPerson/UpdateProjectPerson`, request, true) }
+    updateProjectPerson(request: any) { return this.common.put(`ProjectPerson/UpdateProjectPerson`, request, false) }
 
-    updateInfoProjectPerson(request: any) { return this.common.put(`ProjectPerson/UpdateInfoProjectPerson`, request, true) }
+    updateInfoProjectPerson(request: any) { return this.common.put(`ProjectPerson/UpdateInfoProjectPerson`, request, false) }
 
-    deleteProjectPerson(ids: any) { return this.common.post(`ProjectPerson/DeleteProjectPerson`, ids, true) }
+    deleteProjectPerson(ids: any) { return this.common.post(`ProjectPerson/DeleteProjectPerson`, ids, false) }
 }
