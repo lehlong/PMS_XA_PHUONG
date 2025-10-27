@@ -4,6 +4,7 @@ export class ProjectStatus {
     static readonly DaXacNhan = 2;
     static readonly DaPheDuyet = 3;
     static readonly TuChoi = 4;
+    static readonly YeuCauChinhSua = 5;
 
     static getText(i: number): string {
         switch (i) {
@@ -17,6 +18,8 @@ export class ProjectStatus {
                 return 'Đã phê duyệt';
             case ProjectStatus.TuChoi:
                 return 'Từ chối';
+            case ProjectStatus.YeuCauChinhSua:
+                return 'Yêu cầu chỉnh sửa';
             default:
                 return '';
         }
@@ -28,7 +31,8 @@ export class ProjectStatus {
             { value: this.DaTrinhDuyet, text: this.getText(this.DaTrinhDuyet) },
             { value: this.DaXacNhan, text: this.getText(this.DaXacNhan) },
             { value: this.DaPheDuyet, text: this.getText(this.DaPheDuyet) },
-            { value: this.TuChoi, text: this.getText(this.TuChoi) }
+            { value: this.TuChoi, text: this.getText(this.TuChoi) },
+            { value: this.YeuCauChinhSua, text: this.getText(this.YeuCauChinhSua) }
         ];
     }
 }

@@ -10,27 +10,31 @@ export class ProjectService {
 
     search(params: ProjectDto) { return this.common.get('Project/Search', params, true) }
 
-    getAll() { return this.common.get('Project/GetAll', {}, false) }
+    getAll() { return this.common.get('Project/GetAll', {}, true) }
 
-    getAllActive() { return this.common.get('Project/GetAllActive', {}, false) }
+    getAllActive() { return this.common.get('Project/GetAllActive', {}, true) }
 
-    insert(data: ProjectDto) { return this.common.post('Project/Insert', data, false) }
+    insert(data: ProjectDto) { return this.common.post('Project/Insert', data, true) }
 
-    update(data: ProjectDto) { return this.common.put('Project/Update', data, false) }
+    update(data: ProjectDto) { return this.common.put('Project/Update', data, true) }
 
-    detail(data: string) { return this.common.get(`Project/Detail/${data}`, {}, false) }
+    detail(data: string) { return this.common.get(`Project/Detail/${data}`, {}, true) }
 
-    getGiaiDoan(data: string) { return this.common.get(`Project/GetGiaiDoan/${data}`, {}, false) }
+    getGiaiDoan(data: string) { return this.common.get(`Project/GetGiaiDoan/${data}`, {}, true) }
 
-    delete(data: string) { return this.common.delete(`Project/Delete/${data}`, {}, false) }
+    delete(data: string) { return this.common.delete(`Project/Delete/${data}`, {}, true) }
 
-    updateOrder(data: any) { return this.common.put(`Project/UpdateOrder`, data, false) }
+    updateOrder(data: any) { return this.common.put(`Project/UpdateOrder`, data, true) }
 
-    trinhDuyet(data: ProjectDto) { return this.common.put('Project/TrinhDuyet', data, false) }
+    trinhDuyet(data: string) { return this.common.put(`Project/TrinhDuyet/${data}`, {}, true) }
 
-    xacNhan(data: ProjectDto) { return this.common.put('Project/XacNhan', data, false) }
+    xacNhan(data: string) { return this.common.put(`Project/XacNhan/${data}`, {}, true) }
 
-    pheDuyet(data: ProjectDto) { return this.common.put('Project/PheDuyet', data, false) }
+    pheDuyet(data: string) { return this.common.put(`Project/PheDuyet/${data}`, {}, true) }
     
-    tuChoi(data: ProjectDto) { return this.common.put('Project/TuChoi', data, false) }
+    tuChoi(data: string) { return this.common.put(`Project/TuChoi/${data}`, {}, true) }
+
+    yeuCauChinhSua(data: string) { return this.common.put(`Project/YeuCauChinhSua/${data}`, {}, true) }
+
+    getCurrentStep(data: string) { return this.common.get(`Project/GetCurrentStep/${data}`, {}, true) }
 }

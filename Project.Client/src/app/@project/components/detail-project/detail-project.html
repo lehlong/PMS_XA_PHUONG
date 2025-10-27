@@ -6,35 +6,46 @@
             <ng-template #dashboard>
                 <i class="bi bi-grid" style="padding-left: 12px;"></i> DASHBOARD
             </ng-template>
-            <app-dashboard-project *ngIf="indexTabProject === 0"></app-dashboard-project>
+            <div class="tab-project">
+                <app-dashboard-project *ngIf="indexTabProject === 0"></app-dashboard-project>
+            </div>
         </nz-tab>
 
         <nz-tab [nzTitle]="information">
             <ng-template #information>
                 <i class="bi bi-info-square"></i> THÔNG TIN DỰ ÁN
             </ng-template>
-            <app-info-project *ngIf="indexTabProject === 1"></app-info-project>
+            <div class="tab-project">
+                <app-info-project *ngIf="indexTabProject === 1"></app-info-project>
+            </div>
         </nz-tab>
 
         <nz-tab [nzTitle]="personnel">
             <ng-template #personnel>
                 <i class="bi bi-people"></i> NHÂN SỰ
             </ng-template>
-            <app-person-project *ngIf="indexTabProject === 2"></app-person-project>
+            <div class="tab-project">
+                <app-person-project *ngIf="indexTabProject === 2"></app-person-project>
+            </div>
         </nz-tab>
 
         <nz-tab [nzTitle]="workflow">
             <ng-template #workflow>
                 <i class="bi bi-activity"></i> QUY TRÌNH
             </ng-template>
-            <app-workflow-project *ngIf="indexTabProject === 3"></app-workflow-project>
+            <div class="tab-project">
+                <app-workflow-project *ngIf="indexTabProject === 3"></app-workflow-project>
+            </div>
+
         </nz-tab>
 
         <nz-tab [nzTitle]="struct">
             <ng-template #struct>
                 <i class="bi bi-diagram-3"></i> HẠNG MỤC, CÔNG VIỆC
             </ng-template>
-            <app-struct-project *ngIf="indexTabProject === 4"></app-struct-project>
+            <div class="tab-project">
+                <app-struct-project *ngIf="indexTabProject === 4"></app-struct-project>
+            </div>
         </nz-tab>
     </nz-tabs>
 </div>

@@ -2,33 +2,74 @@
     <div nz-row [nzGutter]="12">
         <div nz-col class="gutter-row" [nzSpan]="6">
             <div class="inner-box" style="margin-top: 7px;">
+                <nz-divider [nzText]="divider_task">
+                        <ng-template #divider_task>
+                            <i class="bi bi-activity"></i> QUÁ TRÌNH THỰC HIỆN
+                        </ng-template>
+                    </nz-divider>
                 <nz-timeline>
-                    <nz-timeline-item nzColor="gray" *ngFor="let i of lstSteps">
+                    <nz-timeline-item [nzColor]="i.isDone && !i.isProcessing ? '#339933' : 
+                    !i.isDone && i.isProcessing ? '#1890FF' : 'gray'"
+                         *ngFor="let i of lstSteps">
                         <div class="item-workflow">
-                            <div class="name-step-workflow-gray">{{i.name}} </div>
+                            <div [class]="i.isDone ? 'name-step-workflow-done' : i.isProcessing ? 'name-step-workflow-processing' : 'name-step-workflow-gray'">{{i.name}} </div>
                             <div class="detail-workflow">
-                                <div class="item-detail">
-                                    <span><nz-icon nzType="user" nzTheme="outline" /></span>
-                                    <span style="font-weight: 600;">Người xử lý:</span>
-                                    @if(i.userName){
-                                    <span>{{i.userName}}</span>
-                                    }
-                                    @else {
-                                    <span>
-                                        <nz-tag nzColor="default">
-                                            <span>Chưa cấu hình</span>
-                                        </nz-tag>
-                                    </span>
-                                    }
-                                </div>
 
                                 <div class="item-detail">
-                                    <span><nz-icon nzType="bars" nzTheme="outline" /></span>
-                                    <span style="font-weight: 600;">Hành động:</span>
-                                    <span>
-                                        {{workflowProjectAction.getText(i.action)}}
-                                    </span>
+                                    <span><i class="bi bi-person-circle"></i></span>
+                                    <span style="font-weight: 600;">Người xử lý:</span>
+                                    <span>{{i?.person?.fullName}}</span>
                                 </div>
+
+                                @if(i.isDone){
+
+                                    <div class="item-detail">
+                                        <span><nz-icon nzType="bars" nzTheme="outline" /></span>
+                                        <span style="font-weight: 600;">Hành động:</span>
+                                        <span>
+                                            {{workflowProjectAction.getText(i.acted)}}
+                                        </span>
+                                    </div>
+
+                                    <div class="item-detail">
+                                        <span><i class="bi bi-alarm"></i></span>
+                                        <span style="font-weight: 600;">Thời gian thực hiện:</span>
+                                        <span> {{i.updateDate | date : 'dd/MM/yyyy HH:mm'}}</span>
+                                    </div>
+                                    
+                                    <div class="item-detail">
+                                        <nz-tag nzColor="success">
+                                            <nz-icon nzType="check" />
+                                            <span>Đã xử lý</span>
+                                        </nz-tag>
+                                    </div>
+
+                                }
+
+                                @if(i.isProcessing){
+                                
+                                    <div class="item-detail">
+                                        <span><i class="bi bi-alarm"></i></span>
+                                        <span style="font-weight: 600;">Hạn xử lý:</span>
+                                        <span> {{i.deadline | date : 'dd/MM/yyyy HH:mm'}}</span>
+                                    </div>
+                                    
+                                    <div class="item-detail">
+                                        <nz-tag nzColor="processing">
+                                            <nz-icon nzType="sync" nzSpin />
+                                            <span>Đang xử lý</span>
+                                        </nz-tag>
+                                    </div>
+
+                                }
+
+                                @if(!i.isProcessing && !i.isDone){
+                                    <div class="item-detail">
+                                        <nz-tag nzColor="default">
+                                            <span>Chưa bắt đầu</span>
+                                        </nz-tag>
+                                    </div>
+                                } 
 
                             </div>
                         </div>
@@ -38,6 +79,7 @@
         </div>
         <div nz-col class="gutter-row" [nzSpan]="18">
             <div class="inner-box">
+                <div class="text-valid-wf" *ngIf="personnel.length == 0">(Vui lòng cấu hình nhân sự tham gia dự án trước khi cấu hình luồng quy trình)</div>
                 <nz-table #workflowTable nzBordered [nzData]="lstSteps" nzSize="small" [nzFrontPagination]="false">
                     <thead>
                         <tr>
@@ -47,7 +89,7 @@
                                         <nz-icon nzType="save" nzTheme="outline" /> Cập nhật cấu hình
                                     </button>
 
-                                    <button nz-button nzType="primary" class="btn-green" (click)="update()">
+                                    <button nz-button nzType="primary" class="btn-green" (click)="startWorkflow()">
                                         <nz-icon nzType="step-forward" nzTheme="outline" /> Bắt đầu luồng quy trình
                                     </button>
 
@@ -68,15 +110,15 @@
                             <td>{{item.name}}</td>
                             <td nzAlign="center">{{item.hanXuLy}}</td>
                             <td>
-                                <nz-select nzShowSearch nzAllowClear [(ngModel)]="item.action">
+                                <nz-select nzShowSearch nzAllowClear [(ngModel)]="item.listActions" nzMode="multiple">
                                     <nz-option *ngFor="let i of lstAction" [nzLabel]="i.text"
                                         [nzValue]="i.value"></nz-option>
                                 </nz-select>
                             </td>
                             <td>
-                                <nz-select nzShowSearch nzAllowClear [(ngModel)]="item.action">
-                                    <nz-option *ngFor="let i of lstAction" [nzLabel]="i.text"
-                                        [nzValue]="i.value"></nz-option>
+                                <nz-select nzShowSearch nzAllowClear [(ngModel)]="item.userName">
+                                    <nz-option *ngFor="let i of personnel" [nzLabel]="i.person?.fullName"
+                                        [nzValue]="i.userName"></nz-option>
                                 </nz-select>
                             </td>
                         </tr>

@@ -51,6 +51,7 @@ namespace Project.Service.Services.MD
                 {
                     i.Id = Guid.NewGuid().ToString();
                     i.WorkflowId = workflowId;
+                    i.Action = string.Join(",", i.ListActions);
                 }
 
                 var _steps = _mapper.Map<List<MdWorkflowStep>>(request.Steps);
@@ -73,6 +74,11 @@ namespace Project.Service.Services.MD
                 var _workflow = _mapper.Map<MdWorkflow>(request);
                 _dbContext.MdWorkflow.Update(_workflow);
 
+                foreach(var i in request.Steps)
+                {
+                    i.Action = string.Join(",", i.ListActions);
+                }
+
                 var _steps = _mapper.Map<List<MdWorkflowStep>>(request.Steps);
                 _dbContext.MdWorkflowStep.UpdateRange(_steps);
 
@@ -94,7 +100,14 @@ namespace Project.Service.Services.MD
                 {
                     _workflow.Steps = _workflow.Steps.OrderBy(x => x.Step).ToList();
                 }
-                return _mapper.Map<WorkflowDto>(_workflow);
+
+                var data = _mapper.Map<WorkflowDto>(_workflow);
+
+                foreach (var i in data.Steps)
+                {
+                    i.ListActions = i.Action?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
+                }
+                return data;
             }
             catch (Exception ex)
             {

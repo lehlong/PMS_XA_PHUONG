@@ -1,7 +1,10 @@
 <div class="main-login">
-    
+
     <div class="login-container">
-            <img src="img/logo.png" class="img-logo-login">
+        <img src="img/logo.png" class="img-logo-login">
+        <div class="title-system">
+            HỆ THỐNG QUẢN LÝ DỰ ÁN
+        </div>
         <nz-tabs nzCentered [(nzSelectedIndex)]="activeTabIndex" (nzSelectedIndexChange)="onTabChange($event)">
             <nz-tab [nzTitle]="loginAccount">
                 <ng-template #loginAccount>
@@ -9,7 +12,7 @@
                 </ng-template>
                 <div class="tab-content">
                     <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="submitForm()">
-                        <nz-form-item>
+                        <nz-form-item style="margin-bottom: 12px !important">
                             <nz-form-control nzErrorTip="Vui lòng nhập tên đăng nhập!">
                                 <nz-input-group nzPrefixIcon="user">
                                     <input type="text" nz-input formControlName="username"
@@ -17,7 +20,7 @@
                                 </nz-input-group>
                             </nz-form-control>
                         </nz-form-item>
-                        <nz-form-item>
+                        <nz-form-item style="margin-bottom: 12px !important">
                             <nz-form-control nzErrorTip="Vui lòng nhập mật khẩu!">
                                 <nz-input-group nzPrefixIcon="lock">
                                     <input [type]="isPasswordVisible ? 'text' : 'password'" nz-input
@@ -29,7 +32,7 @@
                             </nz-form-control>
                         </nz-form-item>
 
-                        <div nz-row class="login-form-margin">
+                        <div nz-row class="login-form-margin" style="margin-bottom: 12px !important">
                             <div nz-col [nzSpan]="12">
                                 <label nz-checkbox>
                                     <span>Ghi nhớ</span>

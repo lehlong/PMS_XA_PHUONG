@@ -15,6 +15,7 @@ import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dro
 import { PaginationResult } from '../../../class/common/pagination-result.class';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { EnvironmentService } from '../../../services/common/environment.service';
+import { WorkflowProjectAction } from '../../../shared/statics/workflow-action.static';
 
 @Component({
   selector: 'app-info-project',
@@ -22,12 +23,14 @@ import { EnvironmentService } from '../../../services/common/environment.service
   templateUrl: './info-project.html',
   styleUrls: ['../../project.scss']
 })
+
 export class InfoProject implements OnInit {
   private destroy$ = new Subject<void>();
   projectId: string = '';
   project: ProjectDto = new ProjectDto();
   lstGiaiDoan: any[] = [];
   giaiDoanHienTai: any = {}
+  currentStep: any = {}
 
   isVisibleHistory = false;
   isVisibleViewFile = false;
@@ -38,6 +41,8 @@ export class InfoProject implements OnInit {
   lstAccount: any[] = []
   lstCustomer: any[] = []
   lstHistory: PaginationResult = new PaginationResult();
+  workflowProjectAction = WorkflowProjectAction
+
 
   constructor(
     private route: ActivatedRoute,
@@ -51,7 +56,7 @@ export class InfoProject implements OnInit {
     private _file: FileService,
     private sanitizer: DomSanitizer,
     private nzContextMenuService: NzContextMenuService,
-    private env : EnvironmentService
+    private env: EnvironmentService
   ) { }
 
   ngOnInit(): void {
@@ -60,6 +65,9 @@ export class InfoProject implements OnInit {
     this.service.detail(this.projectId).subscribe({
       next: (res: any) => {
         this.project = res;
+        if (this.project.currentStepWorkflowId) {
+          this.getCurrentStep(this.project.currentStepWorkflowId)
+        }
         this.global.setBreadcrumb([
           { name: 'Danh sách dự án', path: 'project/list-project' },
           { name: this.project.name, path: 'project/' + this.project.id },
@@ -94,6 +102,15 @@ export class InfoProject implements OnInit {
           this.lstCustomer = res.lstCustomer;
         }
       });
+  }
+
+  getCurrentStep(stepId: string) {
+    this.service.getCurrentStep(stepId).subscribe({
+      next: (res) => {
+        this.currentStep = res
+        console.log(res)
+      }
+    })
   }
 
   chuyenTiepGiaiDoan() {
@@ -164,8 +181,8 @@ export class InfoProject implements OnInit {
   }
 
   filePreview!: SafeResourceUrl;
-  idTab : string = '';
-  
+  idTab: string = '';
+
   viewFileOpen(data: any, mode: any) {
     const idTab = this.generateShortId();
     this.idTab = idTab;
@@ -202,7 +219,7 @@ export class InfoProject implements OnInit {
   }
 
   trinhDuyet() {
-    this.service.trinhDuyet(this.project).pipe(takeUntil(this.destroy$)).subscribe({
+    this.service.trinhDuyet(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.ngOnInit();
       }
@@ -210,7 +227,7 @@ export class InfoProject implements OnInit {
   }
 
   xacNhan() {
-    this.service.xacNhan(this.project).pipe(takeUntil(this.destroy$)).subscribe({
+    this.service.xacNhan(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.ngOnInit();
       }
@@ -218,7 +235,7 @@ export class InfoProject implements OnInit {
   }
 
   pheDuyet() {
-    this.service.pheDuyet(this.project).pipe(takeUntil(this.destroy$)).subscribe({
+    this.service.pheDuyet(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.ngOnInit();
       }
@@ -226,10 +243,23 @@ export class InfoProject implements OnInit {
   }
 
   tuChoi() {
-    this.service.tuChoi(this.project).pipe(takeUntil(this.destroy$)).subscribe({
+    this.service.tuChoi(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.ngOnInit();
       }
     })
   }
+
+  yeuCauChinhSua() {
+    this.service.yeuCauChinhSua(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res) => {
+        this.ngOnInit();
+      }
+    })
+  }
+
+  checkActionCurrent(action: number): boolean {
+    return !!this.currentStep && this.currentStep.listActions?.includes(action);
+  }
+
 }

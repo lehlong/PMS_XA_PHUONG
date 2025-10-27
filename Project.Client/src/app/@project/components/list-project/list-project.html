@@ -32,7 +32,7 @@
                     <th nzAlign="center" nzWidth="140px">Ngày bắt đầu</th>
                     <th nzAlign="center" nzWidth="140px">Ngày kết thúc</th>
                     <th nzAlign="center"> Giai đoạn</th>
-                    <th nzAlign="center"> Trạng thái</th>
+                    <th nzAlign="center" nzWidth="160px"> Trạng thái</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,7 +46,9 @@
                     <td nzAlign="center">{{ item.startDate | date: 'dd/MM/yyyy' }}</td>
                     <td nzAlign="center">{{ item.endDate | date: 'dd/MM/yyyy' }}</td>
                     <td nzAlign="center">{{ item.giaiDoan }}</td>
-                    <td nzAlign="center">{{ item.trangThai }}</td>
+                    <td nzAlign="center">
+                        <nz-tag nzColor="default">{{  projectStatus.getText(item.trangThai) }}</nz-tag>
+                    </td>
 
                 </tr>
             </tbody>

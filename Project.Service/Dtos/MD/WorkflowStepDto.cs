@@ -13,7 +13,8 @@ namespace Project.Service.Dtos.MD
         public int? Step { get; set; }
         public string? Name { get; set; }
         public int? HanXuLy { get; set; }
-        public int? Action { get; set; }
+        public string? Action { get; set; }
+        public List<int>? ListActions { get; set; }
 
         public void Mapping(Profile profile)
         {

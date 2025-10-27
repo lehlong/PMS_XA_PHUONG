@@ -76,6 +76,22 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
 
+        [HttpGet("GetCurrentStep/{stepId}")]
+        public async Task<IActionResult> GetCurrentStep([FromRoute] string stepId)
+        {
+            var res = new TransferObject();
+            var data = await _service.GetCurrentStep(stepId);
+            if (_service.Status)
+            {
+                res.Data = data;
+            }
+            else
+            {
+                await res.GetMessage("0001", _service);
+            }
+            return Ok(res);
+        }
+
         [HttpGet("GetGiaiDoan/{projectId}")]
         public async Task<IActionResult> GetGiaiDoan([FromRoute] string projectId)
         {
@@ -93,11 +109,11 @@ namespace Project.Api.Controllers.PS
         }
 
 
-        [HttpPut("TrinhDuyet")]
-        public async Task<IActionResult> TrinhDuyet([FromBody] ProjectDto request)
+        [HttpPut("TrinhDuyet/{projectId}")]
+        public async Task<IActionResult> TrinhDuyet([FromRoute] string projectId)
         {
             var res = new TransferObject();
-            await _service.Update(request);
+            await _service.TrinhDuyet(projectId);
             if (_service.Status)
             {
                 await res.GetMessage("0103", _service);
@@ -109,11 +125,11 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
 
-        [HttpPut("PheDuyet")]
-        public async Task<IActionResult> PheDuyet([FromBody] ProjectDto request)
+        [HttpPut("PheDuyet/{projectId}")]
+        public async Task<IActionResult> PheDuyet([FromRoute] string projectId)
         {
             var res = new TransferObject();
-            await _service.Update(request);
+            await _service.PheDuyet(projectId);
             if (_service.Status)
             {
                 await res.GetMessage("0103", _service);
@@ -125,11 +141,11 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
 
-        [HttpPut("XacNhan")]
-        public async Task<IActionResult> XacNhan([FromBody] ProjectDto request)
+        [HttpPut("XacNhan/{projectId}")]
+        public async Task<IActionResult> XacNhan([FromRoute] string projectId)
         {
             var res = new TransferObject();
-            await _service.Update(request);
+            await _service.XacNhan(projectId);
             if (_service.Status)
             {
                 await res.GetMessage("0103", _service);
@@ -141,11 +157,27 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
 
-        [HttpPut("TuChoi")]
-        public async Task<IActionResult> TuChoi([FromBody] ProjectDto request)
+        [HttpPut("TuChoi/{projectId}")]
+        public async Task<IActionResult> TuChoi([FromRoute] string projectId)
         {
             var res = new TransferObject();
-            await _service.Update(request);
+            await _service.TuChoi(projectId);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
+            }
+            return Ok(res);
+        }
+
+        [HttpPut("YeuCauChinhSua/{projectId}")]
+        public async Task<IActionResult> YeuCauChinhSua([FromRoute] string projectId)
+        {
+            var res = new TransferObject();
+            await _service.YeuCauChinhSua(projectId);
             if (_service.Status)
             {
                 await res.GetMessage("0103", _service);

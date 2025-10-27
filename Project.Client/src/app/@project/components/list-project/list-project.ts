@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 import { FileService } from '../../../services/common/file.service';
 import { AreaService } from '../../../@master-data/services/area.service';
 import { WorkflowService } from '../../../@master-data/services/workflow.service';
+import { ProjectStatus } from '../../../shared/statics/project-status.static';
 
 @Component({
   selector: 'app-list-project',
@@ -45,6 +46,8 @@ export class ListProject implements OnInit, OnDestroy {
   lstCustomer: any[] = []
   lstArea: any[] = []
   lstWorkflow: any[] = []
+
+  projectStatus = ProjectStatus
 
   constructor(
     private global: GlobalService,

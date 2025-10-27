@@ -7,6 +7,7 @@
         public const int DaXacNhan = 2;
         public const int DaPheDuyet = 3;
         public const int TuChoi = 4;
+        public const int YeuCauChinhSua = 5;
 
         public static string GetText(int i) => i switch
         {
@@ -15,6 +16,7 @@
             DaXacNhan => "Đã xác nhận",
             DaPheDuyet => "Đã phê duyệt",
             TuChoi => "Từ chối",
+            YeuCauChinhSua => "Yêu cầu chỉnh sửa",
             _ => string.Empty
         };
     }
