@@ -80,7 +80,7 @@
         <div nz-col class="gutter-row" [nzSpan]="18">
             <div class="inner-box">
                 <div class="text-valid-wf" *ngIf="personnel.length == 0">(Vui lòng cấu hình nhân sự tham gia dự án trước khi cấu hình luồng quy trình)</div>
-                <nz-table #workflowTable nzBordered [nzData]="lstSteps" nzSize="small" [nzFrontPagination]="false">
+                <nz-table #workflowTable nzBordered [nzData]="lstSteps" [nzFrontPagination]="false">
                     <thead>
                         <tr>
                             <th colspan="5">

@@ -31,6 +31,8 @@ namespace Project.Service.Dtos.PS
         public string? WorkflowId { get; set; }
         public string? RefrenceFileId { get; set; }
         public string? CurrentStepWorkflowId { get; set; }
+        public string? CreateBy { get; set; }
+        public DateTime? CreateDate { get; set; }
         public ICollection<ProjectStructDto>? ListGiaiDoan { get; set; }
         public ICollection<ProjectStructDto>? Structs { get; set; }
         public ICollection<FileDto>? Files { get; set; }

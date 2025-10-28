@@ -199,7 +199,16 @@
                                 <label>Quy trình</label>
                                 <input nz-input [(ngModel)]="project.diaDiem" class="space-control" />
                             </div>
-                            <div nz-col nzSpan="24">
+                            <div nz-col nzSpan="6">
+                                <label>Người tạo dự án</label>
+                                <input nz-input [(ngModel)]="project.createBy" class="space-control" [readOnly]="true"/>
+                            </div>
+                            <div nz-col nzSpan="6">
+                                <label>Thời gian tạo</label>
+                                <input nz-input [value]="project.createDate | date: 'dd/MM/yyyy HH:mm'" class="space-control" [readOnly]="true"/>
+                            </div>
+
+                            <div nz-col nzSpan="12">
                                 <label>Ghi chú</label>
                                 <input nz-input [(ngModel)]="project.notes" class="space-control" />
                             </div>
