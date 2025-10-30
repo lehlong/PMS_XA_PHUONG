@@ -26,6 +26,9 @@ namespace Project.Service.Services.MD
                 {
                     query = query.Where(x => x.OrgId == filter.OrgId);
                 }
+              
+                    query = query.Where(x => x.Type == filter.Type);
+             
 
                 return await Paging(query, filter);
 

@@ -49,10 +49,12 @@ export class WorkflowProject implements OnInit, OnDestroy {
   }
 
   search() {
+       this.filter.type = WorkflowType.Project;
     this.service.search(this.filter)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+        
           this.data = res
         }
       })
