@@ -19,10 +19,11 @@ import { FileService } from '../../../services/common/file.service';
 import { AreaService } from '../../../@master-data/services/area.service';
 import { WorkflowService } from '../../../@master-data/services/workflow.service';
 import { ProjectStatus } from '../../../shared/statics/project-status.static';
+import { ErrorMessage } from '../../../shared/components/error-message/error-message';
 
 @Component({
   selector: 'app-list-project',
-  imports: [NgModule],
+  imports: [NgModule, ErrorMessage],
   templateUrl: './list-project.html',
   styleUrls: ['../../project.scss']
 })
@@ -45,7 +46,8 @@ export class ListProject implements OnInit, OnDestroy {
   lstAccount: any[] = []
   lstCustomer: any[] = []
   lstArea: any[] = []
-  lstWorkflow: any[] = []
+  lstWorkflow: any[] = [];
+  submitted = false;
 
   projectStatus = ProjectStatus
 
@@ -170,7 +172,11 @@ export class ListProject implements OnInit, OnDestroy {
     this.visible = true;
   }
 
-  save() {
+  save(form: any) {
+    this.submitted = true;
+    if (form.invalid) {
+      return;
+    }
     this.service.insert(this.dto).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         if (res.status) {

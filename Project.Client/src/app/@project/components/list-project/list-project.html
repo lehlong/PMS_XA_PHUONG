@@ -62,160 +62,261 @@
         (nzPageSizeChange)="pageSizeChange($event)">
     </nz-pagination>
 </div>
-
-<nz-drawer [nzWidth]="'50%'" [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" [nzMask]="true"
-    [nzExtra]="extra" [nzTitle]="'TẠO MỚI DỰ ÁN'" (nzOnClose)="close()" [nzBodyStyle]="{ padding: '0px' }">
-    <ng-container *nzDrawerContent>
-
-        <div nz-row [nzGutter]="12">
-            <div nz-col class="gutter-row" [nzSpan]="12">
-                <div class="inner-box">
-                    <div class="project-info">
-
-                        <label>Mã dự án</label>
-                        <input nz-input [(ngModel)]="dto.code" class="space-control" />
-
-                        <label>Loại dự án</label>
-                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.loaiDuAn" class="space-control">
-                            <nz-option *ngFor="let i of loaiDuAn" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
-                        </nz-select>
-
-                        <label>Đơn vị phụ trách</label>
-                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.donViPhuTrach" class="space-control">
-                            <nz-option *ngFor="let i of lstOrganize" [nzLabel]="i.name" [nzValue]="i.id"></nz-option>
-                        </nz-select>
-
-                        <label>PM dự án</label>
-                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.pmDuAn" class="space-control">
-                            <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
-                                [nzValue]="i.userName"></nz-option>
-                        </nz-select>
-
-                        <label>Quản lý hợp đồng</label>
-                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.quanLyHopDong" class="space-control">
-                            <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
-                                [nzValue]="i.userName"></nz-option>
-                        </nz-select>
-
-                        <div style="display: flex;gap:12px">
-                            <div>
-                                <label>Ngày bắt đầu</label>
-                                <nz-date-picker [(ngModel)]="dto.startDate" class="space-control"
-                                    [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
-                            </div>
-                            <div>
-                                <label>Ngày kết thúc</label>
-                                <nz-date-picker [(ngModel)]="dto.endDate" class="space-control"
-                                    [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
-                            </div>
-                        </div>
-
-                        <label>Khu vực</label>
-                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.khuVuc" class="space-control">
-                            <nz-option *ngFor="let i of lstArea" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
-                        </nz-select>
-
-                    </div>
-
+<form #f="ngForm" (ngSubmit)="save(f)">
+    <nz-drawer [nzWidth]="'50%'" [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" [nzMask]="true"
+        [nzExtra]="extra" [nzTitle]="'TẠO MỚI DỰ ÁN'" (nzOnClose)="close()" [nzBodyStyle]="{ padding: '0px' }">
+        <ng-container *nzDrawerContent>
+    
+            <div nz-row [nzGutter]="12">
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <label>Mã dự án</label>
+                    <input nz-input [(ngModel)]="dto.code" name="code" #code="ngModel" class="space-control"
+                        required
+                        [minlength]="3"
+                        [maxlength]="255"/>
+                    <app-error-message
+                        [control]="code"
+                        [messages]="{
+                            required: 'Mã không được để trống',
+                            minlength: 'Mã không được nhỏ hơn 3 ký tự',
+                            maxlength: 'Mã không được lớn hơn 255 ký tự'
+                            }"
+                        [submitted]="submitted">
+                    </app-error-message>
                 </div>
-            </div>
-            <div nz-col class="gutter-row" [nzSpan]="12">
-                <div class="inner-box">
-
+                <div nz-col class="gutter-row" [nzSpan]="12">
                     <label>Tên dự án</label>
-                    <input nz-input [(ngModel)]="dto.name" class="space-control" />
+                    <input nz-input [(ngModel)]="dto.name" name="name" #name="ngModel"
+                    required
+                    [minlength]="3"
+                    [maxlength]="255"
+                    class="space-control" />
+                    <app-error-message
+                        [control]="code"
+                        [messages]="{
+                            required: 'Tên không được để trống',
+                            minlength: 'Tên không được nhỏ hơn 3 ký tự',
+                            maxlength: 'Tên không được lớn hơn 255 ký tự'
+                            }"
+                        [submitted]="submitted">
+                    </app-error-message>
+                </div>
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <label>Loại dự án</label>
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.loaiDuAn" 
+                    name="loaiDuAn" #dtoloaiDuAn="ngModel" required class="space-control">
+                        <nz-option *ngFor="let i of loaiDuAn" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
+                    </nz-select>
 
+                    <app-error-message
+                        [control]="dtoloaiDuAn"
+                        [messages]="{
+                            required: 'Loại dự án bắt buộc chọn',
+                            }"
+                        [submitted]="submitted">
+                    </app-error-message>
+                </div>
+
+                <div nz-col class="gutter-row" [nzSpan]="12">
                     <label>Cấp dự án</label>
-                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.capDuAn" class="space-control">
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.capDuAn" 
+                    name="capDuAn"
+                    #dtoCapDuAn="ngModel"
+                    required
+                    class="space-control">
                         <nz-option *ngFor="let i of capDuAn" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
                     </nz-select>
+                    <app-error-message
+                        [control]="dtoCapDuAn"
+                        [messages]="{
+                            required: 'Cấp dự án bắt buộc chọn',
+                            }"
+                        [submitted]="submitted">
+                    </app-error-message>
+                </div>
 
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <label>Đơn vị phụ trách</label>
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.donViPhuTrach" 
+                    name="donViPhuTrach" 
+                    #donViPhuTrach="ngModel"
+                    required
+                    class="space-control">
+                        <nz-option *ngFor="let i of lstOrganize" [nzLabel]="i.name" [nzValue]="i.id"></nz-option>
+                    </nz-select>
+                    <app-error-message
+                        [control]="donViPhuTrach"
+                        [messages]="{
+                            required: 'Đơn vị phụ trách bắt buộc chọn',
+                            }"
+                        [submitted]="submitted">
+                    </app-error-message>
+                </div>
+
+                <div nz-col class="gutter-row" [nzSpan]="12">
                     <label>Lãnh đạo phụ trách</label>
-                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.lanhDaoPhuTrach" class="space-control">
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.lanhDaoPhuTrach" 
+                    name="lanhDaoPhuTrach" 
+                    #lanhDaoPhuTrach="ngModel" 
+                    required
+                    class="space-control">
                         <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
                             [nzValue]="i.userName"></nz-option>
                     </nz-select>
+                    <app-error-message
+                        [control]="lanhDaoPhuTrach"
+                        [messages]="{
+                            required: 'Lãnh đạo phụ trách bắt buộc chọn',
+                            }"
+                        [submitted]="submitted">
+                    </app-error-message>
+                </div>
 
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <label>PM dự án</label>
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.pmDuAn" 
+                    name="pmDuAn" 
+                    #pmDuAn="ngModel"
+                    required
+                    class="space-control">
+                        <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
+                            [nzValue]="i.userName"></nz-option>
+                    </nz-select>
+                    <app-error-message
+                        [control]="pmDuAn"
+                        [messages]="{
+                            required: 'PM dự án bắt buộc chọn',
+                            }"
+                        [submitted]="submitted">
+                    </app-error-message>
+                </div>
+
+                <div nz-col class="gutter-row" [nzSpan]="12">
                     <label>Phụ trách dự án</label>
-                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.phuTrachDuAn" class="space-control">
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.phuTrachDuAn" 
+                    name="phuTrachDuAn" 
+                    #phuTrachDuAn="ngModel"
+                    required
+                    class="space-control">
                         <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
                             [nzValue]="i.userName"></nz-option>
                     </nz-select>
+                    <app-error-message
+                        [control]="phuTrachDuAn"
+                        [messages]="{
+                            required: 'Phụ trách dự án bắt buộc chọn',
+                            }"
+                        [submitted]="submitted">
+                    </app-error-message>
+                </div>
 
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <label>Quản lý hợp đồng</label>
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.quanLyHopDong" name="quanLyHopDong" class="space-control">
+                        <nz-option *ngFor="let i of lstAccount" [nzLabel]="i.fullName"
+                            [nzValue]="i.userName"></nz-option>
+                    </nz-select>
+                </div>
+
+                <div nz-col class="gutter-row" [nzSpan]="12">
                     <label>Khách hàng</label>
-                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.khachHang" class="space-control">
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.khachHang" name="khachHang" class="space-control">
                         <nz-option *ngFor="let i of lstCustomer" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
                     </nz-select>
+                </div>
 
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <div style="display: flex;gap:12px">
+                        <div>
+                            <label>Ngày bắt đầu</label>
+                            <nz-date-picker [(ngModel)]="dto.startDate" name="startDate" class="space-control"
+                                [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
+                        </div>
+                        <div>
+                            <label>Ngày kết thúc</label>
+                            <nz-date-picker [(ngModel)]="dto.endDate" name="endDate" class="space-control"
+                                [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
+                        </div>
+                    </div>
+                </div>
+
+                <div nz-col class="gutter-row" [nzSpan]="12">
                     <label>Quy trình</label>
-                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.workflowId" class="space-control">
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.workflowId" name="workflowId" class="space-control">
                         <nz-option *ngFor="let i of lstWorkflow" [nzLabel]="i.name" [nzValue]="i.id"></nz-option>
                     </nz-select>
+                </div>
 
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <label>Khu vực</label>
+                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.khuVuc" name="khuVuc" class="space-control">
+                        <nz-option *ngFor="let i of lstArea" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
+                    </nz-select>
+                </div>
+
+                <div nz-col class="gutter-row" [nzSpan]="12">
                     <label>Địa điểm</label>
-                    <input nz-input [(ngModel)]="dto.diaDiem" class="space-control" />
-
+                    <input nz-input [(ngModel)]="dto.diaDiem" name="diaDiem" class="space-control" />
                 </div>
-            </div>
-
-            <div nz-col class="gutter-row" [nzSpan]="24">
-                <div class="inner-box">
-
-                    <label>Ghi chú</label>
-                    <textarea nz-input class="space-control" [nzAutosize]="{ minRows: 2, maxRows: 5 }"
-                        [(ngModel)]="dto.notes"></textarea>
-                </div>
-            </div>
-
-            <div nz-col class="gutter-row" [nzSpan]="12" *ngFor="let f of dto.files">
-                <div class="inner-box">
-
-                    <div class="file-item">
-                        <div><img [src]="f.icon" width="30" style="margin-right: 12px;"></div>
-                        <div>
-                            <span style="font-weight: 600;">{{f.fileName}}</span><br>
-                            <span style="font-size:12px; color: gray">{{ f.fileSize < 1048576 ? (f.fileSize / 1024 |
-                                    number : "1.1-1" ) + " KB" : (f.fileSize / 1048576 | number : "1.1-1" ) + " MB"
-                                    }}</span>
-                        </div>
-                        <div style="margin-left: auto;color: rgb(220, 53, 69);" nz-tooltip="Xoá file"
-                            (click)="deleteFile(f)">
-                            <nz-icon nzType="delete" nzTheme="outline" />
-                        </div>
+    
+                <div nz-col class="gutter-row" [nzSpan]="24">
+                    <div class="inner-box">
+                        <label>Ghi chú</label>
+                        <textarea nz-input class="space-control" name="notes" [nzAutosize]="{ minRows: 2, maxRows: 5 }"
+                            [(ngModel)]="dto.notes"></textarea>
                     </div>
                 </div>
-            </div>
-
-            <div nz-col class="gutter-row" [nzSpan]="24">
-                <div class="inner-box">
-
-                    <div class="project-file">
-                        <div class="file-upload-area" (click)="fileInput.click()">
+    
+                <div nz-col class="gutter-row" [nzSpan]="12" *ngFor="let f of dto.files">
+                    <div class="inner-box">
+    
+                        <div class="file-item">
+                            <div><img [src]="f.icon" width="30" style="margin-right: 12px;"></div>
                             <div>
-                                <img src="img/folder_upload.png" class="img-upload">
+                                <span style="font-weight: 600;">{{f.fileName}}</span><br>
+                                <span style="font-size:12px; color: gray">{{ f.fileSize < 1048576 ? (f.fileSize / 1024 |
+                                        number : "1.1-1" ) + " KB" : (f.fileSize / 1048576 | number : "1.1-1" ) + " MB"
+                                        }}</span>
                             </div>
-                            <h3>Tải lên file đính kèm dự án</h3>
-                            <p style="color: #666; font-size: 14px;">Hỗ trợ các định dạng: PDF, DOC, DOCX,
-                                XLS, XLSX, PNG, JPG</p>
+                            <div style="margin-left: auto;color: rgb(220, 53, 69);" nz-tooltip="Xoá file"
+                                (click)="deleteFile(f)">
+                                <nz-icon nzType="delete" nzTheme="outline" />
+                            </div>
                         </div>
                     </div>
                 </div>
+    
+                <div nz-col class="gutter-row" [nzSpan]="24">
+                    <div class="inner-box">
+    
+                        <div class="project-file">
+                            <div class="file-upload-area" (click)="fileInput.click()">
+                                <div>
+                                    <img src="img/folder_upload.png" class="img-upload">
+                                </div>
+                                <h3>Tải lên file đính kèm dự án</h3>
+                                <p style="color: #666; font-size: 14px;">Hỗ trợ các định dạng: PDF, DOC, DOCX,
+                                    XLS, XLSX, PNG, JPG</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
             </div>
-
-        </div>
-
-    </ng-container>
-
-    <ng-template #extra>
-        <nz-space>
-            <button *nzSpaceItem nz-button nzType="primary" (click)="save()" class="btn-green">
-                <nz-icon nzType="save" nzTheme="outline" /> Lưu
-            </button>
-            <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="close()">
-                <nz-icon nzType="close" nzTheme="outline" />
-            </button>
-        </nz-space>
-    </ng-template>
-</nz-drawer>
+    
+        </ng-container>
+    
+        <ng-template #extra>
+            <nz-space>
+                <button *nzSpaceItem nz-button nzType="primary" (click)="save(f)" class="btn-green">
+                    <nz-icon nzType="save" nzTheme="outline" /> Lưu
+                </button>
+                <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="close()">
+                    <nz-icon nzType="close" nzTheme="outline" />
+                </button>
+            </nz-space>
+        </ng-template>
+    </nz-drawer>
+</form>
 
 <input type="file" #fileInput hidden multiple (change)="upload($event)" />

@@ -9,6 +9,7 @@
   --bs-bright-blue: #3B82F6;
   --bs-alice-blue: #EFF6FF;
   --bs-deep-blue-violet: #4B49AC;
+  --bs-danger: #BA0C2F;
 }
 
 $my-map: (
@@ -21,7 +22,8 @@ $my-map: (
   'purple',
   'bright-blue',
   'alice-blue',
-  'deep-blue-violet'
+  'deep-blue-violet',
+  'danger'
 );
 
 * {
@@ -525,4 +527,8 @@ $spacing-unit: 0.25rem;
 
 .ant-row{
   margin: 0 !important;
+}
+
+.fst-italic{
+  font-style: italic !important;
 }

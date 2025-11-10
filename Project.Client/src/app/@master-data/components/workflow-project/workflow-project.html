@@ -60,98 +60,112 @@
     </nz-pagination>
 </div>
 
-<nz-drawer nzWidth="50%" [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" [nzMask]="!isEdit"
-    [nzExtra]="extra" [nzTitle]="isEdit ? 'CHỈNH SỬA' : 'TẠO MỚI'" (nzOnClose)="close()">
-    <ng-container *nzDrawerContent>
+<form #f="ngForm" (ngSubmit)="save(f)">
+    <nz-drawer nzWidth="50%" [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" [nzMask]="!isEdit"
+        [nzExtra]="extra" [nzTitle]="isEdit ? 'CHỈNH SỬA' : 'TẠO MỚI'" (nzOnClose)="close()">
+        <ng-container *nzDrawerContent>
+    
+            <div nz-row [nzGutter]="16">
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <div class="inner-box">
+                        <label>Mã </label>
+                        <input nz-input [(ngModel)]="dto.code" #code="ngModel" name="code" required class="space-control" />
+    
+                        <app-error-message
+                            [control]="code"
+                            [messages]="{required: 'Mã không được để trống'}"
+                            [submitted]="submitted">
+                        </app-error-message>
+                    </div>
+                </div>
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <div class="inner-box">
+                        <label>Tên</label>
+                        <input nz-input [(ngModel)]="dto.name" #name="ngModel" name="name" required class="space-control" />
 
-        <div nz-row [nzGutter]="16">
-            <div nz-col class="gutter-row" [nzSpan]="12">
-                <div class="inner-box">
-                    <label>Mã </label>
-                    <input nz-input [(ngModel)]="dto.code" class="space-control" />
+                        <app-error-message
+                            [control]="name"
+                            [messages]="{required: 'Tên không được để trống'}"
+                            [submitted]="submitted">
+                        </app-error-message>
+                    </div>
                 </div>
-            </div>
-            <div nz-col class="gutter-row" [nzSpan]="12">
-                <div class="inner-box">
-                    <label>Tên</label>
-                    <input nz-input [(ngModel)]="dto.name" class="space-control" />
-                </div>
-            </div>
-            <div nz-col class="gutter-row" [nzSpan]="12">
-                <div class="inner-box">
-                    <label>Cấp dự án</label>
-                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.projectLevelCode" class="space-control">
-                        <nz-option *ngFor="let i of lstProjectLevel" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
-                    </nz-select>
-                </div>
-            </div>
-            <div nz-col class="gutter-row" [nzSpan]="12">
-                <div class="inner-box">
-                    <label>Đơn vị</label>
-                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.orgId" class="space-control">
-                        <nz-option *ngFor="let i of lstOrganize" [nzLabel]="i.name" [nzValue]="i.id"></nz-option>
-                    </nz-select>
-                </div>
-            </div>
-            <div nz-col class="gutter-row" [nzSpan]="24">
-                <div class="inner-box">
-                    <label>Ghi chú</label>
-                    <input nz-input [(ngModel)]="dto.notes" class="space-control" />
-                </div>
-            </div>
-        </div>
-
-        <nz-radio-group [(ngModel)]="dto.isActive">
-            <label nz-radio [nzValue]="true">Kích hoạt</label>
-            <label nz-radio [nzValue]="false">Khoá</label>
-        </nz-radio-group>
-
-        <nz-table #configStep nzBordered [nzData]="dto.steps" nzSize="middle" [nzFrontPagination]="false"
-            style="margin-top:12px">
-            <thead>
-                <tr>
-                    <th colspan="4">CẤU HÌNH CÁC BƯỚC</th>
-                </tr>
-                <tr>
-                    <th nzAlign="center">STT</th>
-                    <th>Tên bước</th>
-                    <th>Số ngày xử lý</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let item of configStep.data; let i = index; trackBy: trackById">
-                    <td nzAlign="center" style="font-weight: 600;">Bước {{item.step}}</td>
-                    <td>
-                        <input nz-input [(ngModel)]="item.name" />
-                    </td>
-                    <td>
-                        <input nz-input [(ngModel)]="item.hanXuLy" type="number" />
-                    </td>
-                    <td>
-                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="item.listActions" nzMode="multiple">
-                            <nz-option *ngFor="let i of lstAction" [nzLabel]="i.text" [nzValue]="i.value"></nz-option>
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <div class="inner-box">
+                        <label>Cấp dự án</label>
+                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.projectLevelCode" name="projectLevelCode" class="space-control">
+                            <nz-option *ngFor="let i of lstProjectLevel" [nzLabel]="i.name" [nzValue]="i.code"></nz-option>
                         </nz-select>
-                    </td>
-                </tr>
-            </tbody>
-        </nz-table>
-
-        <div class="btn-add-step">
-            <button nz-button nzType="dashed" (click)="addStep()">
-                <nz-icon nzType="plus" nzTheme="outline" />Thêm bước
-            </button>
-        </div>
-    </ng-container>
-
-    <ng-template #extra>
-        <nz-space>
-            <button *nzSpaceItem nz-button nzType="primary" (click)="save()" class="btn-green">
-                <nz-icon nzType="save" nzTheme="outline" /> {{isEdit ? 'Cập nhật' : 'Lưu'}}
-            </button>
-            <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="close()">
-                <nz-icon nzType="close" nzTheme="outline" />
-            </button>
-        </nz-space>
-    </ng-template>
-</nz-drawer>
+                    </div>
+                </div>
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <div class="inner-box">
+                        <label>Đơn vị</label>
+                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="dto.orgId" name="orgId" class="space-control">
+                            <nz-option *ngFor="let i of lstOrganize" [nzLabel]="i.name" [nzValue]="i.id"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+                <div nz-col class="gutter-row" [nzSpan]="24">
+                    <div class="inner-box">
+                        <label>Ghi chú</label>
+                        <input nz-input [(ngModel)]="dto.notes" name="notes" class="space-control" />
+                    </div>
+                </div>
+            </div>
+    
+            <nz-radio-group [(ngModel)]="dto.isActive" name="isActive">
+                <label nz-radio [nzValue]="true">Kích hoạt</label>
+                <label nz-radio [nzValue]="false">Khoá</label>
+            </nz-radio-group>
+    
+            <nz-table #configStep nzBordered [nzData]="dto.steps" nzSize="middle" [nzFrontPagination]="false"
+                style="margin-top:12px">
+                <thead>
+                    <tr>
+                        <th colspan="4">CẤU HÌNH CÁC BƯỚC</th>
+                    </tr>
+                    <tr>
+                        <th nzAlign="center">STT</th>
+                        <th>Tên bước</th>
+                        <th>Số ngày xử lý</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of configStep.data; let i = index; trackBy: trackById">
+                        <td nzAlign="center" style="font-weight: 600;">Bước {{item.step}}</td>
+                        <td>
+                            <input nz-input [(ngModel)]="item.name" name="name-table" />
+                        </td>
+                        <td>
+                            <input nz-input [(ngModel)]="item.hanXuLy" name="hanXuLy" type="number" />
+                        </td>
+                        <td>
+                            <nz-select nzShowSearch nzAllowClear [(ngModel)]="item.listActions" nzMode="multiple">
+                                <nz-option *ngFor="let i of lstAction" name="lstAction" [nzLabel]="i.text" [nzValue]="i.value"></nz-option>
+                            </nz-select>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+    
+            <div class="btn-add-step">
+                <button nz-button nzType="dashed" (click)="addStep()">
+                    <nz-icon nzType="plus" nzTheme="outline" />Thêm bước
+                </button>
+            </div>
+        </ng-container>
+    
+        <ng-template #extra>
+            <nz-space>
+                <button *nzSpaceItem nz-button nzType="primary" (click)="save(f)" class="btn-green">
+                    <nz-icon nzType="save" nzTheme="outline" /> {{isEdit ? 'Cập nhật' : 'Lưu'}}
+                </button>
+                <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="close()">
+                    <nz-icon nzType="close" nzTheme="outline" />
+                </button>
+            </nz-space>
+        </ng-template>
+    </nz-drawer>
+</form>

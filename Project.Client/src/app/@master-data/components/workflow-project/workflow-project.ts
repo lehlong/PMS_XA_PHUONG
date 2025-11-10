@@ -9,10 +9,12 @@ import { WorkflowProjectAction } from '../../../shared/statics/workflow-action.s
 import { CapDuAnService } from '../../services/cap-du-an.service';
 import { OrganizeService } from '../../services/organize.service';
 import { WorkflowType } from '../../../shared/statics/workflow-type.static';
+import { ErrorMessage } from '../../../shared/components/error-message/error-message';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-workflow-project',
-  imports: [NgModule],
+  imports: [NgModule, ErrorMessage],
   templateUrl: './workflow-project.html',
   styleUrl: './workflow-project.scss'
 })
@@ -27,6 +29,7 @@ export class WorkflowProject implements OnInit, OnDestroy {
   lstAction = WorkflowProjectAction.getList();
   lstProjectLevel: any[] = [];
   lstOrganize: any[] = [];
+  submitted = false;
 
   constructor(
     private global: GlobalService,
@@ -105,7 +108,11 @@ export class WorkflowProject implements OnInit, OnDestroy {
     this.dto = new WorkflowDto();
   }
 
-  save() {
+  save(form: any) {
+    this.submitted = true;
+     if (form.invalid) {
+      return;
+    }
     this.dto.type = WorkflowType.Project;
     const action = this.isEdit ? 'update' : 'insert';
     this.service[action](this.dto)
