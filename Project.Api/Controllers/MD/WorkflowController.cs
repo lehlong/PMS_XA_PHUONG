@@ -11,6 +11,16 @@ namespace Project.Api.Controllers.MD
     {
         public readonly IWorkflowService _service = service;
 
+        [HttpGet("CheckCodeExists")]
+        public async Task<IActionResult> CheckCodeExists([FromQuery] string code)
+        {
+            var res = new TransferObject();
+            bool data = await _service.ValidateCodeExists(code);
+            res.Data = data;
+            res.Status = true;
+            return Ok(res);
+        }
+
         [HttpGet("Search")]
         public async Task<IActionResult> Search([FromQuery] WorkflowDto filter)
         {

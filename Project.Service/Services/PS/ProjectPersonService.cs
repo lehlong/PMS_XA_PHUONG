@@ -10,7 +10,7 @@ namespace Project.Service.Services.PS
     public interface IProjectPersonService : IGenericService<PsProjectPerson, ProjectPersonDto>
     {
         Task<List<ProjectPersonDto>> GetProjectPerson(string projectId);
-
+        Task<List<ProjectPersonDto>> GetProjectPersonByOrg(string projectId, string orgId);
         Task UpdateProjectPerson(List<ProjectPersonDto> request);
         Task UpdateInfoProjectPerson(List<ProjectPersonDto> request);
         Task DeleteProjectPerson(List<string> ids);
@@ -34,6 +34,34 @@ namespace Project.Service.Services.PS
                 return new List<ProjectPersonDto>();
             }
 
+        }
+
+        public async Task<List<ProjectPersonDto>> GetProjectPersonByOrg(string projectId, string orgId)
+        {
+            try
+            {
+                // Bắt đầu query cơ bản, giống hàm GetProjectPerson
+                var query = _dbContext.PsProjectPerson
+                                    .Include(x => x.Person)
+                                    .ThenInclude(x => x.Title)
+                                    .Where(x => x.ProjectId == projectId);
+                // Nếu orgId là "G00" hoặc null/empty, nó sẽ bỏ qua bộ lọc này
+                // và trả về tất cả nhân sự của dự án.
+                if (!string.IsNullOrEmpty(orgId) && orgId != "G00")
+                {
+                    // Thêm điều kiện lọc theo OrgId trong đối tượng Person liên quan
+                    query = query.Where(x => x.Person.OrgId == orgId);
+                }
+
+                var entities = await query.ToListAsync();
+                return _mapper.Map<List<ProjectPersonDto>>(entities);
+            }
+            catch (Exception ex)
+            {
+                this.Status = false;
+                this.Exception = ex;
+                return new List<ProjectPersonDto>();
+            }
         }
 
         public async Task UpdateProjectPerson(List<ProjectPersonDto> request)

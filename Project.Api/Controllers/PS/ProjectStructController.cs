@@ -13,6 +13,16 @@ namespace Project.Api.Controllers.PS
         public readonly IProjectStructService _service = service;
 
 
+        [HttpGet("CheckCodeExists")]
+        public async Task<IActionResult> CheckCodeExists([FromQuery] string code)
+        {
+            var res = new TransferObject();
+            bool data = await _service.ValidateCodeExists(code);
+            res.Data = data;
+            res.Status = true;
+            return Ok(res);
+        }
+
         [HttpGet("GetProjectStruct/{projectId}")]
         public async Task<IActionResult> Detail([FromRoute] string projectId)
         {

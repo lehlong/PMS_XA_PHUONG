@@ -25,6 +25,7 @@ namespace Project.Service.Common
         Task Update(IDto dto);
         Task Delete(object code);
         Task<PagedResponseDto> Paging(IQueryable<TEntity> query, TDto filter);
+        Task<bool> ValidateCodeExists(string code);
     }
     public abstract class GenericService<TEntity, TDto>(AppDbContext dbContext, IMapper mapper)
         : BaseService(dbContext, mapper), IGenericService<TEntity, TDto>
@@ -175,6 +176,34 @@ namespace Project.Service.Common
                 Status = false;
                 Exception = ex;
                 return null;
+            }
+        }
+        public virtual async Task<bool> ValidateCodeExists(string code)
+        {
+            try
+            {
+                var codeProperty = typeof(TEntity).GetProperty("Code",
+                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                if (codeProperty == null)
+                {
+                    throw new InvalidOperationException($"Entity {typeof(TEntity).Name} không có thuộc tính 'Code' để thực hiện xác thực.");
+                }
+
+                // 4. Xây dựng Expression Tree: e => e.Code == code
+                var param = Expression.Parameter(typeof(TEntity), "e"); // e
+                var propertyAccess = Expression.Property(param, codeProperty); // e.Code
+                var constantValue = Expression.Constant(code); // "giá trị code"
+                var equalsExpression = Expression.Equal(propertyAccess, constantValue); // e.Code == "giá trị code"
+                var lambda = Expression.Lambda<Func<TEntity, bool>>(equalsExpression, param); // e => e.Code == "giá trị code"
+
+                // 5. Chạy truy vấn AnyAsync
+                return await _dbContext.Set<TEntity>().AnyAsync(lambda);
+            }
+            catch (Exception ex)
+            {
+                Status = false;
+                Exception = ex;
+                return true;
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Project.Core;
 using Project.Core.Entities.AD;
 using Project.Core.Entities.MD;
@@ -14,6 +15,5 @@ namespace Project.Service.Services.MD
 
     public class AreaService(AppDbContext dbContext, IMapper mapper) : GenericService<MdArea, AreaDto>(dbContext, mapper), IAreaService
     {
-
     }
 }
