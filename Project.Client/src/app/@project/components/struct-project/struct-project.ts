@@ -10,6 +10,9 @@ import { ProjectStructDto } from '../../../class/PS/project-struct.class';
 import { FileService } from '../../../services/common/file.service';
 import { SearchableSelect } from '../../../shared/components/searchable-select/searchable-select';
 import { OrganizeService } from '../../../@master-data/services/organize.service';
+import { WorkflowDto } from '../../../class/MD/workflow.class';
+import { WorkflowType } from '../../../shared/statics/workflow-type.static';
+import { WorkflowService } from '../../../@master-data/services/workflow.service';
 
 @Component({
   selector: 'app-struct-project',
@@ -33,6 +36,7 @@ export class StructProject implements OnInit {
   setOfCheckedIdStruct = new Set<any>();
 
   structs: any[] = [];
+  lstWorkflow: any[] = [];
 
   dto: ProjectStructDto = new ProjectStructDto();
   dataListUser: any = [];
@@ -45,13 +49,16 @@ export class StructProject implements OnInit {
     private service: ProjectStructService,
     private _file: FileService,
     private org: OrganizeService,
+    private workflowService: WorkflowService,
   ) { }
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
     this.getProjectStruct();
+<<<<<<< HEAD
     this.getDataListUser();
     this.getDataListOrg();
+    this.getWorkflow();
   }
 
   ngOnDestroy(): void {
@@ -71,7 +78,21 @@ export class StructProject implements OnInit {
       error: (err: any) => console.error(err),
     })
   }
+  getWorkflow() {
+    const filter = new WorkflowDto();
+    filter.type = WorkflowType.Task;
+    filter.isActive = true;
+    filter.pageSize = 50; 
+    filter.currentPage = 1;
 
+    this.workflowService.search(filter)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.lstWorkflow = res.data; 
+        }
+      })
+  }
 
   refreshCheckedStatusStruct(): void {
     this.checkedStruct = this.structs.every((i: any) => this.setOfCheckedIdStruct.has(i.id));

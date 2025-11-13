@@ -87,6 +87,19 @@
 
                                 <label>Ghi chú</label>
                                 <input nz-input [(ngModel)]="dto.notes" class="space-control" />
+                                <label>Workflow công việc</label>
+                                <nz-select 
+                                    nzShowSearch 
+                                    nzAllowClear 
+                       
+                                    class="space-control">
+                                    <nz-option 
+                                        *ngFor="let wf of lstWorkflow" 
+                                        [nzLabel]="wf.code + ' - ' + wf.name" 
+                                        [nzValue]="wf.id">
+                                    </nz-option>
+                                </nz-select>
+                                
                             </div>
 
                         </div>
