@@ -8,10 +8,12 @@ import { ProjectStructService } from '../../services/project-struct.service';
 import { TreeUtils } from '../../../services/utilities/tree.ultis';
 import { ProjectStructDto } from '../../../class/PS/project-struct.class';
 import { FileService } from '../../../services/common/file.service';
+import { SearchableSelect } from '../../../shared/components/searchable-select/searchable-select';
+import { OrganizeService } from '../../../@master-data/services/organize.service';
 
 @Component({
   selector: 'app-struct-project',
-  imports: [NgModule],
+  imports: [NgModule, SearchableSelect],
   templateUrl: './struct-project.html',
   styleUrls: ['../../project.scss']
 })
@@ -33,17 +35,23 @@ export class StructProject implements OnInit {
   structs: any[] = [];
 
   dto: ProjectStructDto = new ProjectStructDto();
+  dataListUser: any = [];
+  dataListUserSelected: any = [];
+  dataListOrgData: any = [];
 
   constructor(
     private route: ActivatedRoute,
     private global: GlobalService,
     private service: ProjectStructService,
-    private _file: FileService
+    private _file: FileService,
+    private org: OrganizeService,
   ) { }
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
     this.getProjectStruct();
+    this.getDataListUser();
+    this.getDataListOrg();
   }
 
   ngOnDestroy(): void {
@@ -174,5 +182,37 @@ export class StructProject implements OnInit {
 
   deleteFile(f: any) {
     this.dto.files = this.dto.files.filter(x => x.id != f.id)
+  }
+
+
+  getDataListUser(): void{
+    if(this.dataListUser.length == 0){
+      this.service.getProjectPerson(this.projectId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.dataListUser = res;
+        this.dataListUserSelected = res;
+        console.log(this.dataListUser);
+      })
+    }
+  }
+
+  onChangeCheckbox(item: any, key: string) {
+
+  }
+
+  onSearchOrgId(event: any): void{
+    console.log(event);
+  }
+
+  private getDataListOrg(): void{
+    this.org.getAll().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.dataListOrgData = res.map((item: any) => ({
+          label: item.name,
+          value: item.id
+        }));
+      }
+    });
   }
 }

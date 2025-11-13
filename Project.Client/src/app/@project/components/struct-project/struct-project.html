@@ -133,6 +133,92 @@
                 <ng-template #personnel>
                     <i class="bi bi-people"></i> GIAO THỰC HIỆN
                 </ng-template>
+                <div class="d-flex align-items-center justify-content-between">
+                    <p class="text-color-black fs-14">Đã chọn: 0/7 người</p>
+                    <div>
+                        <app-searchable-select [items]="dataListOrgData" (selectionChange)="onSearchOrgId($event)"></app-searchable-select>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <div nz-row [nzGutter]="12">
+                        <div nz-col class="gutter-row" [nzSpan]="24">
+                            <div class="inner-box">
+                                <nz-table #expandTable [nzData]="dataListUser" nzTableLayout="fixed" nzSize="small"
+                                    nzBordered [nzFrontPagination]="false">
+                                    <thead>
+                                        <tr>
+                                            <th nzWidth="50px" nzAlign="center">STT</th>
+                                            <th nzAlign="center">Họ và tên</th>
+                                            <th nzAlign="center">Chủ trì</th>
+                                            <th nzAlign="center" nzWidth="80px">Phối hợp</th>
+                                            <th nzAlign="center" nzWidth="66px">Nhận để biết</th>
+                                            <th nzAlign="center" nzWidth="66px">Đang XL</th>
+                                            <th nzAlign="center" nzWidth="100px">Chức vụ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of dataListUser; let i = index">
+                                            <td nzAlign="center">{{ i + 1 }}</td>                                            
+                                            <td >{{item?.person?.fullName}}</td>
+                                            <td nzAlign="center">
+                                                <label nz-checkbox [(ngModel)]="item.isThanhVien"
+                                                    (ngModelChange)="onChangeCheckbox(item, 'isThanhVien')"></label>
+                                            </td>
+                                            <td nzAlign="center">
+                                                <label nz-checkbox [(ngModel)]="item.isThanhVien"
+                                                    (ngModelChange)="onChangeCheckbox(item, 'isThanhVien')"></label>
+                                            </td>
+                                            <td nzAlign="center">
+                                                <label nz-checkbox [(ngModel)]="item.isThanhVien"
+                                                    (ngModelChange)="onChangeCheckbox(item, 'isThanhVien')"></label>
+                                            </td>
+                                            <td nzAlign="center">
+                                                0
+                                            </td>
+                                            <td nzAlign="left">
+                                                Đội trưởng
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </nz-table>
+                            </div>
+                        </div>
+                        <div nz-col class="gutter-row" [nzSpan]="24">
+                            <h4 class="fs-16 fw-700 text-color-black">Danh sách đã chọn</h4>
+                            <div class="inner-box">
+                                <nz-table #basicTable [nzData]="dataListUserSelected" nzSize="small"
+                                    [nzFrontPagination]="false" nzBordered>
+                                    <thead>
+                                        <tr>
+                                            <th nzWidth="60px" nzAlign="center">STT</th>
+                                            <th>Họ và tên</th>
+                                            <th nzAlign="center">Hạng mục công việc</th>
+                                            <th nzAlign="center">Ghi chú</th>
+                                            <th nzAlign="center">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let data of basicTable.data; let i = index">
+                                            <td nzAlign="center">{{ i + 1}}</td>
+                                            <td>
+                                                {{data.person?.fullName}}<br>
+                                            </td>
+                                            <td nzAlign="center">
+                                                <input type="text" class="w-100 border-radius-4px" style="border: 1px solid #CFCFCF">
+                                            </td>
+                                            <td nzAlign="center">
+                                                <input type="text" class="w-100 border-radius-4px" style="border: 1px solid #CFCFCF">
+                                            </td>
+                                            <td>
+                                                trash
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </nz-table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </nz-tab>
         </nz-tabs>
 
