@@ -55,7 +55,6 @@ export class StructProject implements OnInit {
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
     this.getProjectStruct();
-<<<<<<< HEAD
     this.getDataListUser();
     this.getDataListOrg();
     this.getWorkflow();
