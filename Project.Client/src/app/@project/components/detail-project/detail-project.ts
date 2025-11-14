@@ -9,10 +9,20 @@ import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { GlobalService } from '../../../services/common/global.service';
 import { CommonModule } from '@angular/common';
+import { WorkflowProjectList } from '../workflow-project-list/workflow-project-list';
 
 @Component({
   selector: 'app-detail-project',
-  imports: [DashboardProject, InfoProject, PersonProject, WorkflowProject, StructProject, NgModule, CommonModule],
+  imports: [
+    DashboardProject, 
+    InfoProject, 
+    PersonProject, 
+    WorkflowProject, 
+    StructProject, 
+    NgModule, 
+    CommonModule,
+    WorkflowProjectList
+  ],
   templateUrl: './detail-project.html',
   styleUrls: ['../../project.scss']
 })
@@ -20,6 +30,7 @@ export class DetailProject implements OnInit {
   private destroy$ = new Subject<void>();
   projectId: string = '';
   indexTabProject: number = 1;
+  showDetailWorkFolow: boolean = false;;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,6 +39,7 @@ export class DetailProject implements OnInit {
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
+    this.showDetailWorkFolow = false;
   }
 
   onTabChange(index: number): void {

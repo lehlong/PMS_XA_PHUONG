@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CommonService } from '../../services/common/common.service';
 import { WorkflowDto } from '../../class/MD/workflow.class';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -23,4 +24,8 @@ export class WorkflowService {
     delete(data: string) { return this.common.delete(`Workflow/Delete/${data}`, {}, false) }
 
     updateOrder(data: any) { return this.common.put(`Workflow/UpdateOrder`, data, false) }
+
+    checkCodeExits(code: string): Observable<void>{
+        return this.common.get('ProjectStruct/CheckCodeExists', { code: code }, false);
+    }
 }

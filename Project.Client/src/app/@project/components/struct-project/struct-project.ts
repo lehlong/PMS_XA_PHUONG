@@ -13,10 +13,11 @@ import { OrganizeService } from '../../../@master-data/services/organize.service
 import { WorkflowDto } from '../../../class/MD/workflow.class';
 import { WorkflowType } from '../../../shared/statics/workflow-type.static';
 import { WorkflowService } from '../../../@master-data/services/workflow.service';
+import { ErrorMessage } from '../../../shared/components/error-message/error-message';
 
 @Component({
   selector: 'app-struct-project',
-  imports: [NgModule, SearchableSelect],
+  imports: [NgModule, SearchableSelect, ErrorMessage],
   templateUrl: './struct-project.html',
   styleUrls: ['../../project.scss']
 })
@@ -42,6 +43,8 @@ export class StructProject implements OnInit {
   dataListUser: any = [];
   dataListUserSelected: any = [];
   dataListOrgData: any = [];
+  submitted = false;
+  codeExistError = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -173,7 +176,11 @@ export class StructProject implements OnInit {
     this.visibleAddCv = true;
   }
 
-  addCv() {
+  addCv(form: any) {
+    this.submitted = true;
+    if (form.invalid || this.codeExistError) {
+      return;
+    }
     this.service.insert(this.dto).pipe(takeUntil(this.destroy$)).subscribe({
       next :(res) => {
         this.closeAddCv();
@@ -212,7 +219,6 @@ export class StructProject implements OnInit {
       .subscribe((res) => {
         this.dataListUser = res;
         this.dataListUserSelected = res;
-        console.log(this.dataListUser);
       })
     }
   }
@@ -233,6 +239,20 @@ export class StructProject implements OnInit {
           value: item.id
         }));
       }
+    });
+  }
+
+  checkExistCode() {
+    const code = this.dto.code?.trim();
+    if (!code) return;
+
+    this.workflowService.checkCodeExits(code).subscribe({
+      next: (res: any) => {
+        this.codeExistError = res
+      },
+      error: (err) => {
+        console.error('Lỗi khi kiểm tra code:', err);
+      },
     });
   }
 }

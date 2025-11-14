@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { GlobalService } from '../../../services/common/global.service';
@@ -14,6 +14,7 @@ import { ProjectPersonService } from '../../services/project-person.service';
   styleUrls: ['../../project.scss']
 })
 export class WorkflowProject implements OnInit {
+  @Output() showDetailWorkFolow = new EventEmitter<boolean>(true)
   private destroy$ = new Subject<void>();
   projectId: string = '';
   lstSteps: any[] = [];
@@ -73,5 +74,9 @@ export class WorkflowProject implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  goBack(): void{
+    this.showDetailWorkFolow.emit(false);
   }
 }
