@@ -14,5 +14,6 @@ export class ProjectStructDto extends BaseFilter {
     endDate: any;
     refrenceFileId: string = '';
     notes: string = '';
-    files: any[] = []
+    files: any[] = [];
+    workflowId: string = '';
 }

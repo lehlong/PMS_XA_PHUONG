@@ -34,7 +34,8 @@
                 <i class="bi bi-activity"></i> QUY TRÌNH
             </ng-template>
             <div class="tab-project">
-                <app-workflow-project *ngIf="indexTabProject === 3"></app-workflow-project>
+                <app-workflow-project-list *ngIf="indexTabProject === 3 && !showDetailWorkFolow" (showDetailWorkFolow)="showDetailWorkFolow = $event"></app-workflow-project-list>
+                <app-workflow-project *ngIf="indexTabProject === 3 && showDetailWorkFolow" (showDetailWorkFolow)="showDetailWorkFolow = $event"></app-workflow-project>
             </div>
 
         </nz-tab>

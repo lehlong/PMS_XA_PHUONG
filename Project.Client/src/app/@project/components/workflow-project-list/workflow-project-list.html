@@ -1,0 +1,59 @@
+<nz-page-header >
+    <nz-page-header-title>DANH SÁCH WORKFLOW</nz-page-header-title>
+    <nz-page-header-subtitle>các workflow dự án và công việc</nz-page-header-subtitle>
+    <nz-page-header-extra>
+        <nz-space>
+            <input *nzSpaceItem nz-input placeholder="Tìm kiếm nhanh" [(ngModel)]="filter.keyWord"
+                (keydown.enter)="search()" />
+
+            <button *nzSpaceItem nz-button (click)="reset()">
+                <nz-icon nzType="sync" nzTheme="outline" />
+            </button>
+
+            <button *nzSpaceItem nz-button (click)="search()">
+                <nz-icon nzType="search" nzTheme="outline" />
+            </button>
+        </nz-space>
+    </nz-page-header-extra>
+    <nz-page-header-content>
+        <nz-table #list nzBordered [nzData]="data.data" nzSize="small" [nzFrontPagination]="false"
+            [nzScroll]="{ y: 'calc(100vh - 226px)' }">
+            <thead>
+                <tr>
+                    <th nzAlign="center" nzWidth="60px">STT</th>
+                    <th nzWidth="160px">Mã</th>
+                    <th>Tên</th>
+                    <th>Cấp dự án</th>
+                    <th>Đơn vị</th>
+                    <th>Ghi chú</th>
+                    <th>Loại workflow</th>
+                    <th nzAlign="center" nzWidth="160px">Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of list.data; let i = index; trackBy: trackById">
+                    <td nzAlign="center">{{(data.currentPage - 1) * data.pageSize + i + 1}}</td>
+                    <td><a (click)="onShowDetailWorkflow(true)">{{ item.code }}</a></td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.projectLevelCode }}</td>
+                    <td>{{ item.orgId }}</td>
+                    <td>{{ item.notes }}</td>
+                    <td>{{ 'Dự án' }}</td>
+                    <td nzAlign="center">
+                        <nz-tag [nzColor]="item.isActive ? 'success' : 'error'">
+                            <nz-icon [nzType]="item.isActive ? 'check-circle' : 'close-circle'" />
+                            <span>{{item.isActive ? 'Kích hoạt' : 'Khoá'}}</span>
+                        </nz-tag>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </nz-page-header-content>
+</nz-page-header>
+<div class="paging-container">
+    <div>Tổng {{data.totalRecord}} bản ghi</div>
+    <nz-pagination [nzPageIndex]="data.currentPage" [nzTotal]="data.totalRecord" nzShowSizeChanger
+        [nzPageSize]="data.pageSize" nzShowQuickJumper (nzPageIndexChange)="pageIndexChange($event)"
+        (nzPageSizeChange)="pageSizeChange($event)">
+    </nz-pagination>
+</div>

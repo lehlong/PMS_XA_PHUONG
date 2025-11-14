@@ -8,12 +8,16 @@ import { ProjectStructService } from '../../services/project-struct.service';
 import { TreeUtils } from '../../../services/utilities/tree.ultis';
 import { ProjectStructDto } from '../../../class/PS/project-struct.class';
 import { FileService } from '../../../services/common/file.service';
+import { SearchableSelect } from '../../../shared/components/searchable-select/searchable-select';
+import { OrganizeService } from '../../../@master-data/services/organize.service';
 import { WorkflowDto } from '../../../class/MD/workflow.class';
 import { WorkflowType } from '../../../shared/statics/workflow-type.static';
 import { WorkflowService } from '../../../@master-data/services/workflow.service';
+import { ErrorMessage } from '../../../shared/components/error-message/error-message';
+
 @Component({
   selector: 'app-struct-project',
-  imports: [NgModule],
+  imports: [NgModule, SearchableSelect, ErrorMessage],
   templateUrl: './struct-project.html',
   styleUrls: ['../../project.scss']
 })
@@ -36,18 +40,26 @@ export class StructProject implements OnInit {
   lstWorkflow: any[] = [];
 
   dto: ProjectStructDto = new ProjectStructDto();
+  dataListUser: any = [];
+  dataListUserSelected: any = [];
+  dataListOrgData: any = [];
+  submitted = false;
+  codeExistError = false;
 
   constructor(
     private route: ActivatedRoute,
     private global: GlobalService,
     private service: ProjectStructService,
+    private _file: FileService,
+    private org: OrganizeService,
     private workflowService: WorkflowService,
-    private _file: FileService
   ) { }
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
     this.getProjectStruct();
+    this.getDataListUser();
+    this.getDataListOrg();
     this.getWorkflow();
   }
 
@@ -69,20 +81,21 @@ export class StructProject implements OnInit {
     })
   }
   getWorkflow() {
-    const filter = new WorkflowDto();
-    filter.type = WorkflowType.Task;
+    const filter = new WorkflowDto();
+     filter.type = WorkflowType.Task;
     filter.isActive = true;
     filter.pageSize = 50; 
     filter.currentPage = 1;
 
-    this.workflowService.search(filter)
+     this.workflowService.search(filter)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (res: any) => {
-          this.lstWorkflow = res.data; 
-        }
-      })
-  }
+         next: (res: any) => {
+           this.lstWorkflow = res.data; 
+        console.log(this.lstWorkflow)
+         }
+   })
+  }
 
   refreshCheckedStatusStruct(): void {
     this.checkedStruct = this.structs.every((i: any) => this.setOfCheckedIdStruct.has(i.id));
@@ -164,7 +177,12 @@ export class StructProject implements OnInit {
     this.visibleAddCv = true;
   }
 
-  addCv() {
+  addCv(form: any) {
+    this.submitted = true;
+    if (form.invalid || this.codeExistError) {
+      return;
+    }
+    console.log(this.dto);
     this.service.insert(this.dto).pipe(takeUntil(this.destroy$)).subscribe({
       next :(res) => {
         this.closeAddCv();
@@ -193,5 +211,50 @@ export class StructProject implements OnInit {
 
   deleteFile(f: any) {
     this.dto.files = this.dto.files.filter(x => x.id != f.id)
+  }
+
+
+  getDataListUser(): void{
+    if(this.dataListUser.length == 0){
+      this.service.getProjectPerson(this.projectId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.dataListUser = res;
+        this.dataListUserSelected = res;
+      })
+    }
+  }
+
+  onChangeCheckbox(item: any, key: string) {
+
+  }
+
+  onSearchOrgId(event: any): void{
+    console.log(event);
+  }
+
+  private getDataListOrg(): void{
+    this.org.getAll().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.dataListOrgData = res.map((item: any) => ({
+          label: item.name,
+          value: item.id
+        }));
+      }
+    });
+  }
+
+  checkExistCode() {
+    const code = this.dto.code?.trim();
+    if (!code) return;
+
+    this.workflowService.checkCodeExits(code).subscribe({
+      next: (res: any) => {
+        this.codeExistError = res
+      },
+      error: (err) => {
+        console.error('Lỗi khi kiểm tra code:', err);
+      },
+    });
   }
 }

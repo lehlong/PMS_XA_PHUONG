@@ -1,0 +1,30 @@
+<div class="ss-root" (keydown)="onKeyDown($event)" tabindex="0">
+  <div class="ss-control" [class.disabled]="disabled" (click)="toggleDropdown()">
+    <div class="ss-value">
+      <ng-container *ngIf="selectedItem; else ph">
+        {{ selectedItem[labelKey] }}
+      </ng-container>
+      <ng-template #ph>
+        <span class="placeholder">{{ placeholder }}</span>
+      </ng-template>
+    </div>
+    <div class="ss-arrow">&#9662;</div>
+  </div>
+
+  <div class="ss-dropdown" *ngIf="open">
+    <div class="ss-search">
+      <input #searchInput type="text" [(ngModel)]="filter" (input)="onFilter()" placeholder="Tìm..." (click)="$event.stopPropagation()" />
+    </div>
+
+    <ul class="options-list">
+      <li *ngFor="let it of filtered; let i = index; trackBy: trackByFn"
+          [class.highlight]="i === highlighted"
+          [class.selected]="_isSameValue(it, selectedItem)"
+          (click)="select(it)"
+          (mouseenter)="highlighted = i">
+        {{ it[labelKey] }}
+      </li>
+      <li *ngIf="filtered.length === 0" class="no-result">Không có kết quả</li>
+    </ul>
+  </div>
+</div>

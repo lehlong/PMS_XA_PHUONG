@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CommonService } from '../../services/common/common.service';
 import { ProjectStructDto } from '../../class/PS/project-struct.class';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -11,4 +12,6 @@ export class ProjectStructService {
     getProjectStruct(projectId: string) { return this.common.get(`ProjectStruct/GetProjectStruct/${projectId}`, {}, false) }
 
     insert(data: ProjectStructDto) { return this.common.post('ProjectStruct/Insert', data, false) }
+
+    getProjectPerson(projectId: string) { return this.common.get(`ProjectPerson/GetProjectPerson/${projectId}`, {}, false) }
 }
