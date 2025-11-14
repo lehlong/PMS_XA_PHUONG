@@ -37,6 +37,7 @@ namespace Project.Service.Dtos.PS
         public ICollection<ProjectStructDto>? Structs { get; set; }
         public ICollection<FileDto>? Files { get; set; }
         public MdOrganize? DonViPhuTrachRef { get; set; }
+        public MdWorkflow? Workflow { get; set; }
 
         public void Mapping(Profile profile)
         {
@@ -45,7 +46,8 @@ namespace Project.Service.Dtos.PS
             profile.CreateMap<ProjectDto, PsProject>()
                 .ForMember(dest => dest.Structs, opt => opt.Ignore())
                 .ForMember(dest => dest.Files, opt => opt.Ignore())
-                .ForMember(dest => dest.DonViPhuTrachRef, opt => opt.Ignore());
+                .ForMember(dest => dest.DonViPhuTrachRef, opt => opt.Ignore())
+                .ForMember(dest => dest.Workflow,opt => opt.Ignore());
         }
     }
 }

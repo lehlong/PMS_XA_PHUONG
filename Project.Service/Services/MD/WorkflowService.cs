@@ -11,7 +11,6 @@ namespace Project.Service.Services.MD
     {
         Task InsertWorkflow(WorkflowDto request);
         Task UpdateWorkflow(WorkflowDto request);
-        Task<WorkflowDto> GetByWorkflowId(string workflowId);
         Task<WorkflowDto> GetDetail(string workflowId);
     }
 
@@ -92,32 +91,6 @@ namespace Project.Service.Services.MD
             {
                 Status = false;
                 Exception = ex;
-            }
-        }
-
-        public async Task<WorkflowDto> GetByWorkflowId(string workflowId)
-        {
-            try
-            {
-                var _workflow = await _dbContext.MdWorkflow.Include(x => x.Steps)
-                                    .FirstOrDefaultAsync(x => x.Id == workflowId);
-
-                if (_workflow == null)
-                {
-                    // Nếu không tìm thấy, trả về DTO rỗng
-                    return new WorkflowDto();
-                }
-
-                // 2. Map từ entity (MdWorkflow) sang DTO (WorkflowDto)
-                var data = _mapper.Map<WorkflowDto>(_workflow);
-
-                return data;
-            }
-            catch (Exception ex)
-            {
-                Status = false;
-                Exception = ex;
-                return new WorkflowDto();
             }
         }
 

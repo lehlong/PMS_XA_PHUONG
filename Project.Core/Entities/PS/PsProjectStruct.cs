@@ -1,5 +1,6 @@
 ﻿using Project.Core.Common;
 using Project.Core.Entities.CM;
+using Project.Core.Entities.MD;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -29,6 +30,7 @@ namespace Project.Core.Entities.PS
         public string? RefrenceFileId { get; set; }
         public string? Notes { get; set; }
         public virtual PsProject? Project { get; set; }
+        public virtual MdWorkflow? Workflow { get; set; }
         public virtual ICollection<CmFile>? Files { get; set; }
     }
 }

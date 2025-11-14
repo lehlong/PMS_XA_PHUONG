@@ -9,6 +9,7 @@ namespace Project.Core.Entities.PS
         [Key]
         public string Id { get; set; } = string.Empty;
         public string ProjectId { get; set; } = string.Empty;
+        public string? WorkflowId { get; set; }
         public string? NextId { get; set; }
         public int? Step { get; set; }
         public string? Name { get; set; }

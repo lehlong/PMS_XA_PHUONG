@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Project.Core.Common;
 using Project.Core.Entities.CM;
+using Project.Core.Entities.MD;
 using Project.Core.Entities.PS;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,8 @@ namespace Project.Service.Dtos.PS
         public string? RefrenceFileId { get; set; }
         public string? Notes { get; set; }
         public PsProject? Project { get; set; }
+
+        public MdWorkflow? Workflow { get; set; }
         public ICollection<CmFile>? Files { get; set; }
 
         public void Mapping(Profile profile)
@@ -38,6 +41,7 @@ namespace Project.Service.Dtos.PS
 
             profile.CreateMap<ProjectStructDto, PsProjectStruct>()
                 .ForMember(dest => dest.Project, opt => opt.Ignore())
+                .ForMember(dest => dest.Workflow, opt => opt.Ignore())
                 .ForMember(dest => dest.Files, opt => opt.Ignore());
         }
     }

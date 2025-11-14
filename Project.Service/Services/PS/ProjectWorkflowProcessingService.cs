@@ -9,19 +9,19 @@ namespace Project.Service.Services.PS
 {
     public interface IProjectWorkflowProcessingService : IGenericService<PsProjectWorkflowProcessing, ProjectWorkflowProcessingDto>
     {
-        Task<List<ProjectWorkflowProcessingDto>> GetProjectWorkflowStep(string projectId);
+        Task<List<ProjectWorkflowProcessingDto>> GetProjectWorkflowStep(string projectId,string workflowId);
         Task StartWorkflow(string projectId);
         Task UpdateWorkflowProject(List<ProjectWorkflowProcessingDto> request);
     }
 
     public class ProjectWorkflowProcessingService(AppDbContext dbContext, IMapper mapper) : GenericService<PsProjectWorkflowProcessing, ProjectWorkflowProcessingDto>(dbContext, mapper), IProjectWorkflowProcessingService
     {
-        public async Task<List<ProjectWorkflowProcessingDto>> GetProjectWorkflowStep(string projectId)
+        public async Task<List<ProjectWorkflowProcessingDto>> GetProjectWorkflowStep(string projectId,string workflowId)
         {
             try
             {
                 var entities = await _dbContext.PsProjectWorkflowProcessing.Include(x => x.Person)
-                                .Where(x => x.ProjectId == projectId).OrderBy(x => x.Step)
+                                .Where(x => x.ProjectId == projectId && x.WorkflowId == workflowId).OrderBy(x => x.Step)
                                 .ToListAsync();
                 var data = _mapper.Map<List<ProjectWorkflowProcessingDto>>(entities);
                 foreach(var i in data)

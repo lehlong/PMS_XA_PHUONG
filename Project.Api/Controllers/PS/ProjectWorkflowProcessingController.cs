@@ -10,16 +10,17 @@ namespace Project.Api.Controllers.PS
 
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectWorkflowProcessingController(IProjectWorkflowProcessingService service,IWorkflowService workflowService) : ControllerBase
+    public class ProjectWorkflowProcessingController(IProjectWorkflowProcessingService service,IProjectStructService projectStructService,IProjectService projectService) : ControllerBase
     {
         public readonly IProjectWorkflowProcessingService _service = service;
-        public readonly IWorkflowService _workflowService = workflowService;
+        public readonly IProjectStructService _projectStructService = projectStructService;
+        public readonly IProjectService _projectService = projectService;
 
-        [HttpGet("GetProjectWorkflowStep/{projectId}")]
-        public async Task<IActionResult> GetProjectWorkflowStep([FromRoute] string projectId)
+        [HttpGet("GetProjectWorkflowStep/{projectId}/{workflowId}")]
+        public async Task<IActionResult> GetProjectWorkflowStep([FromRoute] string projectId,string workflowId)
         {
             var res = new TransferObject();
-            var data = await _service.GetProjectWorkflowStep(projectId);
+            var data = await _service.GetProjectWorkflowStep(projectId,workflowId);
             if (_service.Status)
             {
                 res.Data = data;
@@ -31,18 +32,34 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
 
-        [HttpGet("GetByWorkflowId/{workflowId}")]
-        public async Task<IActionResult> GetByWorkflowId([FromRoute] string workflowId)
+        [HttpGet("GetTaskWorkflow/{projectId}")]
+        public async Task<IActionResult> GetTaskWorkflow([FromRoute] string projectId)
         {
             var res = new TransferObject();
-            var data = await _workflowService.GetByWorkflowId(workflowId);
-            if (_workflowService.Status)
+            var data = await _projectStructService.GetTaskWorkflow(projectId);
+            if (_projectStructService.Status)
             {
                 res.Data = data;
             }
             else
             {
-                await res.GetMessage("0001", _workflowService);
+                await res.GetMessage("0001", _projectStructService);
+            }
+            return Ok(res);
+        }
+
+        [HttpGet("GetProjectWorkflow/{projectId}")]
+        public async Task<IActionResult> GetProjectWorkflow([FromRoute] string projectId)
+        {
+            var res = new TransferObject();
+            var data = await _projectService.GetProjectWorkflow(projectId);
+            if (_projectService.Status)
+            {
+                res.Data = data;
+            }
+            else
+            {
+                await res.GetMessage("0001", _projectService);
             }
             return Ok(res);
         }
