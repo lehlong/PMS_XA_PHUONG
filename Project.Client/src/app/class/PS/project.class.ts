@@ -22,7 +22,7 @@ export class ProjectDto extends BaseFilter {
     refrenceFileId: string = '';
     workflowId: string = '';
     currentStepWorkflowId: string = '';
-    createDate: any ='';
+    createDate: any = null;
     createBy: string=''
     structs: any[] = []
     listGiaiDoan: any[] = []
