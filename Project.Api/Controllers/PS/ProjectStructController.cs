@@ -38,6 +38,22 @@ namespace Project.Api.Controllers.PS
             }
             return Ok(res);
         }
+
+        //[HttpGet("Search")]
+        //public async Task<IActionResult> Search([FromQuery] ProjectStructDto filter)
+        //{
+        //    var res = new TransferObject();
+        //    var data = await _service.Search(filter);
+        //    if (_service.Status)
+        //    {
+        //        res.Data = data;
+        //    }
+        //    else
+        //    {
+        //        await res.GetMessage("0001", _service);
+        //    }
+        //    return Ok(res);
+        //}
         [HttpGet("GetTaskWorkflow/{projectId}")]
         public async Task<IActionResult> GetTaskWorkflow([FromRoute] string projectId)
         {

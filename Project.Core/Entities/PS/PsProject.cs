@@ -32,6 +32,7 @@ namespace Project.Core.Entities.PS
         public string? RefrenceFileId { get; set; }
         public string? CurrentStepWorkflowId { get; set; }
         public virtual MdOrganize? DonViPhuTrachRef { get; set; }
+        public virtual MdWorkflow? Workflow { get; set; }
         public virtual ICollection<CmFile>? Files { get; set; }
         public virtual ICollection<PsProjectStruct>? Structs { get; set; }
 

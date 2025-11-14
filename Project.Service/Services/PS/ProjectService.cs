@@ -18,6 +18,7 @@ namespace Project.Service.Services.PS
         Task<ProjectDto> GetProjectDetail(string projectId);
         Task<List<ProjectStructDto>> GetGiaiDoan(string projectId);
         Task<ProjectWorkflowProcessingDto> GetCurrentStep(string stepId);
+        Task<List<ProjectDto>> GetProjectWorkflow(string projectId);
         Task TrinhDuyet(string projectId);
         Task XacNhan(string projectId);
         Task PheDuyet(string projectId);
@@ -106,7 +107,21 @@ namespace Project.Service.Services.PS
                 return new ProjectWorkflowProcessingDto();
             }
         }
+        public async Task<List<ProjectDto>> GetProjectWorkflow(string projectId)
+        {
+            try
+            {
 
+                var _structs = await _dbContext.PsProject.Where(x => x.Id == projectId && x.WorkflowId != null).Include(x => x.Workflow).ToListAsync();
+                return _mapper.Map<List<ProjectDto>>(_structs);
+            }
+            catch (Exception ex)
+            {
+                this.Status = false;
+                this.Exception = ex;
+                return new List<ProjectDto>();
+            }
+        }
 
         public async Task<string> CreateProject(ProjectDto request)
         {
@@ -193,6 +208,7 @@ namespace Project.Service.Services.PS
                     {
                         Id = Guid.NewGuid().ToString(),
                         ProjectId = projectId,
+                        WorkflowId = request.WorkflowId,
                         Step = i.Step,
                         Name = i.Name,
                         HanXuLy = i.HanXuLy,

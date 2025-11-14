@@ -11,6 +11,7 @@ namespace Project.Service.Dtos.PS
         [Key]
         public string? Id { get; set; }
         public string? ProjectId { get; set; }
+        public string? WorkflowId { get; set; }
         public string? NextId { get; set; } 
         public int? Step { get; set; }
         public string? Name { get; set; }
