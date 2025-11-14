@@ -81,20 +81,21 @@ export class StructProject implements OnInit {
     })
   }
   getWorkflow() {
-    const filter = new WorkflowDto();
-    filter.type = WorkflowType.Task;
+    const filter = new WorkflowDto();
+     filter.type = WorkflowType.Task;
     filter.isActive = true;
     filter.pageSize = 50; 
     filter.currentPage = 1;
 
-    this.workflowService.search(filter)
+     this.workflowService.search(filter)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (res: any) => {
-          this.lstWorkflow = res.data; 
-        }
-      })
-  }
+         next: (res: any) => {
+           this.lstWorkflow = res.data; 
+        console.log(this.lstWorkflow)
+         }
+   })
+  }
 
   refreshCheckedStatusStruct(): void {
     this.checkedStruct = this.structs.every((i: any) => this.setOfCheckedIdStruct.has(i.id));
@@ -181,6 +182,7 @@ export class StructProject implements OnInit {
     if (form.invalid || this.codeExistError) {
       return;
     }
+    console.log(this.dto);
     this.service.insert(this.dto).pipe(takeUntil(this.destroy$)).subscribe({
       next :(res) => {
         this.closeAddCv();
