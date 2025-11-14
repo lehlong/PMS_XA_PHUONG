@@ -10,6 +10,7 @@ namespace Project.Service.Services.PS
     public interface IProjectStructService : IGenericService<PsProjectStruct, ProjectStructDto>
     {
         Task<List<ProjectStructDto>> GetProjectStruct(string projectId);
+        Task<List<ProjectStructDto>> GetTaskWorkflow(string projectId);
         Task Insert(ProjectStructDto request);
     }
 
@@ -29,6 +30,22 @@ namespace Project.Service.Services.PS
                 return new List<ProjectStructDto>();
             }
         }
+        public async Task<List<ProjectStructDto>> GetTaskWorkflow(string projectId)
+        {
+            try
+            {
+                var _structs = await _dbContext.PsProjectStruct.Where(x => x.ProjectId == projectId && x.Type == 3).OrderBy(x => x.OrderNumber).ToListAsync();
+                return _mapper.Map<List<ProjectStructDto>>(_structs);
+            }
+            catch (Exception ex)
+            {
+                this.Status = false;
+                this.Exception = ex;
+                return new List<ProjectStructDto>();
+            }
+        }
+
+
 
         public async Task Insert(ProjectStructDto request)
         {

@@ -19,6 +19,7 @@ namespace Project.Service.Dtos.PS
         public string? Code { get; set; }
         public string? Name { get; set; }
         public string? PId { get; set; }
+        public string? WorkflowId { get; set; }
         public int? OrderNumber { get; set; }
         public bool? Expanded { get; set; }
         public string? OrgId { get; set; }
