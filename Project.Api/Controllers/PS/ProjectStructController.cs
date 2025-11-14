@@ -38,6 +38,21 @@ namespace Project.Api.Controllers.PS
             }
             return Ok(res);
         }
+        [HttpGet("GetTaskWorkflow/{projectId}")]
+        public async Task<IActionResult> GetTaskWorkflow([FromRoute] string projectId)
+        {
+            var res = new TransferObject();
+            var data = await _service.GetTaskWorkflow(projectId);
+            if (_service.Status)
+            {
+                res.Data = data;
+            }
+            else
+            {
+                await res.GetMessage("0001", _service);
+            }
+            return Ok(res);
+        }
 
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] ProjectStructDto request)
