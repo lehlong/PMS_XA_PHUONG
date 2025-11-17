@@ -4,11 +4,12 @@ import { PaginationResult } from '../../../class/common/pagination-result.class'
 import { WorkflowDto } from '../../../class/MD/workflow.class';
 import { WorkflowProjectAction } from '../../../shared/statics/workflow-action.static';
 import { GlobalService } from '../../../services/common/global.service';
-import { WorkflowService } from '../../../@master-data/services/workflow.service';
 import { CapDuAnService } from '../../../@master-data/services/cap-du-an.service';
 import { OrganizeService } from '../../../@master-data/services/organize.service';
 import { WorkflowType } from '../../../shared/statics/workflow-type.static';
 import { NgModule } from '../../../shared/ng-zorro.module';
+import { ProjectWorkflowProcessingService } from '../../services/project-workflow-processing.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-workflow-project-list',
@@ -21,29 +22,29 @@ export class WorkflowProjectList {
   @Output() showDetailWorkFolow = new EventEmitter<boolean>(false)
   private destroy$ = new Subject<void>();
   visible: boolean = false;
-  isEdit: boolean = false;
-  data: PaginationResult = new PaginationResult();
-  dto: WorkflowDto = new WorkflowDto();
+  data: any = [];
+  originalData: any[] = [];  // dữ liệu gốc từ API (không thay đổi)
   filter: WorkflowDto = new WorkflowDto();
   lstAction = WorkflowProjectAction.getList();
   lstProjectLevel: any[] = [];
   lstOrganize: any[] = [];
+  projectId: string = '';
+  pageIndex = 1;
+  pageSize = 10;
+  total = 0;// tổng bản ghi sau khi filter
 
   constructor(
     private global: GlobalService,
-    private service: WorkflowService,
     private projectLevelService: CapDuAnService,
-    private organizeService: OrganizeService
+    private organizeService: OrganizeService,
+    private projectWorkflowProcessingService: ProjectWorkflowProcessingService,
+    private route: ActivatedRoute,
   ) {
-    this.global.setBreadcrumb([
-      {
-        name: 'Workflow dự án',
-        path: 'master-data/workflow-project',
-      },
-    ]);
+    
   }
 
   ngOnInit(): void {
+    this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
     this.search();
     this.getProjectLevel();
     this.getOrganize();
@@ -51,12 +52,12 @@ export class WorkflowProjectList {
 
   search() {
     this.filter.type = WorkflowType.Task;
-    this.service.search(this.filter)
+    this.projectWorkflowProcessingService.getProjectWorkFlow(this.projectId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          console.log(res);
-          this.data = res
+          this.originalData = res
+          this.applyFilterAndPaging();
         }
       })
   }
@@ -84,18 +85,26 @@ export class WorkflowProjectList {
   }
 
   reset() {
+    // this.filter = new WorkflowDto();
+    // this.search();
     this.filter = new WorkflowDto();
-    this.search();
+    this.pageIndex = 1;
+    this.applyFilterAndPaging();
   }
 
   pageIndexChange(e: any) {
-    this.filter.currentPage = e;
-    this.search();
+    // this.filter.currentPage = e;
+    // this.search();
+    this.pageIndex = e;
+    this.applyFilterAndPaging();
   }
 
   pageSizeChange(e: any) {
-    this.filter.pageSize = e;
-    this.search();
+    // this.filter.pageSize = e;
+    // this.search();
+    this.pageSize = e;
+    this.pageIndex = 1; // reset về trang đầu
+    this.applyFilterAndPaging()
   }
 
   ngOnDestroy(): void {
@@ -106,5 +115,28 @@ export class WorkflowProjectList {
 
   onShowDetailWorkflow(value: boolean): void{
     this.showDetailWorkFolow.emit(value)
+  }
+
+  private applyFilterAndPaging() {
+    let filtered = [...this.originalData];
+
+    // === SEARCH ===
+    if (this.filter.keyWord && this.filter.keyWord.trim() !== '') {
+      const keyword = this.filter.keyWord.toLowerCase();
+      filtered = filtered.filter(item =>
+        (item.code?.toLowerCase().includes(keyword)) ||
+        (item.name?.toLowerCase().includes(keyword)) ||
+        (item.notes?.toLowerCase().includes(keyword))
+      );
+    }
+
+    // Tổng sau khi search
+    this.total = filtered.length;
+
+    // === PAGINATION ===
+    const start = (this.pageIndex - 1) * this.pageSize;
+    const end = this.pageIndex * this.pageSize;
+
+    this.data = filtered.slice(start, end);
   }
 }

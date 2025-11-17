@@ -168,7 +168,9 @@
                         <i class="bi bi-people"></i> GIAO THỰC HIỆN
                     </ng-template>
                     <div class="d-flex align-items-center justify-content-between">
-                        <p class="text-color-black fs-14">Đã chọn: 0/7 người</p>
+                        <p class="text-color-black fs-14">
+                            Đã chọn: {{dataListUserSelected?.length}}/{{dataListUser?.length}} người
+                        </p>
                         <div>
                             <app-searchable-select [items]="dataListOrgData" (selectionChange)="onSearchOrgId($event)"></app-searchable-select>
                         </div>
@@ -195,22 +197,22 @@
                                                 <td nzAlign="center">{{ i + 1 }}</td>                                            
                                                 <td >{{item?.person?.fullName}}</td>
                                                 <td nzAlign="center">
-                                                    <label nz-checkbox [(ngModel)]="item.isThanhVien"  [ngModelOptions]="{standalone: true}"
-                                                        (ngModelChange)="onChangeCheckbox(item, 'isThanhVien')"></label>
+                                                    <label nz-checkbox [(ngModel)]="item.isChuTri"  [ngModelOptions]="{standalone: true}"
+                                                        (ngModelChange)="onChangeCheckbox(item, 'isChuTri')"></label>
                                                 </td>
                                                 <td nzAlign="center">
-                                                    <label nz-checkbox [(ngModel)]="item.isThanhVien"  [ngModelOptions]="{standalone: true}"
-                                                        (ngModelChange)="onChangeCheckbox(item, 'isThanhVien')"></label>
+                                                    <label nz-checkbox [(ngModel)]="item.isPhoiHop"  [ngModelOptions]="{standalone: true}"
+                                                        (ngModelChange)="onChangeCheckbox(item, 'isPhoiHop')"></label>
                                                 </td>
                                                 <td nzAlign="center">
-                                                    <label nz-checkbox [(ngModel)]="item.isThanhVien"  [ngModelOptions]="{standalone: true}"
-                                                        (ngModelChange)="onChangeCheckbox(item, 'isThanhVien')"></label>
+                                                    <label nz-checkbox [(ngModel)]="item.isNhanDeBiet"  [ngModelOptions]="{standalone: true}"
+                                                        (ngModelChange)="onChangeCheckbox(item, 'isNhanDeBiet')"></label>
                                                 </td>
                                                 <td nzAlign="center">
                                                     0
                                                 </td>
                                                 <td nzAlign="left">
-                                                    Đội trưởng
+                                                    {{item.roleName}}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -238,13 +240,35 @@
                                                     {{data.person?.fullName}}<br>
                                                 </td>
                                                 <td nzAlign="center">
-                                                    <input type="text" class="w-100 border-radius-4px" style="border: 1px solid #CFCFCF">
+                                                    <div *ngFor="let item of data.dataTask" class="mb-2">
+                                                        <input type="text" 
+                                                        class="w-100 border-radius-4px px-2 py-1" 
+                                                        style="border: 1px solid #CFCFCF"
+                                                        (keyup)="changeDataWorkName($event, item)"
+                                                        placeholder="Nhập...">
+                                                    </div>
                                                 </td>
                                                 <td nzAlign="center">
-                                                    <input type="text" class="w-100 border-radius-4px" style="border: 1px solid #CFCFCF">
+                                                    <div *ngFor="let item of data.dataTask" class="mb-2">
+                                                        <input type="text" 
+                                                        class="w-100 border-radius-4px px-2 py-1" 
+                                                        style="border: 1px solid #CFCFCF"
+                                                        (keyup)="changeDataWorkNote($event, item)"
+                                                        placeholder="Nhập...">
+                                                    </div>
                                                 </td>
                                                 <td>
-                                                    trash
+                                                    <div class="d-flex align-items-center justify-content-center">
+                                                        <button nz-button nzType="default" class="me-2" (click)="addNewSelectedRow(data)">
+                                                            <i class="bi bi-plus-circle"></i>
+                                                        </button>
+                                                        <div>
+                                                            <button class="d-block mb-2" nz-button nzType="default" (click)="removeSelectedRow(data, j)" *ngFor="let item of data.dataTask; let j = index ">
+                                                                <i class="bi bi-trash text-color-red"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    
                                                 </td>
                                             </tr>
                                         </tbody>

@@ -74,6 +74,7 @@ export class WorkflowProject implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.showDetailWorkFolow.emit(false);
   }
 
   goBack(): void{

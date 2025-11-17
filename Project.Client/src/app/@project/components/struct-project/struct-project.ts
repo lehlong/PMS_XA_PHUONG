@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NgModule } from '../../../shared/ng-zorro.module';
 import { ProjectStructType } from '../../../shared/statics/project-struct-type.static';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { GlobalService } from '../../../services/common/global.service';
 import { ProjectStructService } from '../../services/project-struct.service';
@@ -45,6 +45,7 @@ export class StructProject implements OnInit {
   dataListOrgData: any = [];
   submitted = false;
   codeExistError = false;
+  orgId: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -58,9 +59,9 @@ export class StructProject implements OnInit {
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId') ?? '';
     this.getProjectStruct();
-    this.getDataListUser();
     this.getDataListOrg();
     this.getWorkflow();
+    this.loadProjectEmployeeData();
   }
 
   ngOnDestroy(): void {
@@ -92,7 +93,6 @@ export class StructProject implements OnInit {
       .subscribe({
          next: (res: any) => {
            this.lstWorkflow = res.data; 
-        console.log(this.lstWorkflow)
          }
    })
   }
@@ -182,11 +182,15 @@ export class StructProject implements OnInit {
     if (form.invalid || this.codeExistError) {
       return;
     }
-    console.log(this.dto);
     this.service.insert(this.dto).pipe(takeUntil(this.destroy$)).subscribe({
-      next :(res) => {
-        this.closeAddCv();
-        this.getProjectStruct();
+      next :(res: any) => {
+        if(res?.data?.id){
+          let dataRequest = this.prepareApiAssignPerson(res.data.id);
+          this.callApiAssignPerson(dataRequest);
+        }else{
+          this.closeAddCv();
+          this.getProjectStruct();
+        }
       }
     })
   }
@@ -213,33 +217,105 @@ export class StructProject implements OnInit {
     this.dto.files = this.dto.files.filter(x => x.id != f.id)
   }
 
-
-  getDataListUser(): void{
-    if(this.dataListUser.length == 0){
-      this.service.getProjectPerson(this.projectId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((res) => {
-        this.dataListUser = res;
-        this.dataListUserSelected = res;
-      })
+  // Khi click checkbox
+  onChangeCheckbox(item: any, field: 'isChuTri' | 'isPhoiHop' | 'isNhanDeBiet') {
+    // Nếu item chưa được chọn → push vào mảng
+    const isSelected = item.isChuTri || item.isPhoiHop || item.isNhanDeBiet;
+    
+    if (isSelected) {
+      // Nếu bất kỳ checkbox nào ON → add vào selected (nếu chưa có)
+      const exists = this.dataListUserSelected.some((x: any) => x.id === item.id);
+      if (!exists) {
+        this.dataListUserSelected = [
+          ...this.dataListUserSelected,
+          {
+            ...item,
+            dataTask: [
+              {workItem: '', note: ''}
+            ]
+          }
+        ];
+      }
+    } else {
+      // Nếu cả 3 checkbox đều OFF → remove
+      this.dataListUserSelected = this.dataListUserSelected.filter((x: any) => x.id !== item.id);
     }
   }
 
-  onChangeCheckbox(item: any, key: string) {
-
-  }
-
   onSearchOrgId(event: any): void{
-    console.log(event);
+    this.orgId = event.value
+    this.loadProjectEmployeeData(this.orgId);
   }
 
+  addNewSelectedRow(item: any) {
+    item.dataTask.push(
+      {workItem: '', note: ''}
+    )
+  }
+
+  removeSelectedRow(item: any, index: number) {
+
+    if(item.dataTask.length > 1){
+      item.dataTask.splice(index, 1);
+      return;
+    }
+
+    const target = this.dataListUser.find((x: any) => x.id === item.id);
+    if (target) {
+      target.isChuTri = false;
+      target.isPhoiHop = false;
+      target.isNhanDeBiet = false;
+    }
+
+    this.dataListUserSelected = this.dataListUserSelected.filter((x: any) => x !== item);
+  }
+
+  changeDataWorkName(event: any, item: any): void{
+    item.workItem = event.target.value; 
+  }
+
+  changeDataWorkNote(event: any, item: any): void{
+    item.note = event.target.value;
+  }
+
+  private callApiAssignPerson(dataRequest: any): void{
+    this.service.assignPersonToTask(dataRequest)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((res) => {
+      this.closeAddCv();
+      this.getProjectStruct();
+    })
+  }
+
+  private prepareApiAssignPerson(taskId: string): any{
+    return this.dataListUserSelected.map((item: any) => {
+      let dataTaskRole = [];
+      if(item.isChuTri) dataTaskRole.push(1);
+      if(item.isPhoiHop) dataTaskRole.push(2);
+      if(item.isNhanDeBiet) dataTaskRole.push(3);
+      if(dataTaskRole.length === 0) return;
+      return {
+        taskId: taskId,
+        projectId: this.projectId,
+        userName: item.person.userName,
+        taskRoles: dataTaskRole,
+        projectRoleCode: item.projectRoleCode ? item.projectRoleCode : '',
+        taskPersonDetails: item.dataTask,
+      }
+    })
+  }
+  
   private getDataListOrg(): void{
     this.org.getAll().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.dataListOrgData = res.map((item: any) => ({
+        this.dataListOrgData = [];
+        this.dataListOrgData = res
+        .filter((item: any) => item.pId === 'ORG')
+        .map((item: any) => ({
           label: item.name,
           value: item.id
         }));
+        this.dataListOrgData.unshift({ label: 'Tất cả', value: '' });
       }
     });
   }
@@ -255,6 +331,43 @@ export class StructProject implements OnInit {
       error: (err) => {
         console.error('Lỗi khi kiểm tra code:', err);
       },
+    });
+  }
+
+  private loadProjectEmployeeData(orgId?: string): void{
+    forkJoin({
+      roles: this.workflowService.getProjectRoles(),
+      employees: this.workflowService.getProjectEmployee(this.projectId, orgId ? orgId : '')
+    })
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (res: any) => {
+        const roles = res.roles;
+        const employees = res.employees;
+
+        // Map employees để gán roleName
+        const employeesWithRoleName = employees.map((emp: any) => {
+          const matchedRole = roles.find((role: any) => role.code === emp.projectRoleCode);
+
+          // tìm trong selected (dữ liệu đã lưu)
+          const saved = this.dataListUserSelected.find((x: any) => x.id === emp.id);
+
+          return {
+            ...emp,
+            roleName: matchedRole ? matchedRole.name : null,
+            isChuTri: saved ? saved.isChuTri : false,
+            isPhoiHop: saved ? saved.isPhoiHop : false,
+            isNhanDeBiet: saved ? saved.isNhanDeBiet : false
+          };
+        });
+
+        if(employeesWithRoleName.length > 0){
+          this.dataListUser = employeesWithRoleName;
+        }
+      },
+      error: (err) => {
+        console.error(err);
+      }
     });
   }
 }

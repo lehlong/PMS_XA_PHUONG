@@ -16,15 +16,15 @@
         </nz-space>
     </nz-page-header-extra>
     <nz-page-header-content>
-        <nz-table #list nzBordered [nzData]="data.data" nzSize="small" [nzFrontPagination]="false"
+        <nz-table #list nzBordered [nzData]="data" nzSize="small" [nzFrontPagination]="false"
             [nzScroll]="{ y: 'calc(100vh - 226px)' }">
             <thead>
                 <tr>
                     <th nzAlign="center" nzWidth="60px">STT</th>
                     <th nzWidth="160px">Mã</th>
                     <th>Tên</th>
-                    <th>Cấp dự án</th>
-                    <th>Đơn vị</th>
+                    <!-- <th>Cấp dự án</th> -->
+                    <!-- <th>Đơn vị</th> -->
                     <th>Ghi chú</th>
                     <th>Loại workflow</th>
                     <th nzAlign="center" nzWidth="160px">Trạng thái</th>
@@ -32,11 +32,11 @@
             </thead>
             <tbody>
                 <tr *ngFor="let item of list.data; let i = index; trackBy: trackById">
-                    <td nzAlign="center">{{(data.currentPage - 1) * data.pageSize + i + 1}}</td>
+                    <td nzAlign="center">{{(pageIndex - 1) * pageSize + i + 1}}</td>
                     <td><a (click)="onShowDetailWorkflow(true)">{{ item.code }}</a></td>
                     <td>{{ item.name }}</td>
-                    <td>{{ item.projectLevelCode }}</td>
-                    <td>{{ item.orgId }}</td>
+                    <!-- <td>{{ item.projectLevelCode }}</td> -->
+                    <!-- <td>{{ item.orgId }}</td> -->
                     <td>{{ item.notes }}</td>
                     <td>{{ 'Dự án' }}</td>
                     <td nzAlign="center">
@@ -51,9 +51,14 @@
     </nz-page-header-content>
 </nz-page-header>
 <div class="paging-container">
-    <div>Tổng {{data.totalRecord}} bản ghi</div>
-    <nz-pagination [nzPageIndex]="data.currentPage" [nzTotal]="data.totalRecord" nzShowSizeChanger
-        [nzPageSize]="data.pageSize" nzShowQuickJumper (nzPageIndexChange)="pageIndexChange($event)"
-        (nzPageSizeChange)="pageSizeChange($event)">
-    </nz-pagination>
+    <div>Tổng {{data?.length}} bản ghi</div>
+    <nz-pagination 
+        [nzPageIndex]="pageIndex" 
+        [nzTotal]="total"
+        nzShowSizeChanger
+        [nzPageSize]="pageSize" 
+        nzShowQuickJumper 
+        (nzPageIndexChange)="pageIndexChange($event)"
+        (nzPageSizeChange)="pageSizeChange($event)"
+    ></nz-pagination>
 </div>
