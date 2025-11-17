@@ -13,7 +13,8 @@ namespace Project.Service.Services.PS
     {
         Task<List<ProjectStructDto>> GetProjectStruct(string projectId);
         Task<List<ProjectStructDto>> GetTaskWorkflow(string projectId);
-        Task Insert(ProjectStructDto request);
+        Task<object> Insert(ProjectStructDto request);
+        Task InsertTaskPerson(string taskId, string projectId, List<TaskPersonDto> request);
     }
 
     public class ProjectStructService(AppDbContext dbContext, IMapper mapper) : GenericService<PsProjectStruct, ProjectStructDto>(dbContext, mapper), IProjectStructService
@@ -91,7 +92,7 @@ namespace Project.Service.Services.PS
 
 
 
-        public async Task Insert(ProjectStructDto request)
+        public async Task<object> Insert(ProjectStructDto request)
         {
             try
             {
@@ -101,6 +102,7 @@ namespace Project.Service.Services.PS
                 entities.RefrenceFileId = Guid.NewGuid().ToString();
 
                 await _dbContext.PsProjectStruct.AddAsync(entities);
+
 
                 var lstStepConfig = await _dbContext.MdWorkflowStep.Where(x => x.WorkflowId == request.WorkflowId).OrderBy(x => x.Step).ToListAsync();
 
@@ -131,9 +133,66 @@ namespace Project.Service.Services.PS
 
                 await _dbContext.PsProjectWorkflowProcessing.AddRangeAsync(lstProcessing);
 
+                var lstTaskPersonEntity = new List<PsTaskPerson>();
+                
 
                 await _dbContext.SaveChangesAsync();
+                return new
+                {
+                    Id = request.Id,
+                    ProjectId = request.ProjectId
+                };
 
+            }
+            catch (Exception ex)
+            {
+                this.Status = false;
+                this.Exception = ex;
+                return null;
+            }
+        }
+
+        public async Task InsertTaskPerson(string taskId,string projectId, List<TaskPersonDto> request)
+        {
+            try
+            {
+                if (request != null && request.Count > 0)
+                {
+                    var listEntities = new List<PsTaskPerson>();
+
+                    foreach (var item in request)
+                    {
+                        var personEntity = new PsTaskPerson();
+                        personEntity.Id = Guid.NewGuid().ToString();
+                        personEntity.TaskId = taskId;
+                        personEntity.ProjectId = projectId;
+                        personEntity.UserName = item.UserName;
+                        if (item.TaskRoles != null && item.TaskRoles.Count > 0)
+                        {
+                            personEntity.TaskRoles = string.Join(",", item.TaskRoles);
+                        }
+                        personEntity.TaskPersonDetails = new List<PsTaskPersonDetail>();
+
+                        if (item.TaskPersonDetails != null && item.TaskPersonDetails.Count > 0)
+                        {
+                            foreach (var taskItem in item.TaskPersonDetails)
+                            {
+                                var detailEntity = new PsTaskPersonDetail
+                                {
+                                    Id = Guid.NewGuid().ToString(),
+                                    TaskPersonId = personEntity.TaskId,
+                                    UserName = item.UserName,
+                                    Task = taskItem.Task,
+                                    Note = taskItem.Note
+                                };
+                                personEntity.TaskPersonDetails.Add(detailEntity);
+                            }
+                        }
+                        listEntities.Add(personEntity);
+                    }
+                    await _dbContext.PsTaskPerson.AddRangeAsync(listEntities);
+                    await _dbContext.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {

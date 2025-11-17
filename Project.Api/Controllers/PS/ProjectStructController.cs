@@ -74,7 +74,23 @@ namespace Project.Api.Controllers.PS
         public async Task<IActionResult> Insert([FromBody] ProjectStructDto request)
         {
             var res = new TransferObject();
-            await _service.Insert(request);
+            var result = await _service.Insert(request);
+            if (_service.Status)
+            {
+                res.Data = result;
+                await res.GetMessage("0100", _service);
+            }
+            else
+            {
+                await res.GetMessage("0101", _service);
+            }
+            return Ok(res);
+        }
+        [HttpPost("InsertTaskPerson")]
+        public async Task<IActionResult> InsertTaskPerson([FromQuery] string taskId, [FromQuery] string projectId, [FromBody] List<TaskPersonDto> request)
+        {
+            var res = new TransferObject();
+            await _service.InsertTaskPerson(taskId, projectId, request);
             if (_service.Status)
             {
                 await res.GetMessage("0100", _service);

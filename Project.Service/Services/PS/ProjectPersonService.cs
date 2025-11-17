@@ -10,7 +10,7 @@ namespace Project.Service.Services.PS
     public interface IProjectPersonService : IGenericService<PsProjectPerson, ProjectPersonDto>
     {
         Task<List<ProjectPersonDto>> GetProjectPerson(string projectId);
-        Task<List<ProjectPersonDto>> GetProjectPersonByOrg(string projectId, string orgId);
+        Task<List<ProjectPersonDto>> GetProjectPersonByOrg(string projectId, string orgId = null);
         Task UpdateProjectPerson(List<ProjectPersonDto> request);
         Task UpdateInfoProjectPerson(List<ProjectPersonDto> request);
         Task DeleteProjectPerson(List<string> ids);
@@ -36,7 +36,7 @@ namespace Project.Service.Services.PS
 
         }
 
-        public async Task<List<ProjectPersonDto>> GetProjectPersonByOrg(string projectId, string orgId)
+        public async Task<List<ProjectPersonDto>> GetProjectPersonByOrg(string projectId, string orgId = null)
         {
             try
             {
@@ -45,8 +45,6 @@ namespace Project.Service.Services.PS
                                     .Include(x => x.Person)
                                     .ThenInclude(x => x.Title)
                                     .Where(x => x.ProjectId == projectId);
-                // Nếu orgId là "G00" hoặc null/empty, nó sẽ bỏ qua bộ lọc này
-                // và trả về tất cả nhân sự của dự án.
                 if (!string.IsNullOrEmpty(orgId) && orgId != "G00")
                 {
                     // Thêm điều kiện lọc theo OrgId trong đối tượng Person liên quan
