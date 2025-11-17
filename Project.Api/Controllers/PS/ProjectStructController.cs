@@ -12,6 +12,21 @@ namespace Project.Api.Controllers.PS
     {
         public readonly IProjectStructService _service = service;
 
+        [HttpGet("Search")]
+        public async Task<IActionResult> Search([FromQuery] ProjectStructDto filter)
+        {
+            var res = new TransferObject();
+            var data = await _service.Search(filter);
+            if (_service.Status)
+            {
+                res.Data = data;
+            }
+            else
+            {
+                await res.GetMessage("0001", _service);
+            }
+            return Ok(res);
+        }
 
         [HttpGet("CheckCodeExists")]
         public async Task<IActionResult> CheckCodeExists([FromQuery] string code)
@@ -33,6 +48,21 @@ namespace Project.Api.Controllers.PS
                 res.Data = data;
             }
             else
+            {
+                await res.GetMessage("0001", _service);
+            }
+            return Ok(res);
+        }
+        [HttpGet("GetTask/{taskId}")]
+        public async Task<IActionResult> GetTask([FromRoute] string taskId)
+        {
+            var res = new TransferObject();
+            var data = await _service.GetTask(taskId);
+            if(_service.Status)
+            {
+                res.Data = data;
+            }
+            else 
             {
                 await res.GetMessage("0001", _service);
             }

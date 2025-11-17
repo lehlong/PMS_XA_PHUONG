@@ -17,13 +17,16 @@ namespace Project.Service.Dtos.PS
         public DateTime? EndDate { get; set; }
         public AdAccount? Person { get; set; }
         public PsProject? Project { get; set; }
-
+        public int TaskCount { get; set; }
         public void Mapping(Profile profile)
         {
             profile.CreateMap<PsProjectPerson, ProjectPersonDto>();
 
             profile.CreateMap<ProjectPersonDto, PsProjectPerson>()
                 .ForMember(dest => dest.Person, opt => opt.Ignore());
+            profile.CreateMap<PsTaskPerson, ProjectPersonDto>()
+            .ForMember(dest => dest.TaskCount, opt => opt.MapFrom(src => src.TaskPersonDetails != null ? src.TaskPersonDetails.Count : 0));
+
         }
     }
 }
