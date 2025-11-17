@@ -29,8 +29,8 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
 
-        [HttpGet("GetProjectPersonByOrg/{projectId}/{orgId}")]
-        public async Task<IActionResult> GetProjectPersonByOrg([FromRoute] string projectId, [FromRoute] string orgId)
+        [HttpGet("GetProjectPersonByOrg/{projectId}")]
+        public async Task<IActionResult> GetProjectPersonByOrg([FromRoute] string projectId, [FromQuery] string? orgId)
         {
             var res = new TransferObject();
             var data = await _service.GetProjectPersonByOrg(projectId, orgId);

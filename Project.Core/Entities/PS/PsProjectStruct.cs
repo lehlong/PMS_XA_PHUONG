@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Project.Core.Entities.PS
@@ -32,5 +33,28 @@ namespace Project.Core.Entities.PS
         public virtual PsProject? Project { get; set; }
         public virtual MdWorkflow? Workflow { get; set; }
         public virtual ICollection<CmFile>? Files { get; set; }
+    }
+    public class PsTaskPerson : BaseEntity
+    {
+        [Key]
+        public string Id { get; set; } = string.Empty;
+        public string? TaskId { get; set; } = string.Empty;
+        public string ProjectId { get; set; } = string.Empty;
+        public string? UserName { get; set; }
+        public string? TaskRoles { get; set; }
+        public string? ProjectRoleCode { get; set; }
+        public virtual ICollection<PsTaskPersonDetail>? TaskPersonDetails { get; set; }
+    }
+    public class PsTaskPersonDetail : BaseEntity
+    {
+        [Key]
+        public string Id { get; set; } = string.Empty;
+        public string? TaskPersonId { get; set; } = string.Empty;
+        [ForeignKey("TaskPersonId")]
+        [JsonIgnore]
+        public virtual PsTaskPerson? PsTaskPerson { get; set; }
+        public string? UserName { get; set; }
+        public string? Task { get; set; }
+        public string? Note { get; set; }
     }
 }

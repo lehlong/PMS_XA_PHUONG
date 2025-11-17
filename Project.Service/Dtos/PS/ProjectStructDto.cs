@@ -45,4 +45,37 @@ namespace Project.Service.Dtos.PS
                 .ForMember(dest => dest.Files, opt => opt.Ignore());
         }
     }
+    public class TaskPersonDto : BaseDto, IMapFrom, IDto
+    {
+        [Key]
+        public string? Id { get; set; }
+        public string? TaskId { get; set; }
+        public string? ProjectId { get; set; }
+        public string? UserName { get; set; }
+        public List<int>? TaskRoles { get; set; }
+        public string? ProjectRoleCode { get; set; }
+        public ICollection<PsTaskPersonDetail>? TaskPersonDetails { get; set; }
+        public void Mapping(Profile profile)
+        {
+
+            profile.CreateMap<PsTaskPerson, TaskPersonDto>();
+
+            profile.CreateMap<TaskPersonDto, PsTaskPerson>()
+                .ForMember(dest => dest.TaskPersonDetails, opt => opt.Ignore());
+                
+        }
+    }
+    public class TaskPersonDetailDto : BaseDto, IMapFrom, IDto
+    {
+        [Key]
+        public string? Id { get; set; }
+        public string? TaskPersonId { get; set; }
+        public string? UserName { get; set; }
+        public string? Task { get; set; }
+        public string? Note { get; set; }
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<PsTaskPersonDetail, TaskPersonDetailDto>();
+        }
+    }
 }
