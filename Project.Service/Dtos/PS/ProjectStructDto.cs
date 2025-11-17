@@ -33,6 +33,7 @@ namespace Project.Service.Dtos.PS
 
         public MdWorkflow? Workflow { get; set; }
         public ICollection<CmFile>? Files { get; set; }
+        public ICollection<PsTaskPerson>? TaskPerson { get; set; }
 
         public void Mapping(Profile profile)
         {
@@ -42,6 +43,7 @@ namespace Project.Service.Dtos.PS
             profile.CreateMap<ProjectStructDto, PsProjectStruct>()
                 .ForMember(dest => dest.Project, opt => opt.Ignore())
                 .ForMember(dest => dest.Workflow, opt => opt.Ignore())
+                .ForMember(dest => dest.TaskPerson, opt => opt.Ignore())
                 .ForMember(dest => dest.Files, opt => opt.Ignore());
         }
     }

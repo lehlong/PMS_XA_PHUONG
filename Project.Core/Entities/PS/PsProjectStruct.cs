@@ -33,12 +33,16 @@ namespace Project.Core.Entities.PS
         public virtual PsProject? Project { get; set; }
         public virtual MdWorkflow? Workflow { get; set; }
         public virtual ICollection<CmFile>? Files { get; set; }
+        public virtual ICollection<PsTaskPerson>? TaskPerson { get; set; }
     }
     public class PsTaskPerson : BaseEntity
     {
         [Key]
         public string Id { get; set; } = string.Empty;
         public string? TaskId { get; set; } = string.Empty;
+        [ForeignKey("TaskId")]
+        [JsonIgnore]
+        public virtual PsProjectStruct? PsProjectStruct { get; set; }
         public string ProjectId { get; set; } = string.Empty;
         public string? UserName { get; set; }
         public string? TaskRoles { get; set; }

@@ -47,12 +47,24 @@ namespace Project.Service.Services.PS
                                     .Where(x => x.ProjectId == projectId);
                 if (!string.IsNullOrEmpty(orgId) && orgId != "G00")
                 {
-                    // Thêm điều kiện lọc theo OrgId trong đối tượng Person liên quan
                     query = query.Where(x => x.Person.OrgId == orgId);
                 }
+                var result = await query.Select(p => new ProjectPersonDto
+                {
+                    Id = p.Id,
+                    ProjectId = p.ProjectId,
+                    UserName = p.UserName,
+                    ProjectRoleCode = p.ProjectRoleCode,
+                    StartDate = p.StartDate,
+                    EndDate = p.EndDate,
+                    Person = p.Person,
+                    TaskCount = _dbContext.PsTaskPerson
+                                .Where(t => t.UserName == p.UserName)
+                                .SelectMany(t => t.TaskPersonDetails) // Vào bảng Detail
+                                .Count()
+                }).ToListAsync();
 
-                var entities = await query.ToListAsync();
-                return _mapper.Map<List<ProjectPersonDto>>(entities);
+                return result;
             }
             catch (Exception ex)
             {
