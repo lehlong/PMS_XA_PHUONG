@@ -219,25 +219,40 @@ export class StructProject implements OnInit {
 
   // Khi click checkbox
   onChangeCheckbox(item: any, field: 'isChuTri' | 'isPhoiHop' | 'isNhanDeBiet') {
-    // Nếu item chưa được chọn → push vào mảng
-    const isSelected = item.isChuTri || item.isPhoiHop || item.isNhanDeBiet;
-    
+    const isSelected =
+    item.isChuTri ||
+    item.isPhoiHop ||
+    item.isNhanDeBiet;
+
+    const index = this.dataListUserSelected.findIndex((x: any) => x.id === item.id);
+
     if (isSelected) {
-      // Nếu bất kỳ checkbox nào ON → add vào selected (nếu chưa có)
-      const exists = this.dataListUserSelected.some((x: any) => x.id === item.id);
-      if (!exists) {
+      // Nếu chưa có → push
+      if (index === -1) {
         this.dataListUserSelected = [
           ...this.dataListUserSelected,
           {
             ...item,
             dataTask: [
-              {workItem: '', note: ''}
+              { workItem: '', note: '' }
             ]
           }
         ];
+      } else {
+        // Nếu đã có → cập nhật lại 3 checkbox
+        this.dataListUserSelected[index] = {
+          ...this.dataListUserSelected[index],
+          isChuTri: item.isChuTri,
+          isPhoiHop: item.isPhoiHop,
+          isNhanDeBiet: item.isNhanDeBiet
+        };
+
+        // tạo array mới để Angular detect thay đổi
+        this.dataListUserSelected = [...this.dataListUserSelected];
       }
-    } else {
-      // Nếu cả 3 checkbox đều OFF → remove
+    } 
+    else {
+      // Nếu cả 3 đều false → remove
       this.dataListUserSelected = this.dataListUserSelected.filter((x: any) => x.id !== item.id);
     }
   }
@@ -293,6 +308,7 @@ export class StructProject implements OnInit {
       if(item.isChuTri) dataTaskRole.push(1);
       if(item.isPhoiHop) dataTaskRole.push(2);
       if(item.isNhanDeBiet) dataTaskRole.push(3);
+
       if(dataTaskRole.length === 0) return;
       return {
         taskId: taskId,
