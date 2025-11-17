@@ -93,7 +93,6 @@ export class StructProject implements OnInit {
       .subscribe({
          next: (res: any) => {
            this.lstWorkflow = res.data; 
-        console.log(this.lstWorkflow)
          }
    })
   }
@@ -184,28 +183,16 @@ export class StructProject implements OnInit {
       return;
     }
     this.service.insert(this.dto).pipe(takeUntil(this.destroy$)).subscribe({
-      next :(res) => {
-        console.log(res)
-        // this.closeAddCv();
-        // this.getProjectStruct();
+      next :(res: any) => {
+        if(res?.data?.id){
+          let dataRequest = this.prepareApiAssignPerson(res.data.id);
+          this.callApiAssignPerson(dataRequest);
+        }else{
+          this.closeAddCv();
+          this.getProjectStruct();
+        }
       }
     })
-    let dataRequestAssignPerson = this.dataListUserSelected.map((item: any) => {
-      let dataTaskRole = [];
-      if(item.isChuTri) dataTaskRole.push(1);
-      if(item.isPhoiHop) dataTaskRole.push(2);
-      if(item.isNhanDeBiet) dataTaskRole.push(3);
-      if(dataTaskRole.length === 0) return;
-      return {
-        taskId: '',
-        projectId: this.projectId,
-        userName: item.person.userName,
-        taskRoles: item.dataTaskRole,
-        projectRoleCode: item.projectRoleCode ? item.projectRoleCode : '',
-        taskPersonDetails: item.dataTask,
-      }
-    })
-    console.log(dataRequestAssignPerson);
   }
 
   upload(e: any) {
@@ -264,8 +251,6 @@ export class StructProject implements OnInit {
     item.dataTask.push(
       {workItem: '', note: ''}
     )
-    console.log(item)
-    console.log(this.dataListUserSelected)
   }
 
   removeSelectedRow(item: any, index: number) {
@@ -293,6 +278,33 @@ export class StructProject implements OnInit {
     item.note = event.target.value;
   }
 
+  private callApiAssignPerson(dataRequest: any): void{
+    this.service.assignPersonToTask(dataRequest)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((res) => {
+      this.closeAddCv();
+      this.getProjectStruct();
+    })
+  }
+
+  private prepareApiAssignPerson(taskId: string): any{
+    return this.dataListUserSelected.map((item: any) => {
+      let dataTaskRole = [];
+      if(item.isChuTri) dataTaskRole.push(1);
+      if(item.isPhoiHop) dataTaskRole.push(2);
+      if(item.isNhanDeBiet) dataTaskRole.push(3);
+      if(dataTaskRole.length === 0) return;
+      return {
+        taskId: taskId,
+        projectId: this.projectId,
+        userName: item.person.userName,
+        taskRoles: dataTaskRole,
+        projectRoleCode: item.projectRoleCode ? item.projectRoleCode : '',
+        taskPersonDetails: item.dataTask,
+      }
+    })
+  }
+  
   private getDataListOrg(): void{
     this.org.getAll().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
