@@ -10,6 +10,7 @@
   --bs-alice-blue: #EFF6FF;
   --bs-deep-blue-violet: #4B49AC;
   --bs-danger: #BA0C2F;
+  --bs-red: #E90F0F;
 }
 
 $my-map: (
@@ -23,7 +24,8 @@ $my-map: (
   'bright-blue',
   'alice-blue',
   'deep-blue-violet',
-  'danger'
+  'danger',
+  'red'
 );
 
 * {

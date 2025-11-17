@@ -28,4 +28,14 @@ export class WorkflowService {
     checkCodeExits(code: string): Observable<void>{
         return this.common.get('ProjectStruct/CheckCodeExists', { code: code }, false);
     }
+
+    // Lấy ra danh sách chức vụ
+    getProjectRoles() {
+        return this.common.get('ProjectRole/GetAll', {}, false);
+    }
+
+    // Lấy danh sách nhân sự
+    getProjectEmployee(projectId: string,orgId:string) {
+        return this.common.get(`ProjectPerson/GetProjectPerson/${projectId}`, {param: orgId}, false)
+    }
 }
