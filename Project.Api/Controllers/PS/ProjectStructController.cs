@@ -117,10 +117,10 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
         [HttpPost("InsertTaskPerson")]
-        public async Task<IActionResult> InsertTaskPerson([FromQuery] string taskId, [FromQuery] string projectId, [FromBody] List<TaskPersonDto> request)
+        public async Task<IActionResult> InsertTaskPerson([FromBody] List<TaskPersonDto> request)
         {
             var res = new TransferObject();
-            await _service.InsertTaskPerson(taskId, projectId, request);
+            await _service.InsertTaskPerson( request);
             if (_service.Status)
             {
                 await res.GetMessage("0100", _service);
