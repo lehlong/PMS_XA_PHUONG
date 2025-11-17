@@ -15,7 +15,7 @@ namespace Project.Service.Services.PS
         Task<List<ProjectStructDto>> GetTaskWorkflow(string projectId);
         Task<List<ProjectStructDto>> GetTask(string taskId);
         Task<object> Insert(ProjectStructDto request);
-        Task InsertTaskPerson(string taskId, string projectId, List<TaskPersonDto> request);
+        Task InsertTaskPerson(List<TaskPersonDto> request);
     }
 
     public class ProjectStructService(AppDbContext dbContext, IMapper mapper) : GenericService<PsProjectStruct, ProjectStructDto>(dbContext, mapper), IProjectStructService
@@ -237,7 +237,7 @@ namespace Project.Service.Services.PS
             }
         }
 
-        public async Task InsertTaskPerson(string taskId,string projectId, List<TaskPersonDto> request)
+        public async Task InsertTaskPerson(List<TaskPersonDto> request)
         {
             try
             {
@@ -249,8 +249,8 @@ namespace Project.Service.Services.PS
                     {
                         var personEntity = new PsTaskPerson();
                         personEntity.Id = Guid.NewGuid().ToString();
-                        personEntity.TaskId = taskId;
-                        personEntity.ProjectId = projectId;
+                        personEntity.TaskId =item.TaskId;
+                        personEntity.ProjectId = item.ProjectId;
                         personEntity.UserName = item.UserName;
                         if (item.TaskRoles != null && item.TaskRoles.Count > 0)
                         {
