@@ -36,6 +36,6 @@ export class WorkflowService {
 
     // Lấy danh sách nhân sự
     getProjectEmployee(projectId: string,orgId:string) {
-        return this.common.get(`ProjectPerson/GetProjectPerson/${projectId}`, {param: orgId}, false)
+        return this.common.get(`ProjectPerson/GetProjectPersonByOrg/${projectId}`, {orgId: orgId}, false)
     }
 }

@@ -240,20 +240,35 @@
                                                     {{data.person?.fullName}}<br>
                                                 </td>
                                                 <td nzAlign="center">
-                                                    <input type="text" class="w-100 border-radius-4px" style="border: 1px solid #CFCFCF">
+                                                    <div *ngFor="let item of data.dataTask" class="mb-2">
+                                                        <input type="text" 
+                                                        class="w-100 border-radius-4px px-2 py-1" 
+                                                        style="border: 1px solid #CFCFCF"
+                                                        (keyup)="changeDataWorkName($event, item)"
+                                                        placeholder="Nhập...">
+                                                    </div>
                                                 </td>
                                                 <td nzAlign="center">
-                                                    <input type="text" class="w-100 border-radius-4px" style="border: 1px solid #CFCFCF">
+                                                    <div *ngFor="let item of data.dataTask" class="mb-2">
+                                                        <input type="text" 
+                                                        class="w-100 border-radius-4px px-2 py-1" 
+                                                        style="border: 1px solid #CFCFCF"
+                                                        (keyup)="changeDataWorkNote($event, item)"
+                                                        placeholder="Nhập...">
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center justify-content-center">
-                                                        <button nz-button nzType="default" class="me-2" (click)="addNewSelectedRow()">
+                                                        <button nz-button nzType="default" class="me-2" (click)="addNewSelectedRow(data)">
                                                             <i class="bi bi-plus-circle"></i>
                                                         </button>
-                                                        <button nz-button nzType="default" (click)="removeSelectedRow(data)">
-                                                            <i class="bi bi-trash text-color-red"></i>
-                                                        </button>
+                                                        <div>
+                                                            <button class="d-block mb-2" nz-button nzType="default" (click)="removeSelectedRow(data, j)" *ngFor="let item of data.dataTask; let j = index ">
+                                                                <i class="bi bi-trash text-color-red"></i>
+                                                            </button>
+                                                        </div>
                                                     </div>
+                                                    
                                                 </td>
                                             </tr>
                                         </tbody>

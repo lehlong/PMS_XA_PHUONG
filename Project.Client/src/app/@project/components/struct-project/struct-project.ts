@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NgModule } from '../../../shared/ng-zorro.module';
 import { ProjectStructType } from '../../../shared/statics/project-struct-type.static';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
@@ -183,13 +183,29 @@ export class StructProject implements OnInit {
     if (form.invalid || this.codeExistError) {
       return;
     }
-    console.log(this.dto);
     this.service.insert(this.dto).pipe(takeUntil(this.destroy$)).subscribe({
       next :(res) => {
-        this.closeAddCv();
-        this.getProjectStruct();
+        console.log(res)
+        // this.closeAddCv();
+        // this.getProjectStruct();
       }
     })
+    let dataRequestAssignPerson = this.dataListUserSelected.map((item: any) => {
+      let dataTaskRole = [];
+      if(item.isChuTri) dataTaskRole.push(1);
+      if(item.isPhoiHop) dataTaskRole.push(2);
+      if(item.isNhanDeBiet) dataTaskRole.push(3);
+      if(dataTaskRole.length === 0) return;
+      return {
+        taskId: '',
+        projectId: this.projectId,
+        userName: item.person.userName,
+        taskRoles: item.dataTaskRole,
+        projectRoleCode: item.projectRoleCode ? item.projectRoleCode : '',
+        taskPersonDetails: item.dataTask,
+      }
+    })
+    console.log(dataRequestAssignPerson);
   }
 
   upload(e: any) {
@@ -227,8 +243,9 @@ export class StructProject implements OnInit {
           ...this.dataListUserSelected,
           {
             ...item,
-            workItem: '',
-            note: ''
+            dataTask: [
+              {workItem: '', note: ''}
+            ]
           }
         ];
       }
@@ -243,30 +260,50 @@ export class StructProject implements OnInit {
     this.loadProjectEmployeeData(this.orgId);
   }
 
-  addNewSelectedRow() {
-    this.dataListUserSelected.push({
-      id: 'temp_' + Date.now(),     // id tạm
-      person: null,
-      workItem: '',
-      note: '',
-      isExtra: true                 // bản ghi tạo thêm
-    });
+  addNewSelectedRow(item: any) {
+    item.dataTask.push(
+      {workItem: '', note: ''}
+    )
+    console.log(item)
+    console.log(this.dataListUserSelected)
   }
 
-  removeSelectedRow(item: any) {
-    item.isChuTri = false;
-    item.isPhoiHop = false;
-    item.isNhanDeBiet = false;
+  removeSelectedRow(item: any, index: number) {
+
+    if(item.dataTask.length > 1){
+      item.dataTask.splice(index, 1);
+      return;
+    }
+
+    const target = this.dataListUser.find((x: any) => x.id === item.id);
+    if (target) {
+      target.isChuTri = false;
+      target.isPhoiHop = false;
+      target.isNhanDeBiet = false;
+    }
+
     this.dataListUserSelected = this.dataListUserSelected.filter((x: any) => x !== item);
+  }
+
+  changeDataWorkName(event: any, item: any): void{
+    item.workItem = event.target.value; 
+  }
+
+  changeDataWorkNote(event: any, item: any): void{
+    item.note = event.target.value;
   }
 
   private getDataListOrg(): void{
     this.org.getAll().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.dataListOrgData = res.map((item: any) => ({
+        this.dataListOrgData = [];
+        this.dataListOrgData = res
+        .filter((item: any) => item.pId === 'ORG')
+        .map((item: any) => ({
           label: item.name,
           value: item.id
         }));
+        this.dataListOrgData.unshift({ label: 'Tất cả', value: '' });
       }
     });
   }
@@ -299,12 +336,16 @@ export class StructProject implements OnInit {
         // Map employees để gán roleName
         const employeesWithRoleName = employees.map((emp: any) => {
           const matchedRole = roles.find((role: any) => role.code === emp.projectRoleCode);
+
+          // tìm trong selected (dữ liệu đã lưu)
+          const saved = this.dataListUserSelected.find((x: any) => x.id === emp.id);
+
           return {
             ...emp,
             roleName: matchedRole ? matchedRole.name : null,
-            isChuTri: false,
-            isPhoiHop: false,
-            isNhanDeBiet: false
+            isChuTri: saved ? saved.isChuTri : false,
+            isPhoiHop: saved ? saved.isPhoiHop : false,
+            isNhanDeBiet: saved ? saved.isNhanDeBiet : false
           };
         });
 
