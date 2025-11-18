@@ -46,6 +46,7 @@ export class StructProject implements OnInit {
   submitted = false;
   codeExistError = false;
   orgId: string = '';
+  dataDetailInformation: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -61,7 +62,6 @@ export class StructProject implements OnInit {
     this.getProjectStruct();
     this.getDataListOrg();
     this.getWorkflow();
-    this.loadProjectEmployeeData();
   }
 
   ngOnDestroy(): void {
@@ -169,12 +169,18 @@ export class StructProject implements OnInit {
     this.dto = new ProjectStructDto();
   }
 
-  openAddCv(data: any) {
+  openAddCv(data: any, isCallDetailData: boolean = false) {
     this.titleAddCv = data?.name;
     this.dto.projectId = this.projectId;
     this.dto.type = this.projectStructType.CongViec;
     this.dto.pId = data.id;
     this.visibleAddCv = true;
+
+    if(isCallDetailData){
+      this.getDataTaskDetail(data.id);
+    }else{
+      this.loadProjectEmployeeData();
+    }
   }
 
   addCv(form: any) {
@@ -291,6 +297,37 @@ export class StructProject implements OnInit {
 
   changeDataWorkNote(event: any, item: any): void{
     item.note = event.target.value;
+  }
+
+  getDataTaskDetail(taskId: string): void{
+    this.service.getTaskDetail(taskId)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((res: any) => {
+      if(res){
+        this.dataDetailInformation = res;
+        this.dataListUserSelected = res[0].taskPerson.map((item: any) => {
+          return {
+            ...item,
+            person: {
+              fullName: item.userName
+            },
+            dataTask: item.taskPersonDetails.map((detail: any) => {
+              return {
+                taskId: detail.id,
+                taskPersonId: detail.taskPersonId,
+                workItem: detail.task,
+                note: detail.note
+              }
+            })
+          }
+        });
+        this.dto.code = res[0].code;
+        this.dto.name = res[0].name;
+        this.dto.endDate = res[0].endDate;
+        this.dto.notes = res[0].notes;
+        this.dto.workflowId = res[0].workflowId;
+      }
+    })
   }
 
   private callApiAssignPerson(dataRequest: any): void{

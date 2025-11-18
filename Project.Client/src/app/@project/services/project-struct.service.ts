@@ -17,4 +17,7 @@ export class ProjectStructService {
 
     // Gán người thực hiện
     assignPersonToTask(data: any) { return this.common.post('ProjectStruct/InsertTaskPerson', data) }
+
+    // Lấy chi tiết thông tin task
+    getTaskDetail(taskId: string) { return this.common.get(`ProjectStruct/GetTask/${taskId}`) }
 }

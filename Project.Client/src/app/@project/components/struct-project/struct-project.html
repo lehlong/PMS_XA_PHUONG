@@ -31,15 +31,20 @@
                     <img *ngIf="item.type == projectStructType.HangMuc" src="img/WBS.png" nz-tooltip="Hạng mục">
                     <img *ngIf="item.type == projectStructType.CongViec" src="img/ACTIVITY.png" nz-tooltip="Công việc">
                 </td>
-                <td>{{ item.code }}</td>
+                <td>
+                    <div class="cursor-pointer">
+                        {{ item.code }}
+                    </div>
+                </td>
                 <td [nzIndentSize]="item.level! * 20" [nzShowExpand]="!!item.children" [(nzExpand)]="item.expanded"
                     (nzExpandChange)="collapse(mapOfExpandedData[data.id], item, $event)">
                     <span *ngIf="item.type != projectStructType.HangMuc && item.type != projectStructType.CongViec">{{
                         item.name }}</span>
                     <span *ngIf="item.type == projectStructType.HangMuc"><a style="color: goldenrod;">{{
                             item.name }}</a></span>
-                    <span *ngIf="item.type == projectStructType.CongViec"><a style="color: #378A00;">{{
-                            item.name }}</a></span>
+                    <span *ngIf="item.type == projectStructType.CongViec" (click)="openAddCv(item, true)">
+                        <a style="color: #378A00;">{{item.name }}</a>
+                    </span>
                 </td>
                 <td nzAlign="center">{{ item.startDate | date: 'dd/MM/yyyy' }}</td>
                 <td nzAlign="center">{{ item.endDate | date: 'dd/MM/yyyy' }}</td>
@@ -245,6 +250,7 @@
                                                         class="w-100 border-radius-4px px-2 py-1" 
                                                         style="border: 1px solid #CFCFCF"
                                                         (keyup)="changeDataWorkName($event, item)"
+                                                        [value]="item.workItem ?? ''"
                                                         placeholder="Nhập...">
                                                     </div>
                                                 </td>
@@ -253,6 +259,7 @@
                                                         <input type="text" 
                                                         class="w-100 border-radius-4px px-2 py-1" 
                                                         style="border: 1px solid #CFCFCF"
+                                                        [value]="item.note ?? ''"
                                                         (keyup)="changeDataWorkNote($event, item)"
                                                         placeholder="Nhập...">
                                                     </div>
