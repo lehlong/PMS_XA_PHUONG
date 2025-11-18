@@ -16,6 +16,8 @@ namespace Project.Service.Services.PS
         Task<List<ProjectStructDto>> GetTask(string taskId);
         Task<object> Insert(ProjectStructDto request);
         Task InsertTaskPerson(List<TaskPersonDto> request);
+        Task<object> Update(ProjectTaskDto request);
+        Task UpdateTaskPerson(List<TaskPersonDto> request);
     }
 
     public class ProjectStructService(AppDbContext dbContext, IMapper mapper) : GenericService<PsProjectStruct, ProjectStructDto>(dbContext, mapper), IProjectStructService
@@ -72,7 +74,7 @@ namespace Project.Service.Services.PS
                                     .ToListAsync();
                 return new PagedResponseDto
                 {
-                    CurrentPage = page, 
+                    CurrentPage = page,
                     PageSize = size,
                     TotalRecord = totalRecord,
                     TotalPage = (int)Math.Ceiling((double)totalRecord / size),
@@ -150,7 +152,7 @@ namespace Project.Service.Services.PS
                 var entities = await query.ToListAsync();
                 return _mapper.Map<List<ProjectStructDto>>(entities);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 this.Status = false;
                 this.Exception = ex;
@@ -161,7 +163,7 @@ namespace Project.Service.Services.PS
         {
             try
             {
-                
+
                 var _structs = await _dbContext.PsProjectStruct.Where(x => x.ProjectId == projectId && x.WorkflowId != null).Include(x => x.Workflow).OrderBy(x => x.OrderNumber).ToListAsync();
                 return _mapper.Map<List<ProjectStructDto>>(_structs);
             }
@@ -219,7 +221,7 @@ namespace Project.Service.Services.PS
                 await _dbContext.PsProjectWorkflowProcessing.AddRangeAsync(lstProcessing);
 
                 var lstTaskPersonEntity = new List<PsTaskPerson>();
-                
+
 
                 await _dbContext.SaveChangesAsync();
                 return new
@@ -249,7 +251,7 @@ namespace Project.Service.Services.PS
                     {
                         var personEntity = new PsTaskPerson();
                         personEntity.Id = Guid.NewGuid().ToString();
-                        personEntity.TaskId =item.TaskId;
+                        personEntity.TaskId = item.TaskId;
                         personEntity.ProjectId = item.ProjectId;
                         personEntity.UserName = item.UserName;
                         if (item.TaskRoles != null && item.TaskRoles.Count > 0)
@@ -286,5 +288,182 @@ namespace Project.Service.Services.PS
             }
         }
 
+        public async Task<object> Update(ProjectTaskDto request)
+        {
+            try
+            {
+                var entity = await _dbContext.PsProjectStruct
+                                             .FirstOrDefaultAsync(x => x.Id == request.Id);
+                if (entity == null)
+                {
+                    this.Status = false;
+                    return new { Message = "Không tìm thấy dự án" };
+                }
+                bool isWorkflowChanged = entity.WorkflowId != request.WorkflowId;
+                _mapper.Map(request, entity);
+                if (isWorkflowChanged && !string.IsNullOrEmpty(request.WorkflowId))
+                {
+                    var oldProcessings = await _dbContext.PsProjectWorkflowProcessing
+                                                         .Where(x => x.ProjectId == entity.ProjectId)
+                                                         .ToListAsync();
+                    _dbContext.PsProjectWorkflowProcessing.RemoveRange(oldProcessings);
+                    var lstStepConfig = await _dbContext.MdWorkflowStep
+                                                        .Where(x => x.WorkflowId == request.WorkflowId)
+                                                        .OrderBy(x => x.Step)
+                                                        .ToListAsync();
+
+                    var lstProcessing = new List<PsProjectWorkflowProcessing>();
+
+                    foreach (var i in lstStepConfig)
+                    {
+                        lstProcessing.Add(new PsProjectWorkflowProcessing
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            ProjectId = request.ProjectId,
+                            Step = i.Step,
+                            Name = i.Name,
+                            HanXuLy = i.HanXuLy,
+                            Action = i.Action,
+                            IsDone = false,
+                            IsProcessing = false
+                        });
+                    }
+
+                    // Link NextId cho các bước
+                    for (int idx = 0; idx < lstProcessing.Count; idx++)
+                    {
+                        if (idx < lstProcessing.Count - 1)
+                            lstProcessing[idx].NextId = lstProcessing[idx + 1].Id;
+                        else
+                            lstProcessing[idx].NextId = null;
+                    }
+
+                    await _dbContext.PsProjectWorkflowProcessing.AddRangeAsync(lstProcessing);
+                }
+
+                // 4. Lưu thay đổi
+                await _dbContext.SaveChangesAsync();
+
+                return new { Id = entity.Id, Message = "Cập nhật thông tin thành công" };
+            }
+            catch (Exception ex)
+            {
+                this.Status = false;
+                this.Exception = ex;
+                return null;
+            }
+        }
+        public async Task UpdateTaskPerson(List<TaskPersonDto> request)
+        {
+            try
+            {
+                if (request == null || request.Count == 0)
+                {
+                    return; 
+                }
+                var firstItem = request.FirstOrDefault();
+                string taskId = firstItem.TaskId;
+                string projectId = firstItem.ProjectId;
+
+                if (string.IsNullOrEmpty(taskId))
+                {
+                    this.Status = false;
+                    return;
+                }
+                var existingList = await _dbContext.PsTaskPerson
+                                                   .Include(x => x.TaskPersonDetails)
+                                                   .Where(x => x.TaskId == taskId)
+                                                   .ToListAsync();
+                var requestIds = request.Where(x => !string.IsNullOrEmpty(x.Id)).Select(x => x.Id).ToList();
+                var itemsToDelete = existingList.Where(x => !requestIds.Contains(x.Id)).ToList();
+
+                if (itemsToDelete.Any())
+                {
+                    _dbContext.PsTaskPerson.RemoveRange(itemsToDelete);
+                }
+                foreach (var itemDto in request)
+                {
+                    itemDto.TaskId = taskId;
+                    itemDto.ProjectId = projectId;
+
+                    var existingItem = existingList.FirstOrDefault(x => x.Id == itemDto.Id);
+
+                    if (existingItem == null)
+                    {
+                        var newItem = _mapper.Map<PsTaskPerson>(itemDto);
+
+                        newItem.Id = Guid.NewGuid().ToString(); 
+                        newItem.TaskId = taskId;
+                        newItem.ProjectId = projectId;
+                        if (itemDto.TaskRoles != null && itemDto.TaskRoles.Count > 0)
+                        {
+                            newItem.TaskRoles = string.Join(",", itemDto.TaskRoles);
+                        }
+
+                        if (newItem.TaskPersonDetails != null)
+                        {
+                            foreach (var detail in newItem.TaskPersonDetails)
+                            {
+                                detail.Id = Guid.NewGuid().ToString();
+                            }
+                        }
+
+                        await _dbContext.PsTaskPerson.AddAsync(newItem);
+                    }
+                    else
+                    {
+                        existingItem.UserName = itemDto.UserName;
+                        existingItem.ProjectId = projectId;
+                        if (itemDto.TaskRoles != null && itemDto.TaskRoles.Count > 0)
+                        {
+                            existingItem.TaskRoles = string.Join(",", itemDto.TaskRoles);
+                        }
+                        else
+                        {
+                            existingItem.TaskRoles = null;
+                        }
+                        if (itemDto.TaskPersonDetails != null)
+                        {
+                            var existingDetails = existingItem.TaskPersonDetails.ToList();
+                            var reqDetailIds = itemDto.TaskPersonDetails
+                                                .Where(d => !string.IsNullOrEmpty(d.Id))
+                                                .Select(d => d.Id).ToList();
+                            var detailsToDelete = existingDetails.Where(d => !reqDetailIds.Contains(d.Id)).ToList();
+                            foreach (var d in detailsToDelete)
+                            {
+                                _dbContext.PsTaskPersonDetail.Remove(d);
+                            }
+                            foreach (var detailDto in itemDto.TaskPersonDetails)
+                            {
+                                var existingDetail = existingDetails.FirstOrDefault(d => d.Id == detailDto.Id);
+
+                                if (existingDetail == null)
+                                {
+                                    // Thêm Detail mới
+                                    var newDetail = _mapper.Map<PsTaskPersonDetail>(detailDto);
+                                    newDetail.Id = Guid.NewGuid().ToString();
+                                    newDetail.TaskPersonId = existingItem.Id; // Gán vào cha hiện tại
+                                    existingItem.TaskPersonDetails.Add(newDetail);
+                                }
+                                else
+                                {
+                                    // Sửa Detail cũ
+                                    existingDetail.Task = detailDto.Task;
+                                    existingDetail.Note = detailDto.Note;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 5. Lưu DB
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                this.Status = false;
+                this.Exception = ex;
+            }
+        }
     }
 }
