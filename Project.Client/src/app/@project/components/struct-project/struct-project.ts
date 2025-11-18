@@ -62,6 +62,7 @@ export class StructProject implements OnInit {
     this.getProjectStruct();
     this.getDataListOrg();
     this.getWorkflow();
+    this.loadProjectEmployeeData();
   }
 
   ngOnDestroy(): void {
@@ -179,6 +180,7 @@ export class StructProject implements OnInit {
     if(isCallDetailData){
       this.getDataTaskDetail(data.id);
     }else{
+      this.dataListUserSelected = [];
       this.loadProjectEmployeeData();
     }
   }
@@ -345,6 +347,11 @@ export class StructProject implements OnInit {
       if(item.isChuTri) dataTaskRole.push(1);
       if(item.isPhoiHop) dataTaskRole.push(2);
       if(item.isNhanDeBiet) dataTaskRole.push(3);
+
+      item.dataTask = item.dataTask.map((detail: any) => ({
+        ...detail,
+        task: detail.workItem
+      }));
 
       if(dataTaskRole.length === 0) return;
       return {
