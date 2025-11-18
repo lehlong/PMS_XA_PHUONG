@@ -33,13 +33,12 @@ namespace Project.Service.Dtos.PS
 
         public MdWorkflow? Workflow { get; set; }
         public ICollection<CmFile>? Files { get; set; }
-        public ICollection<PsTaskPerson>? TaskPerson { get; set; }
+        public ICollection<TaskPersonDto>? TaskPerson { get; set; }
 
         public void Mapping(Profile profile)
         {
 
             profile.CreateMap<PsProjectStruct, ProjectStructDto>();
-
             profile.CreateMap<ProjectStructDto, PsProjectStruct>()
                 .ForMember(dest => dest.Project, opt => opt.Ignore())
                 .ForMember(dest => dest.Workflow, opt => opt.Ignore())
@@ -56,15 +55,28 @@ namespace Project.Service.Dtos.PS
         public string? UserName { get; set; }
         public List<int>? TaskRoles { get; set; }
         public string? ProjectRoleCode { get; set; }
+        public int? TaskCount { get; set; }
         public ICollection<PsTaskPersonDetail>? TaskPersonDetails { get; set; }
         public void Mapping(Profile profile)
         {
 
-            profile.CreateMap<PsTaskPerson, TaskPersonDto>();
+            profile.CreateMap<PsTaskPerson, TaskPersonDto>()
+              .ForMember(dest => dest.TaskCount, opt => opt.MapFrom(src =>
+                  src.TaskPersonDetails != null ? src.TaskPersonDetails.Count : 0))
+
+              // Logic chuyển đổi chuỗi "1,2" thành mảng [1, 2] (nếu cần)
+              .ForMember(dest => dest.TaskRoles, opt => opt.MapFrom(src =>
+                  !string.IsNullOrEmpty(src.TaskRoles)
+                  ? src.TaskRoles.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList()
+                  : new List<int>()));
 
             profile.CreateMap<TaskPersonDto, PsTaskPerson>()
                 .ForMember(dest => dest.TaskPersonDetails, opt => opt.Ignore());
-                
+
+
+
+
+
         }
     }
     public class TaskPersonDetailDto : BaseDto, IMapFrom, IDto

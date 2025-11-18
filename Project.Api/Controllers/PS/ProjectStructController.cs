@@ -131,5 +131,36 @@ namespace Project.Api.Controllers.PS
             }
             return Ok(res);
         }
+        [HttpPut("Update")]
+        public async Task<IActionResult> Update([FromBody] ProjectTaskDto request)
+        {
+            var res = new TransferObject();
+            var result = await _service.Update(request);
+            if (_service.Status)
+            {
+                res.Data = result;
+                await res.GetMessage("0100", _service);
+            }
+            else
+            {
+                await res.GetMessage("0101", _service);
+            }
+            return Ok(res);
+        }
+        [HttpPut("UpdateTaskPerson")]
+        public async Task<IActionResult> UpdateTaskPerson([FromBody] List<TaskPersonDto> request)
+        {
+            var res = new TransferObject();
+            await _service.UpdateTaskPerson(request);
+            if (_service.Status)
+            {
+                await res.GetMessage("0100", _service);
+            }
+            else
+            {
+                await res.GetMessage("0101", _service);
+            }
+            return Ok(res);
+        }
     }
 }
