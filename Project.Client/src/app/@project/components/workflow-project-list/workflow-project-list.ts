@@ -48,6 +48,7 @@ export class WorkflowProjectList {
     this.search();
     this.getProjectLevel();
     this.getOrganize();
+    this.workflowProjectData();
   }
 
   search() {
@@ -115,6 +116,16 @@ export class WorkflowProjectList {
 
   onShowDetailWorkflow(value: boolean): void{
     this.showDetailWorkFolow.emit(value)
+  }
+
+  private workflowProjectData(): void{
+    this.projectWorkflowProcessingService.getProjectFlowData(this.projectId)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (res: any) => {
+        console.log(res);
+      }
+    })
   }
 
   private applyFilterAndPaging() {

@@ -14,8 +14,13 @@ export class ProjectWorkflowProcessingService {
 
     startWorkflow(projectId: string) { return this.common.put(`ProjectWorkflowProcessing/StartWorkflow/${projectId}`, {}, false) }
 
-    // danh sách các workflow được gán vào dự án
+    // danh sách các workflow công việc được gán vào dự án
     getProjectWorkFlow(projectId: string){
         return this.common.get('ProjectStruct/GetTaskWorkflow/'+projectId)
+    }
+
+    // danh sách các workflow dự án
+    getProjectFlowData(projectId: string){
+        return this.common.get('ProjectWorkflowProcessing/GetProjectWorkflow/'+projectId)
     }
 }
