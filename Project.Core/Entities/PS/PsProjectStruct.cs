@@ -22,6 +22,8 @@ namespace Project.Core.Entities.PS
         public string? PId { get; set; }
 
         public string? WorkflowId { get; set; }
+        public string? CurrentStepWorkflowId { get; set; }
+        public int? Status { get; set; }
         public int? OrderNumber { get; set; }
         public bool? Expanded { get; set; }
         public string? OrgId { get; set; }
@@ -52,7 +54,7 @@ namespace Project.Core.Entities.PS
     public class PsTaskPersonDetail : BaseEntity
     {
         [Key]
-        public string Id { get; set; } = string.Empty;
+        public string? Id { get; set; } = string.Empty;
         public string? TaskPersonId { get; set; } = string.Empty;
         [ForeignKey("TaskPersonId")]
         [JsonIgnore]

@@ -49,7 +49,7 @@
                 <td nzAlign="center">{{ item.startDate | date: 'dd/MM/yyyy' }}</td>
                 <td nzAlign="center">{{ item.endDate | date: 'dd/MM/yyyy' }}</td>
                 <td nzAlign="center"></td>
-                <td nzAlign="center"></td>
+                <td nzAlign="center">{{item.status}}</td>
                 <td nzAlign="center"></td>
                 <td nzAlign="center"></td>
                 <td nzAlign="center">
@@ -290,7 +290,7 @@
         </ng-container>
         <ng-template #extra>
             <nz-space>
-                <button *nzSpaceItem nz-button nzType="primary" (click)="addCv(f)" class="btn-green">
+                <button *nzSpaceItem nz-button nzType="primary" (click)="saveCv(f)" class="btn-green">
                     <nz-icon nzType="save" nzTheme="outline" /> Lưu
                 </button>
                 <button *nzSpaceItem nz-button nzType="primary" nzDanger (click)="closeAddCv()">

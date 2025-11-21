@@ -16,4 +16,5 @@ export class ProjectStructDto extends BaseFilter {
     notes: string = '';
     files: any[] = [];
     workflowId: string = '';
+    currentStepWorkflowId: string = '';
 }

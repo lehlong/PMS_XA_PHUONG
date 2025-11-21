@@ -21,6 +21,8 @@ namespace Project.Service.Dtos.PS
         public string? Name { get; set; }
         public string? PId { get; set; }
         public string? WorkflowId { get; set; }
+        public string? CurrentStepWorkflowId { get; set; }
+        public int? Status { get; set; }
         public int? OrderNumber { get; set; }
         public bool? Expanded { get; set; }
         public string? OrgId { get; set; }
@@ -34,7 +36,11 @@ namespace Project.Service.Dtos.PS
         {
 
             profile.CreateMap<PsProjectStruct, ProjectTaskDto>();
-            profile.CreateMap<ProjectTaskDto, PsProjectStruct>();
+            profile.CreateMap<ProjectTaskDto, PsProjectStruct>()
+            .ForMember(dest => dest.RefrenceFileId, opt => opt.Ignore())
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.PId, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectId, opt => opt.Ignore());
         }
     }
 }

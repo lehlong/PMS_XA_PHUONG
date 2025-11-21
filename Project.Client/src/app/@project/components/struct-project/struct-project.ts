@@ -202,7 +202,68 @@ export class StructProject implements OnInit {
       }
     })
   }
+updateCv(form: any) {
+  this.submitted = true;
 
+  if (form.invalid || this.codeExistError) {
+    return;
+  }
+
+  this.service.update(this.dto)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (res: any) => {
+        // Lấy ID từ response hoặc dto (ưu tiên response nếu backend trả về id mới)
+        const taskId = res.data ? res.data.id : this.dto.id; 
+        
+        let dataRequest = this.prepareApiUpdateAssignPerson(taskId);
+
+        // GỌI API KỂ CẢ KHI MẢNG RỖNG (Để backend biết mà xóa hết)
+        // Hoặc tùy logic backend của bạn có chặn mảng rỗng không
+        if (dataRequest) {
+           // Backend của bạn đang yêu cầu mảng có ít nhất 1 phần tử để lấy TaskId
+           // Nếu mảng rỗng, ta không gọi API UpdateTaskPerson được theo cách hiện tại
+           // TRỪ KHI bạn viết riêng 1 API DeleteAllTaskPerson.
+           
+           // Nếu dataRequest có dữ liệu -> Gọi Update
+           if (dataRequest.length > 0) {
+              this.callApiUpdateAssignPerson(dataRequest);
+           } else {
+              // Nếu rỗng -> Coi như xong việc (Hoặc gọi API xóa sạch nếu có)
+              this.closeAddCv();
+              this.getProjectStruct();
+           }
+        }
+      },
+      error: (err) => {
+        console.error("Lỗi update công việc:", err);
+      }
+    });
+}
+
+// Hàm gọi API update assign person riêng để code gọn hơn
+private callApiUpdateAssignPerson(dataRequest: any): void {
+  this.service.updateAssignPersonToTask(dataRequest)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (res) => {
+        this.closeAddCv();
+        this.getProjectStruct();
+      },
+      error: (err) => {
+        console.error("Lỗi update người thực hiện:", err);
+      }
+    });
+}
+saveCv(form: any) {
+    // Nếu dto có id => Đang là sửa => Gọi Update
+    if (this.dto.id) {
+      this.updateCv(form);
+    } else {
+      // Ngược lại => Thêm mới => Gọi Add
+      this.addCv(form);
+    }
+  }
   upload(e: any) {
     const input = e.target as HTMLInputElement;
     const files = input.files;
@@ -232,7 +293,7 @@ export class StructProject implements OnInit {
     item.isPhoiHop ||
     item.isNhanDeBiet;
 
-    const index = this.dataListUserSelected.findIndex((x: any) => x.id === item.id);
+    const index = this.dataListUserSelected.findIndex((x: any) => x.userName === item.person.userName);
 
     if (isSelected) {
       // Nếu chưa có → push
@@ -305,17 +366,22 @@ export class StructProject implements OnInit {
     this.service.getTaskDetail(taskId)
     .pipe(takeUntil(this.destroy$))
     .subscribe((res: any) => {
-      if(res){
+      if(res && res.length > 0){
         this.dataDetailInformation = res;
         this.dataListUserSelected = res[0].taskPerson.map((item: any) => {
+          const roles = item.taskRoles || []
           return {
             ...item,
+            isChuTri: roles.includes(1),      
+            isPhoiHop: roles.includes(2),    
+            isNhanDeBiet: roles.includes(3),
             person: {
-              fullName: item.userName
+              fullName: item.userName,
+              userName: item.userName
             },
             dataTask: item.taskPersonDetails.map((detail: any) => {
               return {
-                taskId: detail.id,
+                id: detail.id,
                 taskPersonId: detail.taskPersonId,
                 workItem: detail.task,
                 note: detail.note
@@ -323,12 +389,14 @@ export class StructProject implements OnInit {
             })
           }
         });
+        this.dto.id = res[0].id;
         this.dto.code = res[0].code;
         this.dto.name = res[0].name;
         this.dto.endDate = res[0].endDate;
         this.dto.notes = res[0].notes;
         this.dto.workflowId = res[0].workflowId;
-      }
+        this.loadProjectEmployeeData(this.orgId);
+        }
     })
   }
 
@@ -364,6 +432,39 @@ export class StructProject implements OnInit {
       }
     })
   }
+  private prepareApiUpdateAssignPerson(taskId: string): any {
+  const result = this.dataListUserSelected.map((item: any) => {
+    let dataTaskRole = [];
+    if (item.isChuTri) dataTaskRole.push(1);
+    if (item.isPhoiHop) dataTaskRole.push(2);
+    if (item.isNhanDeBiet) dataTaskRole.push(3);
+
+    // Map lại cấu trúc detail cho khớp DTO backend
+    const details = item.dataTask ? item.dataTask.map((detail: any) => ({
+      id: detail.id ? detail.id : null, 
+      taskPersonId: detail.taskPersonId ? detail.taskPersonId : null,
+      userName: detail.userName,
+      task: detail.workItem,
+      note: detail.note
+    })) : [];
+
+    // Nếu không chọn vai trò nào thì bỏ qua người này
+    if (dataTaskRole.length === 0) return undefined;
+
+    return {
+      id: item.id ? item.id : null, // QUAN TRỌNG: Gửi ID của TaskPerson cũ nếu có (để Backend biết là Sửa)
+      taskId: taskId,               // BẮT BUỘC CÓ
+      projectId: this.projectId,    // BẮT BUỘC CÓ
+      userName: item.userName || item.person?.userName,
+      taskRoles: dataTaskRole,      // Backend nhận mảng [1,2]
+      projectRoleCode: item.projectRoleCode ? item.projectRoleCode : '',
+      taskPersonDetails: details,
+    };
+  });
+
+  // LỌC BỎ GIÁ TRỊ NULL/UNDEFINED
+  return result.filter((item: any) => item !== undefined && item !== null);
+}
   
   private getDataListOrg(): void{
     this.org.getAll().pipe(takeUntil(this.destroy$)).subscribe({
@@ -410,7 +511,7 @@ export class StructProject implements OnInit {
           const matchedRole = roles.find((role: any) => role.code === emp.projectRoleCode);
 
           // tìm trong selected (dữ liệu đã lưu)
-          const saved = this.dataListUserSelected.find((x: any) => x.id === emp.id);
+          const saved = this.dataListUserSelected.find((x: any) => x.userName === emp.userName);
 
           return {
             ...emp,

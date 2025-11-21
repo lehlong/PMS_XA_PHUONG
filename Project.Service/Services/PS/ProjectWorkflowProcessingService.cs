@@ -9,19 +9,20 @@ namespace Project.Service.Services.PS
 {
     public interface IProjectWorkflowProcessingService : IGenericService<PsProjectWorkflowProcessing, ProjectWorkflowProcessingDto>
     {
-        Task<List<ProjectWorkflowProcessingDto>> GetProjectWorkflowStep(string projectId,string workflowId);
-        Task StartWorkflow(string projectId);
+        Task<List<ProjectWorkflowProcessingDto>> GetProjectWorkflowStep(string projectId,string code);
+        Task StartWorkflow(string projectId, string code);
+        Task StartTaskWorkflow(string projectId, string code);
         Task UpdateWorkflowProject(List<ProjectWorkflowProcessingDto> request);
     }
 
     public class ProjectWorkflowProcessingService(AppDbContext dbContext, IMapper mapper) : GenericService<PsProjectWorkflowProcessing, ProjectWorkflowProcessingDto>(dbContext, mapper), IProjectWorkflowProcessingService
     {
-        public async Task<List<ProjectWorkflowProcessingDto>> GetProjectWorkflowStep(string projectId,string workflowId)
+        public async Task<List<ProjectWorkflowProcessingDto>> GetProjectWorkflowStep(string projectId,string code)
         {
             try
             {
                 var entities = await _dbContext.PsProjectWorkflowProcessing.Include(x => x.Person)
-                                .Where(x => x.ProjectId == projectId && x.WorkflowId == workflowId).OrderBy(x => x.Step)
+                                .Where(x => x.ProjectId == projectId && x.Code == code).OrderBy(x => x.Step)
                                 .ToListAsync();
                 var data = _mapper.Map<List<ProjectWorkflowProcessingDto>>(entities);
                 foreach(var i in data)
@@ -38,12 +39,12 @@ namespace Project.Service.Services.PS
             }
         }
 
-        public async Task StartWorkflow(string projectId)
+        public async Task StartWorkflow(string projectId, string code)
         {
             try
             {
                 var project = await _dbContext.PsProject.FirstOrDefaultAsync(x => x.Id == projectId);
-                var step = await _dbContext.PsProjectWorkflowProcessing.Where(x => x.ProjectId == projectId).OrderBy(x => x.Step).FirstOrDefaultAsync();
+                var step = await _dbContext.PsProjectWorkflowProcessing.Where(x => x.ProjectId == projectId && x.Code == code).OrderBy(x => x.Step).FirstOrDefaultAsync();
 
                 project.CurrentStepWorkflowId = step.Id;
                 step.IsProcessing = true;
@@ -53,6 +54,28 @@ namespace Project.Service.Services.PS
                 _dbContext.PsProjectWorkflowProcessing.Update(step);
 
                 await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                this.Status = false;
+                this.Exception = ex;
+            }
+        }
+        public async Task StartTaskWorkflow(string projectId,string code)
+        {
+            try
+            {
+                var projectstruct = await _dbContext.PsProjectStruct.FirstOrDefaultAsync(x => x.ProjectId == projectId && x.Code == code);
+                var step = await _dbContext.PsProjectWorkflowProcessing.Where(x => x.ProjectId == projectId && x.Code == code).OrderBy(x => x.Step).FirstOrDefaultAsync();
+
+                projectstruct.CurrentStepWorkflowId = step.Id;
+                step.IsProcessing = true;
+                step.Deadline = DateTime.Now.AddDays(step.HanXuLy ?? 0);
+
+                _dbContext.PsProjectStruct.Update(projectstruct);
+                _dbContext.PsProjectWorkflowProcessing.Update(step);
+                await _dbContext.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {

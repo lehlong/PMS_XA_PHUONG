@@ -18,6 +18,13 @@ namespace Project.Service.Services.PS
         Task InsertTaskPerson(List<TaskPersonDto> request);
         Task<object> Update(ProjectTaskDto request);
         Task UpdateTaskPerson(List<TaskPersonDto> request);
+        Task<ProjectWorkflowProcessingDto> GetCurrentStep(string projectId,string code);
+
+        Task TrinhDuyet(string code);
+        Task XacNhan(string code);
+        Task PheDuyet(string code);
+        Task YeuCauChinhSua(string code);
+        Task TuChoi(string code);
     }
 
     public class ProjectStructService(AppDbContext dbContext, IMapper mapper) : GenericService<PsProjectStruct, ProjectStructDto>(dbContext, mapper), IProjectStructService
@@ -200,7 +207,9 @@ namespace Project.Service.Services.PS
                     lstProcessing.Add(new PsProjectWorkflowProcessing
                     {
                         Id = Guid.NewGuid().ToString(),
+                        Code = request.Code,
                         ProjectId = request.ProjectId,
+                        WorkflowId = request.WorkflowId,
                         Step = i.Step,
                         Name = i.Name,
                         HanXuLy = i.HanXuLy,
@@ -213,9 +222,23 @@ namespace Project.Service.Services.PS
                 for (int idx = 0; idx < lstProcessing.Count; idx++)
                 {
                     if (idx < lstProcessing.Count - 1)
+                    {
                         lstProcessing[idx].NextId = lstProcessing[idx + 1].Id;
+                    }
                     else
+                    {
                         lstProcessing[idx].NextId = null;
+                    }
+                    if (idx > 0)
+                    {
+                        // Nếu không phải phần tử đầu tiên, lấy ID của phần tử đứng trước nó
+                        lstProcessing[idx].PreviousId = lstProcessing[idx - 1].Id;
+                    }
+                    else
+                    {
+                        // Nếu là phần tử đầu tiên (idx == 0), không có bước trước đó
+                        lstProcessing[idx].PreviousId = null;
+                    }
                 }
 
                 await _dbContext.PsProjectWorkflowProcessing.AddRangeAsync(lstProcessing);
@@ -319,7 +342,9 @@ namespace Project.Service.Services.PS
                         lstProcessing.Add(new PsProjectWorkflowProcessing
                         {
                             Id = Guid.NewGuid().ToString(),
+                            Code = request.Code,
                             ProjectId = request.ProjectId,
+                            WorkflowId = request.WorkflowId,
                             Step = i.Step,
                             Name = i.Name,
                             HanXuLy = i.HanXuLy,
@@ -353,27 +378,36 @@ namespace Project.Service.Services.PS
                 return null;
             }
         }
+
         public async Task UpdateTaskPerson(List<TaskPersonDto> request)
         {
             try
             {
-                if (request == null || request.Count == 0)
-                {
-                    return; 
-                }
-                var firstItem = request.FirstOrDefault();
-                string taskId = firstItem.TaskId;
-                string projectId = firstItem.ProjectId;
+                if (request == null || request.Count == 0) return;
 
+                // 2. [SỬA ĐOẠN NÀY] Lấy TaskId an toàn hơn
+                // Tìm item đầu tiên có TaskId khác rỗng trong cả danh sách
+                string taskId = request.FirstOrDefault(x => !string.IsNullOrEmpty(x.TaskId))?.TaskId;
+
+                // Lấy ProjectId tương tự
+                string projectId = request.FirstOrDefault(x => !string.IsNullOrEmpty(x.ProjectId))?.ProjectId;
+
+                // 3. Nếu vẫn null thì báo lỗi ngay
                 if (string.IsNullOrEmpty(taskId))
                 {
                     this.Status = false;
-                    return;
+                    // Throw exception hoặc return tùy bạn
+                    throw new Exception("Dữ liệu đầu vào thiếu TaskId. Vui lòng kiểm tra lại JSON gửi lên.");
                 }
+
+                // 2. Lấy dữ liệu cũ trong DB (Bao gồm cả Detail)
                 var existingList = await _dbContext.PsTaskPerson
-                                                   .Include(x => x.TaskPersonDetails)
-                                                   .Where(x => x.TaskId == taskId)
-                                                   .ToListAsync();
+                                                    .Include(x => x.TaskPersonDetails)
+                                                    .Where(x => x.TaskId == taskId)
+                                                    .ToListAsync();
+
+                // 3. XỬ LÝ XÓA NHÂN SỰ (DELETE PARENT)
+                // Tìm những người có trong DB nhưng không có trong Request gửi lên -> Xóa
                 var requestIds = request.Where(x => !string.IsNullOrEmpty(x.Id)).Select(x => x.Id).ToList();
                 var itemsToDelete = existingList.Where(x => !requestIds.Contains(x.Id)).ToList();
 
@@ -381,8 +415,11 @@ namespace Project.Service.Services.PS
                 {
                     _dbContext.PsTaskPerson.RemoveRange(itemsToDelete);
                 }
+
+                // 4. DUYỆT REQUEST ĐỂ THÊM HOẶC SỬA
                 foreach (var itemDto in request)
                 {
+                    // Đồng bộ TaskId và ProjectId cho chắc chắn
                     itemDto.TaskId = taskId;
                     itemDto.ProjectId = projectId;
 
@@ -390,73 +427,110 @@ namespace Project.Service.Services.PS
 
                     if (existingItem == null)
                     {
-                        var newItem = _mapper.Map<PsTaskPerson>(itemDto);
+                        // =================================================
+                        // CASE A: INSERT (THÊM MỚI) - GIỐNG HỆT INSERT CỦA BẠN
+                        // =================================================
+                        var personEntity = new PsTaskPerson();
+                        personEntity.Id = Guid.NewGuid().ToString();
+                        personEntity.TaskId = taskId;
+                        personEntity.ProjectId = projectId;
+                        personEntity.UserName = itemDto.UserName;
 
-                        newItem.Id = Guid.NewGuid().ToString(); 
-                        newItem.TaskId = taskId;
-                        newItem.ProjectId = projectId;
+                        // Xử lý Roles thủ công
                         if (itemDto.TaskRoles != null && itemDto.TaskRoles.Count > 0)
                         {
-                            newItem.TaskRoles = string.Join(",", itemDto.TaskRoles);
+                            personEntity.TaskRoles = string.Join(",", itemDto.TaskRoles);
                         }
 
-                        if (newItem.TaskPersonDetails != null)
+                        // Xử lý Detail thủ công
+                        personEntity.TaskPersonDetails = new List<PsTaskPersonDetail>();
+
+                        if (itemDto.TaskPersonDetails != null && itemDto.TaskPersonDetails.Count > 0)
                         {
-                            foreach (var detail in newItem.TaskPersonDetails)
+                            foreach (var taskItem in itemDto.TaskPersonDetails)
                             {
-                                detail.Id = Guid.NewGuid().ToString();
+                                var detailEntity = new PsTaskPersonDetail
+                                {
+                                    Id = Guid.NewGuid().ToString(),
+                                    TaskPersonId = personEntity.Id, // Gán vào ID cha mới tạo
+                                    UserName = itemDto.UserName,
+                                    Task = taskItem.Task,
+                                    Note = taskItem.Note
+                                };
+                                personEntity.TaskPersonDetails.Add(detailEntity);
                             }
                         }
 
-                        await _dbContext.PsTaskPerson.AddAsync(newItem);
+                        await _dbContext.PsTaskPerson.AddAsync(personEntity);
                     }
                     else
                     {
+                        // =================================================
+                        // CASE B: UPDATE (CẬP NHẬT) - GÁN TAY THỦ CÔNG
+                        // =================================================
+
+                        // 1. Cập nhật thông tin cha
                         existingItem.UserName = itemDto.UserName;
                         existingItem.ProjectId = projectId;
+
+                        // Cập nhật Roles thủ công
                         if (itemDto.TaskRoles != null && itemDto.TaskRoles.Count > 0)
                         {
                             existingItem.TaskRoles = string.Join(",", itemDto.TaskRoles);
                         }
                         else
                         {
-                            existingItem.TaskRoles = null;
+                            existingItem.TaskRoles = null; // Nếu mảng rỗng thì set null
                         }
+
+                        // 2. Cập nhật danh sách Detail con
                         if (itemDto.TaskPersonDetails != null)
                         {
                             var existingDetails = existingItem.TaskPersonDetails.ToList();
+
+                            // Lấy danh sách ID của detail gửi lên
                             var reqDetailIds = itemDto.TaskPersonDetails
-                                                .Where(d => !string.IsNullOrEmpty(d.Id))
-                                                .Select(d => d.Id).ToList();
+                                                    .Where(d => !string.IsNullOrEmpty(d.Id))
+                                                    .Select(d => d.Id).ToList();
+
+                            // B2.1: Xóa những detail thừa (có trong DB mà ko có trong request)
                             var detailsToDelete = existingDetails.Where(d => !reqDetailIds.Contains(d.Id)).ToList();
                             foreach (var d in detailsToDelete)
                             {
                                 _dbContext.PsTaskPersonDetail.Remove(d);
                             }
-                            foreach (var detailDto in itemDto.TaskPersonDetails)
+
+                            // B2.2: Thêm mới hoặc Sửa detail
+                            foreach (var taskItem in itemDto.TaskPersonDetails)
                             {
-                                var existingDetail = existingDetails.FirstOrDefault(d => d.Id == detailDto.Id);
+                                var existingDetail = existingDetails.FirstOrDefault(d => d.Id == taskItem.Id);
 
                                 if (existingDetail == null)
                                 {
-                                    // Thêm Detail mới
-                                    var newDetail = _mapper.Map<PsTaskPersonDetail>(detailDto);
-                                    newDetail.Id = Guid.NewGuid().ToString();
-                                    newDetail.TaskPersonId = existingItem.Id; // Gán vào cha hiện tại
+                                    // -- Thêm Detail Mới (Manual) --
+                                    var newDetail = new PsTaskPersonDetail
+                                    {
+                                        Id = Guid.NewGuid().ToString(),
+                                        TaskPersonId = existingItem.Id, // Link vào cha hiện tại
+                                        UserName = itemDto.UserName,
+                                        Task = taskItem.Task,
+                                        Note = taskItem.Note
+                                    };
                                     existingItem.TaskPersonDetails.Add(newDetail);
                                 }
                                 else
                                 {
-                                    // Sửa Detail cũ
-                                    existingDetail.Task = detailDto.Task;
-                                    existingDetail.Note = detailDto.Note;
+                                    // -- Sửa Detail Cũ (Manual) --
+                                    existingDetail.UserName = itemDto.UserName; // Cập nhật lại username nếu cần
+                                    existingDetail.Task = taskItem.Task;
+                                    existingDetail.Note = taskItem.Note;
                                 }
                             }
                         }
                     }
                 }
 
-                // 5. Lưu DB
+                // 5. Lưu thay đổi
                 await _dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -465,5 +539,409 @@ namespace Project.Service.Services.PS
                 this.Exception = ex;
             }
         }
+
+        public async Task<ProjectWorkflowProcessingDto> GetCurrentStep(string projectId, string code)
+        {
+            try
+            {
+
+                var projectStruct = await _dbContext.PsProjectStruct
+                                            .FirstOrDefaultAsync(x => x.ProjectId == projectId && x.Code == code);
+
+                // Kiểm tra nếu không tìm thấy Struct hoặc Struct chưa có CurrentStepWorkflowId (dự án chưa chạy luồng)
+                if (projectStruct == null || string.IsNullOrEmpty(projectStruct.CurrentStepWorkflowId))
+                {
+                    // Trả về null hoặc DTO rỗng tùy convention của bạn
+                    return null;
+                }
+
+                // Lấy ID bước hiện tại từ Struct
+                var currentStepId = projectStruct.CurrentStepWorkflowId;
+
+                // BƯỚC 2: Tìm thông tin chi tiết của bước đó (Logic cũ)
+                var _step = await _dbContext.PsProjectWorkflowProcessing
+                                            .FirstOrDefaultAsync(x => x.Id == currentStepId);
+
+                if (_step == null) return null;
+
+                // BƯỚC 3: Map dữ liệu và xử lý Actions (Giữ nguyên logic cũ)
+                var step = _mapper.Map<ProjectWorkflowProcessingDto>(_step);
+
+                // Chuyển đổi chuỗi Action "1,2,3" thành List<int> [1, 2, 3]
+                step.ListActions = step.Action?
+                                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                        .Select(int.Parse)
+                                        .ToList();
+
+                return step;
+            }
+            catch (Exception ex)
+            {
+                Status = false;
+                Exception = ex;
+                // Log lỗi nếu cần
+                return new ProjectWorkflowProcessingDto();
+            }
+        }
+        public async Task TrinhDuyet(string code)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var projectstruct = await _dbContext.PsProjectStruct.FirstOrDefaultAsync(x => x.Code == code);
+                if (projectstruct == null)
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi hệ thống!";
+                    this.MessageObject.MessageDetail = $"Không tìm thấy dự án với ID: {code}";
+                    return;
+                }
+
+                var currentStep = await _dbContext.PsProjectWorkflowProcessing
+                    .FirstOrDefaultAsync(x => x.Id == projectstruct.CurrentStepWorkflowId);
+                if (currentStep == null)
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi hệ thống!";
+                    this.MessageObject.MessageDetail = $"Không tìm thấy bước xử lý hiện tại của quy trình workflow!";
+                    return;
+                }
+
+                projectstruct.Status = ProjectStatus.DaTrinhDuyet;
+
+                currentStep.IsDone = true;
+                currentStep.IsProcessing = false;
+                currentStep.Acted = WorkflowProjectAction.TrinhDuyet;
+
+                if (!string.IsNullOrEmpty(currentStep.NextId))
+                {
+                    projectstruct.CurrentStepWorkflowId = currentStep.NextId;
+
+                    var nextStep = await _dbContext.PsProjectWorkflowProcessing
+                        .FirstOrDefaultAsync(x => x.Id == currentStep.NextId);
+
+                    if (nextStep != null)
+                    {
+                        nextStep.IsDone = false;
+                        nextStep.IsProcessing = true;
+                        nextStep.Deadline = DateTime.Now.AddDays(nextStep.HanXuLy ?? 0);
+
+                        _dbContext.PsProjectWorkflowProcessing.Update(nextStep);
+                    }
+                    else
+                    {
+                        this.Status = false;
+                        this.MessageObject.Message = "Lỗi hệ thống!";
+                        this.MessageObject.MessageDetail = $"Không tìm thấy bước xử lý tiếp theo của quy trình workflow!";
+                        return;
+                    }
+                }
+                else
+                {
+                    projectstruct.CurrentStepWorkflowId = null;
+                }
+
+                _dbContext.PsProjectStruct.Update(projectstruct);
+                _dbContext.PsProjectWorkflowProcessing.Update(currentStep);
+
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                this.Status = false;
+                this.Exception = ex;
+            }
+        }
+
+        public async Task XacNhan(string code)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var project = await _dbContext.PsProjectStruct.FirstOrDefaultAsync(x => x.Code == code);
+                if (project == null)
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi hệ thống!";
+                    this.MessageObject.MessageDetail = $"Không tìm thấy dự án với ID: {code}";
+                    return;
+                }
+
+                var currentStep = await _dbContext.PsProjectWorkflowProcessing
+                    .FirstOrDefaultAsync(x => x.Id == project.CurrentStepWorkflowId);
+                if (currentStep == null)
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi hệ thống!";
+                    this.MessageObject.MessageDetail = $"Không tìm thấy bước xử lý hiện tại của quy trình workflow!";
+                    return;
+                }
+
+                project.Status = ProjectStatus.DaXacNhan;
+
+                currentStep.IsDone = true;
+                currentStep.IsProcessing = false;
+                currentStep.Acted = WorkflowProjectAction.XacNhan;
+
+                if (!string.IsNullOrEmpty(currentStep.NextId))
+                {
+                    project.CurrentStepWorkflowId = currentStep.NextId;
+
+                    var nextStep = await _dbContext.PsProjectWorkflowProcessing
+                        .FirstOrDefaultAsync(x => x.Id == currentStep.NextId);
+
+                    if (nextStep != null)
+                    {
+                        nextStep.IsDone = false;
+                        nextStep.IsProcessing = true;
+                        nextStep.Deadline = DateTime.Now.AddDays(nextStep.HanXuLy ?? 0);
+
+                        _dbContext.PsProjectWorkflowProcessing.Update(nextStep);
+                    }
+                    else
+                    {
+                        this.Status = false;
+                        this.MessageObject.Message = "Lỗi hệ thống!";
+                        this.MessageObject.MessageDetail = $"Không tìm thấy bước xử lý tiếp theo của quy trình workflow!";
+                        return;
+                    }
+                }
+                else
+                {
+                    project.CurrentStepWorkflowId = null;
+                }
+
+                _dbContext.PsProjectStruct.Update(project);
+                _dbContext.PsProjectWorkflowProcessing.Update(currentStep);
+
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                this.Status = false;
+                this.Exception = ex;
+            }
+        }
+
+        public async Task PheDuyet(string code)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var project = await _dbContext.PsProjectStruct.FirstOrDefaultAsync(x => x.Code == code);
+                if (project == null)
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi hệ thống!";
+                    this.MessageObject.MessageDetail = $"Không tìm thấy dự án với ID: {code}";
+                    return;
+                }
+
+                var currentStep = await _dbContext.PsProjectWorkflowProcessing
+                    .FirstOrDefaultAsync(x => x.Id == project.CurrentStepWorkflowId);
+                if (currentStep == null)
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi hệ thống!";
+                    this.MessageObject.MessageDetail = $"Không tìm thấy bước xử lý hiện tại của quy trình workflow!";
+                    return;
+                }
+
+                project.Status = ProjectStatus.DaPheDuyet;
+
+                currentStep.IsDone = true;
+                currentStep.IsProcessing = false;
+                currentStep.Acted = WorkflowProjectAction.PheDuyet;
+
+                if (!string.IsNullOrEmpty(currentStep.NextId))
+                {
+                    project.CurrentStepWorkflowId = currentStep.NextId;
+
+                    var nextStep = await _dbContext.PsProjectWorkflowProcessing
+                        .FirstOrDefaultAsync(x => x.Id == currentStep.NextId);
+
+                    if (nextStep != null)
+                    {
+                        nextStep.IsDone = false;
+                        nextStep.IsProcessing = true;
+                        nextStep.Deadline = DateTime.Now.AddDays(nextStep.HanXuLy ?? 0);
+
+                        _dbContext.PsProjectWorkflowProcessing.Update(nextStep);
+                    }
+                    else
+                    {
+                        this.Status = false;
+                        this.MessageObject.Message = "Lỗi hệ thống!";
+                        this.MessageObject.MessageDetail = $"Không tìm thấy bước xử lý tiếp theo của quy trình workflow!";
+                        return;
+                    }
+                }
+                else
+                {
+                    project.CurrentStepWorkflowId = null;
+                }
+
+                _dbContext.PsProjectStruct.Update(project);
+                _dbContext.PsProjectWorkflowProcessing.Update(currentStep);
+
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                this.Status = false;
+                this.Exception = ex;
+            }
+        }
+
+        public async Task TuChoi(string code)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var project = await _dbContext.PsProjectStruct.FirstOrDefaultAsync(x => x.Code == code);
+                if (project == null)
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi hệ thống!";
+                    this.MessageObject.MessageDetail = $"Không tìm thấy dự án với ID: {code}";
+                    return;
+                }
+
+                var currentStep = await _dbContext.PsProjectWorkflowProcessing
+                    .FirstOrDefaultAsync(x => x.Id == project.CurrentStepWorkflowId);
+                if (currentStep == null)
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi hệ thống!";
+                    this.MessageObject.MessageDetail = $"Không tìm thấy bước xử lý hiện tại của quy trình workflow!";
+                    return;
+                }
+
+                project.Status = ProjectStatus.TuChoi;
+
+                currentStep.IsDone = true;
+                currentStep.IsProcessing = false;
+                currentStep.Acted = WorkflowProjectAction.TuChoi;
+
+                if (!string.IsNullOrEmpty(currentStep.NextId))
+                {
+                    project.CurrentStepWorkflowId = currentStep.NextId;
+
+                    var nextStep = await _dbContext.PsProjectWorkflowProcessing
+                        .FirstOrDefaultAsync(x => x.Id == currentStep.NextId);
+
+                    if (nextStep != null)
+                    {
+                        nextStep.IsDone = false;
+                        nextStep.IsProcessing = true;
+                        nextStep.Deadline = DateTime.Now.AddDays(nextStep.HanXuLy ?? 0);
+
+                        _dbContext.PsProjectWorkflowProcessing.Update(nextStep);
+                    }
+                    else
+                    {
+                        this.Status = false;
+                        this.MessageObject.Message = "Lỗi hệ thống!";
+                        this.MessageObject.MessageDetail = $"Không tìm thấy bước xử lý tiếp theo của quy trình workflow!";
+                        return;
+                    }
+                }
+                else
+                {
+                    project.CurrentStepWorkflowId = null;
+                }
+
+                _dbContext.PsProjectStruct.Update(project);
+                _dbContext.PsProjectWorkflowProcessing.Update(currentStep);
+
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                this.Status = false;
+                this.Exception = ex;
+            }
+        }
+
+        public async Task YeuCauChinhSua(string code)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var project = await _dbContext.PsProjectStruct.FirstOrDefaultAsync(x => x.Code == code);
+                if (project == null)
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi hệ thống!";
+                    this.MessageObject.MessageDetail = $"Không tìm thấy dự án với ID: {code}";
+                    return;
+                }
+
+                var currentStep = await _dbContext.PsProjectWorkflowProcessing
+                    .FirstOrDefaultAsync(x => x.Id == project.CurrentStepWorkflowId);
+                if (currentStep == null)
+                {
+                    this.Status = false;
+                    this.MessageObject.Message = "Lỗi hệ thống!";
+                    this.MessageObject.MessageDetail = $"Không tìm thấy bước xử lý hiện tại của quy trình workflow!";
+                    return;
+                }
+
+                project.Status = ProjectStatus.YeuCauChinhSua;
+
+                currentStep.IsDone = false;
+                currentStep.IsProcessing = false;
+                currentStep.Acted = WorkflowProjectAction.YeuCauChinhSua;
+
+                if (!string.IsNullOrEmpty(currentStep.PreviousId))
+                {
+                    project.CurrentStepWorkflowId = currentStep.PreviousId;
+
+                    var previousStep = await _dbContext.PsProjectWorkflowProcessing
+                        .FirstOrDefaultAsync(x => x.Id == currentStep.PreviousId);
+
+                    if (previousStep != null)
+                    {
+                        previousStep.IsDone = false;
+                        previousStep.IsProcessing = true;
+                        previousStep.Deadline = DateTime.Now.AddDays(previousStep.HanXuLy ?? 0);
+
+                        _dbContext.PsProjectWorkflowProcessing.Update(previousStep);
+                    }
+                    else
+                    {
+                        this.Status = false;
+                        this.MessageObject.Message = "Lỗi hệ thống!";
+                        this.MessageObject.MessageDetail = $"Không tìm thấy bước xử lý tiếp theo của quy trình workflow!";
+                        return;
+                    }
+                }
+                else
+                {
+                    project.CurrentStepWorkflowId = null;
+                }
+
+                _dbContext.PsProjectStruct.Update(project);
+                _dbContext.PsProjectWorkflowProcessing.Update(currentStep);
+
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                this.Status = false;
+                this.Exception = ex;
+            }
+        }
+
     }
 }

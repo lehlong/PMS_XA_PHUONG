@@ -21,6 +21,8 @@ namespace Project.Service.Dtos.PS
         public string? Name { get; set; }
         public string? PId { get; set; }
         public string? WorkflowId { get; set; }
+        public string? CurrentStepWorkflowId { get; set; }
+        public int? Status { get; set; }
         public int? OrderNumber { get; set; }
         public bool? Expanded { get; set; }
         public string? OrgId { get; set; }
@@ -43,7 +45,8 @@ namespace Project.Service.Dtos.PS
                 .ForMember(dest => dest.Project, opt => opt.Ignore())
                 .ForMember(dest => dest.Workflow, opt => opt.Ignore())
                 .ForMember(dest => dest.TaskPerson, opt => opt.Ignore())
-                .ForMember(dest => dest.Files, opt => opt.Ignore());
+                .ForMember(dest => dest.Files, opt => opt.Ignore())
+                .ForMember(dest => dest.RefrenceFileId, opt => opt.Ignore());
         }
     }
     public class TaskPersonDto : BaseDto, IMapFrom, IDto

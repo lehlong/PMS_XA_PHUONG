@@ -155,6 +155,7 @@ namespace Project.Service.Services.PS
                 {
                     Id = rootStructId,
                     ProjectId = projectId,
+                    WorkflowId = request.WorkflowId,
                     Code = request.Code,
                     Name = request.Name,
                     PId = "STRUCT_PROJECT",
@@ -207,6 +208,7 @@ namespace Project.Service.Services.PS
                     lstProcessing.Add(new PsProjectWorkflowProcessing
                     {
                         Id = Guid.NewGuid().ToString(),
+                        Code = request.Code,
                         ProjectId = projectId,
                         WorkflowId = request.WorkflowId,
                         Step = i.Step,
@@ -215,15 +217,29 @@ namespace Project.Service.Services.PS
                         Action = i.Action,
                         IsDone = false,
                         IsProcessing = false
-                    });
+                    }); 
                 }
 
                 for (int idx = 0; idx < lstProcessing.Count; idx++)
                 {
                     if (idx < lstProcessing.Count - 1)
+                    {
                         lstProcessing[idx].NextId = lstProcessing[idx + 1].Id;
+                    }
                     else
+                    {
                         lstProcessing[idx].NextId = null;
+                    }
+                    if (idx > 0)
+                    {
+                        // Nếu không phải phần tử đầu tiên, lấy ID của phần tử đứng trước nó
+                        lstProcessing[idx].PreviousId = lstProcessing[idx - 1].Id;
+                    }
+                    else
+                    {
+                        // Nếu là phần tử đầu tiên (idx == 0), không có bước trước đó
+                        lstProcessing[idx].PreviousId = null;
+                    }
                 }
 
                 await _dbContext.PsProjectWorkflowProcessing.AddRangeAsync(lstProcessing);
@@ -601,24 +617,24 @@ namespace Project.Service.Services.PS
 
                 project.TrangThai = ProjectStatus.YeuCauChinhSua;
 
-                currentStep.IsDone = true;
+                currentStep.IsDone = false;
                 currentStep.IsProcessing = false;
                 currentStep.Acted = WorkflowProjectAction.YeuCauChinhSua;
 
-                if (!string.IsNullOrEmpty(currentStep.NextId))
+                if (!string.IsNullOrEmpty(currentStep.PreviousId))
                 {
-                    project.CurrentStepWorkflowId = currentStep.NextId;
+                    project.CurrentStepWorkflowId = currentStep.PreviousId;
 
-                    var nextStep = await _dbContext.PsProjectWorkflowProcessing
-                        .FirstOrDefaultAsync(x => x.Id == currentStep.NextId);
+                    var previousStep = await _dbContext.PsProjectWorkflowProcessing
+                        .FirstOrDefaultAsync(x => x.Id == currentStep.PreviousId);
 
-                    if (nextStep != null)
+                    if (previousStep != null)
                     {
-                        nextStep.IsDone = false;
-                        nextStep.IsProcessing = true;
-                        nextStep.Deadline = DateTime.Now.AddDays(nextStep.HanXuLy ?? 0);
+                        previousStep.IsDone = false;
+                        previousStep.IsProcessing = true;
+                        previousStep.Deadline = DateTime.Now.AddDays(previousStep.HanXuLy ?? 0);
 
-                        _dbContext.PsProjectWorkflowProcessing.Update(nextStep);
+                        _dbContext.PsProjectWorkflowProcessing.Update(previousStep);
                     }
                     else
                     {

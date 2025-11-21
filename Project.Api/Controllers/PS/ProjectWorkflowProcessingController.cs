@@ -16,11 +16,11 @@ namespace Project.Api.Controllers.PS
         public readonly IProjectStructService _projectStructService = projectStructService;
         public readonly IProjectService _projectService = projectService;
 
-        [HttpGet("GetProjectWorkflowStep/{projectId}/{workflowId}")]
-        public async Task<IActionResult> GetProjectWorkflowStep([FromRoute] string projectId,string workflowId)
+        [HttpGet("GetProjectWorkflowStep/{projectId}/{code}")]
+        public async Task<IActionResult> GetProjectWorkflowStep([FromRoute] string projectId,string code)
         {
             var res = new TransferObject();
-            var data = await _service.GetProjectWorkflowStep(projectId,workflowId);
+            var data = await _service.GetProjectWorkflowStep(projectId,code);
             if (_service.Status)
             {
                 res.Data = data;
@@ -80,11 +80,27 @@ namespace Project.Api.Controllers.PS
             return Ok(res);
         }
 
-        [HttpPut("StartWorkflow/{projectId}")]
-        public async Task<IActionResult> StartWorkflow([FromRoute] string projectId)
+        [HttpPut("StartWorkflow/{projectId}/{code}")]
+        public async Task<IActionResult> StartWorkflow([FromRoute] string projectId, string code)
         {
             var res = new TransferObject();
-            await _service.StartWorkflow(projectId);
+            await _service.StartWorkflow(projectId,code);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
+            }
+            return Ok(res);
+        }
+
+        [HttpPut("StartTaskWorkflow/{projectId}/{code}")]
+        public async Task<IActionResult> StartTaskWorkflow([FromRoute] string projectId, string code)
+        {
+            var res = new TransferObject();
+            await _service.StartTaskWorkflow(projectId, code);
             if (_service.Status)
             {
                 await res.GetMessage("0103", _service);

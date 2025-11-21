@@ -29,6 +29,7 @@ export class WorkflowProjectList {
   lstProjectLevel: any[] = [];
   lstOrganize: any[] = [];
   projectId: string = '';
+  code : string='';
   pageIndex = 1;
   pageSize = 10;
   total = 0;// tổng bản ghi sau khi filter
@@ -114,7 +115,8 @@ export class WorkflowProjectList {
     this.destroy$.complete();
   }
 
-  onShowDetailWorkflow(value: boolean): void{
+  onShowDetailWorkflow(value: boolean,code : string): void{
+    this.projectWorkflowProcessingService.setProcessingCode(code); 
     this.showDetailWorkFolow.emit(value)
   }
 

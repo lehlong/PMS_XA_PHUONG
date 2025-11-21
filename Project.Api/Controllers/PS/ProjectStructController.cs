@@ -162,5 +162,101 @@ namespace Project.Api.Controllers.PS
             }
             return Ok(res);
         }
+
+        [HttpGet("GetCurrentStep/{projectId}/{code}")]
+        public async Task<IActionResult> GetCurrentStep([FromRoute] string projectId,string code)
+        {
+            var res = new TransferObject();
+            var data = await _service.GetCurrentStep(projectId,code);
+            if (_service.Status)
+            {
+                res.Data = data;
+            }
+            else
+            {
+                await res.GetMessage("0001", _service);
+            }
+            return Ok(res);
+        }
+        [HttpPut("TrinhDuyet/{code}")]
+        public async Task<IActionResult> TrinhDuyet([FromRoute] string code)
+        {
+            var res = new TransferObject();
+            await _service.TrinhDuyet(code);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
+            }
+            return Ok(res);
+        }
+
+        [HttpPut("PheDuyet/{code}")]
+        public async Task<IActionResult> PheDuyet([FromRoute] string code)
+        {
+            var res = new TransferObject();
+            await _service.PheDuyet(code);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
+            }
+            return Ok(res);
+        }
+
+        [HttpPut("XacNhan/{code}")]
+        public async Task<IActionResult> XacNhan([FromRoute] string code)
+        {
+            var res = new TransferObject();
+            await _service.XacNhan(code);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
+            }
+            return Ok(res);
+        }
+
+        [HttpPut("TuChoi/{code}")]
+        public async Task<IActionResult> TuChoi([FromRoute] string code)
+        {
+            var res = new TransferObject();
+            await _service.TuChoi(code);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
+            }
+            return Ok(res);
+        }
+
+        [HttpPut("YeuCauChinhSua/{code}")]
+        public async Task<IActionResult> YeuCauChinhSua([FromRoute] string code)
+        {
+            var res = new TransferObject();
+            await _service.YeuCauChinhSua(code);
+            if (_service.Status)
+            {
+                await res.GetMessage("0103", _service);
+            }
+            else
+            {
+                await res.GetMessage("0104", _service);
+            }
+            return Ok(res);
+        }
+
     }
 }

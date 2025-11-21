@@ -89,13 +89,35 @@
                         <tr>
                             <th colspan="5">
                                 <div class="button-action">
+                                        @if(currentStep){
+            <button nz-button nzType="primary" (click)="trinhDuyet()" *ngIf="checkActionCurrent(workflowProjectAction.TrinhDuyet)">
+                <nz-icon nzType="send" nzTheme="outline" /> Trình duyệt
+            </button>
+            
+            <button nz-button nzType="primary" class="btn-green" (click)="pheDuyet()" *ngIf="checkActionCurrent(workflowProjectAction.PheDuyet)">
+                <nz-icon nzType="check" nzTheme="outline" /> Phê duyệt
+            </button>
+            
+            <button nz-button nzType="primary" class="btn-green" (click)="xacNhan()" *ngIf="checkActionCurrent(workflowProjectAction.XacNhan)">
+                <nz-icon nzType="check" nzTheme="outline" /> Xác nhận
+            </button>
+
+            <button nz-button nzType="primary" (click)="yeuCauChinhSua()" *ngIf="checkActionCurrent(workflowProjectAction.YeuCauChinhSua)">
+                <nz-icon nzType="sync" nzTheme="outline" /> Yêu cầu chỉnh sửa
+            </button>
+            
+            <button nz-button nzType="primary" nzDanger (click)="tuChoi()" *ngIf="checkActionCurrent(workflowProjectAction.TuChoi)">
+                <nz-icon nzType="close" nzTheme="outline" /> Từ chối
+            </button>
+        }
                                     <button nz-button nzType="primary" class="btn-green" (click)="update()">
                                         <nz-icon nzType="save" nzTheme="outline" /> Cập nhật cấu hình
                                     </button>
 
-                                    <button nz-button nzType="primary" class="btn-green" (click)="startWorkflow()">
+                                    <button nz-button nzType="primary" class="btn-green" (click)="startTaskWorkflow()" *ngIf="checkShowStartButton()">
                                         <nz-icon nzType="step-forward" nzTheme="outline" /> Bắt đầu luồng quy trình
                                     </button>
+                                 
 
                                 </div>
                             </th>
