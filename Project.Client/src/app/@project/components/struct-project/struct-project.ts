@@ -14,6 +14,9 @@ import { WorkflowDto } from '../../../class/MD/workflow.class';
 import { WorkflowType } from '../../../shared/statics/workflow-type.static';
 import { WorkflowService } from '../../../@master-data/services/workflow.service';
 import { ErrorMessage } from '../../../shared/components/error-message/error-message';
+import { ProjectStatus } from '../../../shared/statics/project-status.static';
+import { ProjectWorkflowProcessingService } from '../../services/project-workflow-processing.service';
+import { WorkflowProjectAction } from '../../../shared/statics/workflow-action.static';
 
 @Component({
   selector: 'app-struct-project',
@@ -26,6 +29,7 @@ export class StructProject implements OnInit {
   private destroy$ = new Subject<void>();
   projectId: string = '';
   visibleAddCv = false;
+  isEdit: boolean = false;
   titleAddCv: string = '';
   projectStructType = ProjectStructType;
 
@@ -38,6 +42,8 @@ export class StructProject implements OnInit {
 
   structs: any[] = [];
   lstWorkflow: any[] = [];
+  lstSteps: any[] = []; 
+  workflowProjectAction = WorkflowProjectAction;
 
   dto: ProjectStructDto = new ProjectStructDto();
   dataListUser: any = [];
@@ -55,6 +61,7 @@ export class StructProject implements OnInit {
     private _file: FileService,
     private org: OrganizeService,
     private workflowService: WorkflowService,
+    private workflowProcessingService: ProjectWorkflowProcessingService
   ) { }
 
   ngOnInit(): void {
@@ -96,6 +103,35 @@ export class StructProject implements OnInit {
            this.lstWorkflow = res.data; 
          }
    })
+  }
+  getSteps(code: string) {
+    if (this.projectId && code) {
+      this.workflowProcessingService.getProjectWorkflowStep(this.projectId, code)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            this.lstSteps = res;
+          }
+        })
+    }
+  }
+getStatusText(status: number | null | undefined): string {
+    if (status === null || status === undefined) return '';
+    return ProjectStatus.getText(status);
+}
+
+  // 3. Viết hàm lấy Màu (để hiển thị trên nz-tag)
+  // Bạn có thể tùy chỉnh màu theo ý thích
+  getStatusColor(status: number): string {
+    switch (status) {
+        case ProjectStatus.KhoiTao: return 'default';         // Màu xám
+        case ProjectStatus.DaTrinhDuyet: return 'processing'; // Màu xanh dương nhạt
+        case ProjectStatus.DaXacNhan: return 'geekblue';      // Màu xanh đậm
+        case ProjectStatus.DaPheDuyet: return 'success';      // Màu xanh lá
+        case ProjectStatus.TuChoi: return 'error';            // Màu đỏ
+        case ProjectStatus.YeuCauChinhSua: return 'warning';  // Màu cam
+        default: return 'default';
+    }
   }
 
   refreshCheckedStatusStruct(): void {
@@ -168,9 +204,11 @@ export class StructProject implements OnInit {
     this.titleAddCv = '';
     this.visibleAddCv = false;
     this.dto = new ProjectStructDto();
+    this.lstSteps = [];
   }
 
   openAddCv(data: any, isCallDetailData: boolean = false) {
+    this.isEdit = false;
     this.titleAddCv = data?.name;
     this.dto.projectId = this.projectId;
     this.dto.type = this.projectStructType.CongViec;
@@ -201,6 +239,25 @@ export class StructProject implements OnInit {
         }
       }
     })
+  }
+  openUpdateCv(data: any) {
+    // 1. Đặt cờ hiệu là đang sửa
+    this.isEdit = true;
+    
+    // 2. Gán tiêu đề drawer (để hiển thị ở HTML như bước trước ta đã làm)
+    this.titleAddCv = data.name;
+    
+    // 3. Reset DTO và gán ID dự án
+    this.dto = new ProjectStructDto();
+    this.dto.projectId = this.projectId;
+    this.dto.id = data.id; // Quan trọng: Phải có ID thì nút Lưu mới hiểu là Update
+
+    // 4. Mở Drawer
+    this.visibleAddCv = true;
+
+    // 5. Gọi API lấy chi tiết để fill dữ liệu vào Form (Ngày tháng, người thực hiện...)
+    this.getDataTaskDetail(data.id);
+    this.getSteps(data.code);
   }
 updateCv(form: any) {
   this.submitted = true;

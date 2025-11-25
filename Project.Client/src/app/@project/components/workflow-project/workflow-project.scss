@@ -1,0 +1,25 @@
+::ng-deep .readonly-select {
+    // 1. Chặn hoàn toàn thao tác chuột
+    pointer-events: none; 
+    
+    // 2. Ẩn nút X (remove icon) trên từng tag
+    .ant-select-selection-item-remove {
+        display: none !important;
+    }
+
+    // 3. Căn chỉnh lại padding cho tag vì nút X đã mất (để chữ nằm giữa đẹp hơn)
+    .ant-select-selection-item {
+        padding-right: 8px !important; 
+        cursor: default; // Đổi con trỏ chuột thành hình mũi tên thường
+        background-color: #f5f5f5; // (Tùy chọn) chỉnh màu nền tag nhẹ nhàng hơn
+        border: 1px solid #d9d9d9; // (Tùy chọn) viền tag
+    }
+
+    // 4. Ẩn viền và nền của chính cái ô select (để nhìn nó trong suốt như text thường)
+    .ant-select-selector {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding-left: 0 !important;
+    }
+}

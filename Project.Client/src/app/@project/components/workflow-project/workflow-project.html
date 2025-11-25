@@ -1,6 +1,6 @@
 <nz-page-header nzBackIcon (nzBack)="goBack()">
-    <nz-page-header-title>WORKFLOW DỰ ÁN</nz-page-header-title>
-    <nz-page-header-subtitle>các bước workflow của dự án</nz-page-header-subtitle>
+    <nz-page-header-title>WORKFLOW</nz-page-header-title>
+    <nz-page-header-subtitle>các bước workflow</nz-page-header-subtitle>
 </nz-page-header>
 <div class="project-workflow">
     <div nz-row [nzGutter]="12">
@@ -136,9 +136,18 @@
                             <td>{{item.name}}</td>
                             <td nzAlign="center">{{item.hanXuLy}}</td>
                             <td>
-                                <nz-select nzShowSearch nzAllowClear [(ngModel)]="item.listActions" nzMode="multiple">
-                                    <nz-option *ngFor="let i of lstAction" [nzLabel]="i.text"
-                                        [nzValue]="i.value"></nz-option>
+                                <nz-select 
+                                    nzMode="multiple"
+                                    [(ngModel)]="item.listActions" 
+                                    
+                                    [nzShowArrow]="false"      
+                                    [nzAllowClear]="false"     
+                                    [nzOpen]="false"           
+                                    class="readonly-select"    
+                                    style="pointer-events: none; border: none; background: transparent;">
+                                    
+                                    <nz-option *ngFor="let i of lstAction" [nzLabel]="i.text" [nzValue]="i.value">
+                                    </nz-option>
                                 </nz-select>
                             </td>
                             <td>

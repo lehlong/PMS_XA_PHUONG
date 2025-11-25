@@ -1,5 +1,4 @@
 import { BaseFilter } from "../common/base-filter.class";
-
 export class ProjectDto extends BaseFilter {
     id: string = '';
     code: string = '';
@@ -21,6 +20,7 @@ export class ProjectDto extends BaseFilter {
     notes: string = '';
     refrenceFileId: string = '';
     workflowId: string = '';
+    workflow: any;
     currentStepWorkflowId: string = '';
     createDate: any = null;
     createBy: string=''

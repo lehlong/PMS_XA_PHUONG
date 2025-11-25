@@ -172,3 +172,100 @@ label {
     align-items: center;
     width: 100%;
 }
+
+::ng-deep .readonly-select {
+    // 1. Chặn hoàn toàn thao tác chuột
+    pointer-events: none; 
+    
+    // 2. Ẩn nút X (remove icon) trên từng tag
+    .ant-select-selection-item-remove {
+        display: none !important;
+    }
+
+    // 3. Căn chỉnh lại padding cho tag vì nút X đã mất (để chữ nằm giữa đẹp hơn)
+    .ant-select-selection-item {
+        padding-right: 8px !important; 
+        cursor: default; // Đổi con trỏ chuột thành hình mũi tên thường
+        background-color: #f5f5f5; // (Tùy chọn) chỉnh màu nền tag nhẹ nhàng hơn
+        border: 1px solid #d9d9d9; // (Tùy chọn) viền tag
+    }
+
+    // 4. Ẩn viền và nền của chính cái ô select (để nhìn nó trong suốt như text thường)
+    .ant-select-selector {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding-left: 0 !important;
+    }
+}
+.step-card-container {
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    height: 100%;
+    overflow: hidden;    
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease-in-out; 
+    cursor: default; 
+    &:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); 
+        transform: translateY(-2px);
+    }
+    // --- STYLE CHO HEADER ---
+    .card-header {
+        padding: 10px 15px;
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;        
+        &.header-success {
+            background-color: #339933; 
+            color: #fff;
+            border-bottom: 1px solid #2b822b;
+        }
+        &.header-processing {
+            background-color: #1890FF; // Hoặc #007bff
+            color: #fff;
+            border-bottom: 1px solid #0056b3;
+        }
+        &.header-default {
+            background-color: #fff; // Nền trắng
+            color: #333; // Chữ đen
+            border-bottom: 1px solid #f0f0f0; // Có viền ngăn cách với body
+        }
+    }
+
+    // --- STYLE CHO BODY ---
+    .card-body {
+        padding: 12px 15px;
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #333;
+
+            i {
+                font-size: 14px;
+                margin-right: 8px;
+                width: 16px; // Cố định chiều rộng icon để text thẳng hàng
+                text-align: center;
+                color: #595959;
+            }
+
+            .label {
+                font-weight: 600;
+                margin-right: 5px;
+                color: #262626;
+            }
+
+            .value {
+                color: #595959;
+            }
+        }
+
+        .mt-2 {
+            margin-top: 10px;
+        }
+    }
+}

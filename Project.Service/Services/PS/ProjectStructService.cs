@@ -171,7 +171,7 @@ namespace Project.Service.Services.PS
             try
             {
 
-                var _structs = await _dbContext.PsProjectStruct.Where(x => x.ProjectId == projectId && x.WorkflowId != null).Include(x => x.Workflow).OrderBy(x => x.OrderNumber).ToListAsync();
+                var _structs = await _dbContext.PsProjectStruct.Where(x => x.ProjectId == projectId && x.WorkflowId != null).Include(x => x.Workflow).OrderBy(x => x.CreateDate).ToListAsync();
                 return _mapper.Map<List<ProjectStructDto>>(_structs);
             }
             catch (Exception ex)
@@ -192,7 +192,7 @@ namespace Project.Service.Services.PS
             {
                 request.Id = Guid.NewGuid().ToString();
                 var entities = _mapper.Map<PsProjectStruct>(request);
-
+                entities.Status = ProjectStatus.KhoiTao;
                 entities.RefrenceFileId = Guid.NewGuid().ToString();
 
                 await _dbContext.PsProjectStruct.AddAsync(entities);

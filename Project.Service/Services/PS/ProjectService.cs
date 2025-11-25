@@ -268,7 +268,7 @@ namespace Project.Service.Services.PS
         {
             try
             {
-                var _project = await _dbContext.PsProject.Include(x => x.DonViPhuTrachRef)
+                var _project = await _dbContext.PsProject.Include(x => x.DonViPhuTrachRef).Include(x=>x.Workflow)
                     .Include(x => x.Files)
                     .FirstOrDefaultAsync(x => x.Id == projectId);
 

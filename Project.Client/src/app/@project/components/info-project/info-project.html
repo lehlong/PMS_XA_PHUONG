@@ -197,7 +197,7 @@
                             </div>
                             <div nz-col nzSpan="12">
                                 <label>Quy trình</label>
-                                <input nz-input [(ngModel)]="project.diaDiem" class="space-control" />
+                                <input nz-input  [(ngModel)]="project.workflow.name"  class="space-control" [disabled]="true" />
                             </div>
                             <div nz-col nzSpan="6">
                                 <label>Người tạo dự án</label>

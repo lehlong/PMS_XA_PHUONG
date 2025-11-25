@@ -42,14 +42,17 @@
                         item.name }}</span>
                     <span *ngIf="item.type == projectStructType.HangMuc"><a style="color: goldenrod;">{{
                             item.name }}</a></span>
-                    <span *ngIf="item.type == projectStructType.CongViec" (click)="openAddCv(item, true)">
+                    <span *ngIf="item.type == projectStructType.CongViec" (click)="openUpdateCv(item)">
                         <a style="color: #378A00;">{{item.name }}</a>
                     </span>
                 </td>
                 <td nzAlign="center">{{ item.startDate | date: 'dd/MM/yyyy' }}</td>
                 <td nzAlign="center">{{ item.endDate | date: 'dd/MM/yyyy' }}</td>
                 <td nzAlign="center"></td>
-                <td nzAlign="center">{{item.status}}</td>
+                <td nzAlign="center"><nz-tag *ngIf="item.status !== null && item.status !== undefined" 
+                [nzColor]="getStatusColor(item.status)">
+                {{ getStatusText(item.status) }}
+                </nz-tag></td>
                 <td nzAlign="center"></td>
                 <td nzAlign="center"></td>
                 <td nzAlign="center">
@@ -67,11 +70,11 @@
 </div>
 <form #f="ngForm" (ngSubmit)="addCv(f)">
     <nz-drawer nzWidth="50%" [nzClosable]="false" [nzVisible]="visibleAddCv" nzPlacement="right"
-        [nzTitle]="'TẠO MỚI CÔNG VIỆC - ' + titleAddCv" (nzOnClose)="closeAddCv()" [nzExtra]="extra">
+        [nzTitle]="(isEdit ? 'CHI TIẾT CÔNG VIỆC' : 'TẠO MỚI CÔNG VIỆC') + (titleAddCv ? ' - ' + titleAddCv : '')" (nzOnClose)="closeAddCv()" [nzExtra]="extra">
         <ng-container *nzDrawerContent>
             <nz-tabs>
     
-                <nz-tab [nzTitle]="information">
+                <!-- <nz-tab [nzTitle]="information">
                     <ng-template #information>
                         <i class="bi bi-info-square"></i> THÔNG TIN CÔNG VIỆC
                     </ng-template>
@@ -127,6 +130,7 @@
                                             [nzValue]="wf.id">
                                         </nz-option>
                                     </nz-select>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -166,8 +170,170 @@
                             </div>
                         </div>
                     </div>
-                </nz-tab>
+                </nz-tab> -->
+                <nz-tab [nzTitle]="information">
+    <ng-template #information>
+        <i class="bi bi-info-square"></i> THÔNG TIN CÔNG VIỆC
+    </ng-template>
+
+    <div nz-row [nzGutter]="12">
+        <div nz-col class="gutter-row" [nzSpan]="12">
+            <div class="inner-box">
+                <div class="project-info">
+                    <label>Mã công việc</label>
+                                    <input nz-input [(ngModel)]="dto.code" #code="ngModel" name="code" required class="space-control" 
+                                    (blur)="checkExistCode()"/>
     
+                                    <div *ngIf="codeExistError" class="text-color-danger fst-italic text-sm mt-1">
+                                        Mã công việc đã tồn tại
+                                    </div>
+
+                                    <app-error-message
+                                        *ngIf="!codeExistError"
+                                        [control]="code"
+                                        [messages]="{required: 'Mã không được để trống'}"
+                                        [submitted]="submitted">
+                                    </app-error-message>
+    
+                                    <label>Tên công việc</label>
+                                    <input nz-input [(ngModel)]="dto.name" #name="ngModel" name="name" required class="space-control" />
+                                    
+                                    <app-error-message
+                                        [control]="name"
+                                        [messages]="{required: 'Tên không được để trống'}"
+                                        [submitted]="submitted">
+                                    </app-error-message>
+    
+                                    <label>Hạn xử lý</label>
+                                    <nz-date-picker [(ngModel)]="dto.endDate" #endDate="ngModel" name="endDate" class="space-control"
+                                        [nzFormat]="'dd/MM/yyyy'"></nz-date-picker>
+                                    <app-error-message
+                                        [control]="endDate"
+                                        [messages]="{required: 'Hạn xử lý không được để trống'}"
+                                        [submitted]="submitted">
+                                    </app-error-message>
+                                    
+                                    <label>Ghi chú</label>
+                                    <input nz-input [(ngModel)]="dto.notes" name="notes" class="space-control" />
+                                    <label>Workflow công việc</label>
+                                    <nz-select 
+                                        nzShowSearch 
+                                        nzAllowClear 
+                                        name="workFlow"
+                                         [(ngModel)]="dto.workflowId"
+                                        class="space-control">
+                                        <nz-option 
+                                            *ngFor="let wf of lstWorkflow" 
+                                            [nzLabel]="wf.code + ' - ' + wf.name" 
+                                            [nzValue]="wf.id">
+                                        </nz-option>
+                                    </nz-select>
+                </div>
+            </div>
+        </div>
+
+        <div nz-col class="gutter-row" [nzSpan]="12">
+            <div class="inner-box">
+                <div nz-row [nzGutter]="12">
+                    <div nz-col class="gutter-row" [nzSpan]="24">
+                        <div class="inner-box">
+                                            <div class="project-file">
+                                                <div class="file-upload-area" (click)="fileInput.click()">
+                                                    <div>
+                                                        <img src="img/folder_upload.png" class="img-upload">
+                                                    </div>
+                                                    <h3>Tải lên file đính kèm dự án</h3>
+                                                    <p style="color: #666; font-size: 14px;">Hỗ trợ các định dạng: PDF, DOC,
+                                                        DOCX,
+                                                        XLS, XLSX, PNG, JPG</p>
+                                                </div>
+                                            </div>
+                                            <div *ngFor="let f of dto.files" class="file-item">
+                                                <div><img [src]="f.icon" width="30" style="margin-right: 12px;"></div>
+                                                <div>
+                                                    <span style="font-weight: 600;">{{f.fileName}}</span><br>
+                                                    <span style="font-size:12px; color: gray">{{ f.fileSize < 1048576 ?
+                                                            (f.fileSize / 1024 | number : "1.1-1" ) + " KB" : (f.fileSize /
+                                                            1048576 | number : "1.1-1" ) + " MB" }}</span>
+                                                </div>
+                                                <div style="margin-left: auto;color: rgb(220, 53, 69);"
+                                                    nz-tooltip="Xoá file" (click)="deleteFile(f)">
+                                                    <nz-icon nzType="delete" nzTheme="outline" />
+                                                </div>
+                                            </div>
+                                        </div>
+                         </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div *ngIf="isEdit" nz-row [nzGutter]="[16, 16]" style="margin-top: 20px;">
+    
+    <div nz-col [nzSpan]="24">
+        <label style="font-weight: 600; color: #333; display: block;">
+             Quá trình thực hiện
+        </label>
+    </div>
+
+    <div nz-col [nzSpan]="12" *ngFor="let i of lstSteps; let idx = index">
+        
+        <div class="step-card-container">
+            <div class="card-header"
+                    [class.header-success]="i.isDone && !i.isProcessing"
+                    [class.header-processing]="!i.isDone && i.isProcessing"
+                    [class.header-default]="!i.isDone && !i.isProcessing">
+               {{i.name | uppercase}}
+            </div>
+
+            <div class="card-body">
+                <div class="info-row">
+                    <i class="bi bi-person-circle"></i>
+                    <span class="label">Người xử lý:</span>
+                    <span class="value">{{i?.person?.fullName || '---'}}</span>
+                </div>
+
+                <ng-container *ngIf="i.isDone">
+                    <div class="info-row">
+                        <i class="bi bi-list-ul"></i>
+                        <span class="label">Hành động:</span>
+                        <span class="value">{{workflowProjectAction.getText(i.acted)}}</span>
+                    </div>
+                    <div class="info-row">
+                        <i class="bi bi-clock-history"></i>
+                        <span class="label">Thời gian thực hiện:</span>
+                        <span class="value">{{i.updateDate | date : 'dd/MM/yyyy HH:mm'}}</span>
+                    </div>
+                    <div class="mt-2">
+                        <nz-tag [nzColor]="'#f6ffed'" [style.border]="'1px solid #b7eb8f'" [style.color]="'#52c41a'">
+                            <i nz-icon nzType="check"></i> Đã xử lý
+                        </nz-tag>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngIf="i.isProcessing">
+                    <div class="info-row">
+                        <i class="bi bi-alarm"></i>
+                        <span class="label">Hạn xử lý:</span>
+                        <span class="value">{{i.deadline | date : 'dd/MM/yyyy HH:mm'}}</span>
+                    </div>
+                    <div class="mt-2">
+                        <nz-tag [nzColor]="'#e6f7ff'" [style.border]="'1px solid #91d5ff'" [style.color]="'#1890ff'">
+                            <i nz-icon nzType="sync" nzSpin></i> Đang xử lý
+                        </nz-tag>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngIf="!i.isProcessing && !i.isDone">
+                    <div class="mt-2">
+                        <nz-tag [nzColor]="'default'">Chưa bắt đầu</nz-tag>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+    </div>
+</div>
+</nz-tab>
                 <nz-tab [nzTitle]="personnel">
                     <ng-template #personnel>
                         <i class="bi bi-people"></i> GIAO THỰC HIỆN
